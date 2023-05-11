@@ -1,0 +1,1097 @@
+{%extends 'base.html'%} {%block title%}Create Order{%endblock title%}
+{%block content%}
+<body>
+  <br />
+  <br />
+  <div class="container-fluid">
+    <section class="content">
+      <section class="invoice">
+        <div class="row">
+          <div class="col-md-12">
+            <div class="card">
+              <form>
+              <div class="card-header">Find or create customer</div>
+              <div class="card-body">
+                <div class="row">
+                  <div class="col-md-4">
+                    <div class="form-group">
+                      <label
+                        for=""
+                        style="display: flex; justify-content: space-between"
+                        >Customer<button
+                          class="btn btn-success addCustomer"
+                          
+                        >
+                          +
+                        </button></label
+                      >
+                      <select class="selectpicker dropup form-control customerSelectOption" data-container="body" data-live-search="true" name="customer_id" id="customer_id" title="Select ..." required>
+                        {%for customer in customerData%}
+                            
+                            <option value="{{customer.id}}" >{{customer.first_name}}</option>
+                        {%endfor%}
+                           
+                      </select>
+                      
+                    </div>
+                  </div>
+                </div>
+                
+              </div>
+            </div>
+          </div>
+          <div class="col-md-12">
+            <div class="card">
+              <div class="card-header">Create Order</div>
+              <div class="card-body">
+                
+                    
+                       
+                        
+                        
+                        
+                        <!-- /.col -->
+                      
+              <div class="row">
+                <div class="col-xs-12 table-responsive">
+
+                  <table class="table" id="po_table">
+                    <thead>
+                    <tr>
+                      <th class="text-left col-sm-12 col-md-2">Item</th>
+                      <th class="text-left col-sm-12 col-md-4">Description</th>
+                      <th class="text-left col-sm-12 col-md-1">Quantity</th>
+                      <th class="text-left col-sm-12 col-md-1">Unit Price</th>
+                      <th class="text-left col-sm-12 col-md-1">Discount Type</th>
+                      <th class="text-left col-sm-12 col-md-1">Discount</th>
+                      <th class="text-left col-sm-12 col-md-1 border-left">Amount</th>
+                      <th class="text-left"></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    
+                    <tr>
+                      <td>
+                        <div class="btn-group bootstrap-select">
+                          <div id="vendor_item_list_1">
+                            <select class="selectpicker dropup" data-container="body" data-live-search="true" name="item_id_1" id="item_id_1" onchange="populateItemDetails(this.value,this.name)" title="Select Item..." required>
+                              {%for product in products%}
+                              <option value="{{product[0].product_id}}">{{product[0].product_code}}</option>
+                              {%endfor%}
+                            </select>
+                          </div>
+                        </div>
+                      </td>
+                      <td id="item_desc_1"></td>
+                      <td class="text-left">
+                        <input type="number" class="form-control" onchange="calculate_item_total(this.name)" name="item_quantity_1" value="0" id="item_quantity_1" required/>
+                      </td>
+                      <td class="text-right">
+                        <div class="input-group mb-3">
+                          <span class="input-group-text border-0 bg-white" id="basic-addon1">$</span>
+                          <input class="form-control-plaintext" type="number" name="unit_price_1" id="unit_price_1" value="0" readonly></input>
+                        </div>
+                      </td>
+                      <td>
+                        <label><input type="checkbox" name="is_wholesale" value="1" id="is_discount_amount_1" class="is_discount_amount" data-id="1" onclick=changeDiscountInput(1)>Amount</label>
+
+                        
+                      </td>
+                      <td>
+                        <input type="number" onchange=percentInput(1) id="percent_input_1" placeholder="%" class="form-control percent_input" style="display:block" data-id="1" name="percent_input_1" />
+
+                        <input type="text" onchange=amountInput(1) id="amount_input_1" placeholder="$" class="form-control hidden amount_input" style="display:none" data-id="1" name="amount_input_1"/>
+                      </td>
+                      
+                      
+                      <td class="text-left border-left">
+                        <div class="input-group mb-3">
+                          <span class="input-group-text border-0 bg-white" id="basic-addon1">$</span>
+                          <input class="form-control-plaintext" type="number" name="sub_total_1" id="sub_total_1" value="0" readonly></input> 
+                        </div>
+                        </td>
+                      <td class="text-right">
+                        <a class="btn btn-sm danger" id ="deleteRow_1" onclick="remove_po_item(this.id)"><i class="fa fa-remove"></i></a>
+                      </td>
+                    </tr>
+                    
+                    </tbody>  
+                  </table>
+                </div>
+                <!-- /.col -->
+              </div>
+              <!-- /.row -->
+
+               <!-- Add rows button-->
+               <div class="row">
+                <div class="col-sm-6 col-xs-12" z-index="0">
+                    <div class="col-sm-2">
+                        <a class="btn btn-primary rounded-4 btn-block" id="insertRow" href="#"><i class="fa fa-plus"> </i> Add</a>
+                    </div>
+                </div>
+                <div class="col-sm-3 col-xs-12">
+                  <div class="row">
+                    <label><input type="checkbox" name="discount" value="1" id="" class="main_discount" data-id="1" onclick=mainDiscountCheckBox()>Discount in amount</label>
+                    <input type="number" id="main_percent_input" placeholder="input discount in %" class="form-control" style="display:block" data-id="1" name="main_percent_input" onchange="mainPercentDiscount()"/>
+                    <input type="text" id="main_amount_input" placeholder="input discount in amount" class="form-control hidden" style="display:none" data-id="1" name="main_amount_input" onchange="mainAmountDiscount()"/>
+                  </div>
+                </div>
+                <div class="col-sm-3 col-xs-12">
+                        <div class="table-responsive">
+                            <table class="table">
+                            <tbody>
+                            <tr>
+                                <th>Total:</th>
+                                <td class="text-right">
+                                  <div class="input-group mb-3">
+                                  <span class="input-group-text border-0 bg-white" id="basic-addon1">$</span>
+                                  <input name="grand_total" class="form-control-plaintext" id="grand_total" value="0" readonly></input>
+                                  </div>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+              <input type="hidden" style="display: none" name="item_counter" id="item_counter" value="1"></input>
+              <input type="hidden" style="display: none" name="item_counter_list" id="item_counter_list" value="1"></input>
+                  <!-- /.col -->
+              <div class="row">
+                <!-- accepted payments column -->
+                <button class="btn btn-success saveButton">Save</button>
+                <!-- /.col -->
+              </div>
+              <br/><br/>
+              <div class="row">
+                <div class="col-sm-3 col-xs-12" style="display: block" id="ship_to">
+                  
+                </div>
+              </div>
+                
+            </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </section>
+    <!-- FIM DO CONTEUDO-->
+  </div>
+
+  <!--============= MODEL ===================-->
+  <div
+    class="modal fade myModal"
+    id="exampleModal-1"
+    tabindex="-1"
+    role="dialog"
+    aria-labelledby="exampleModalLabel"
+    aria-hidden="true"
+    style="z-index: 20"
+  >
+    <div class="modal-dialog modal-lg" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Add customer</h5>
+          <button
+            type="button"
+            class="close"
+            data-dismiss="modal"
+            aria-label="Close"
+          >
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="card">
+            
+              <div class="card-body">
+                <div class="box box-primary">
+                  <div class="box-header with-heading">
+                    <h3 class="box-title">Common</h3>
+                  </div>
+                  <div class="box-body">
+                    <div class="row">
+                      <div class="col-md-6">
+                        <div class="form-group">
+                          <label>First name</label>
+                          <input
+                            type="text"
+                            name="first_name"
+                            class="form-control"
+                            value=""
+                            id="first_name"
+                          />
+                        </div>
+                      </div>
+                      <div class="col-md-6">
+                        <div class="form-group">
+                          <label>Last Name</label>
+                          <input
+                            type="text"
+                            name="first_name"
+                            class="form-control"
+                            value=""
+                            id="last_name"
+                          />
+                        </div>
+                      </div>
+                    </div>
+  
+                    <div class="form-group">
+                      <label>Email</label>
+                      <input
+                        type="text"
+                        name="email"
+                        class="form-control"
+                        value=""
+                        id="email"
+                      />
+                    </div>
+                  </div>
+                </div>
+                <div class="box box-primary">
+                  <div class="box-header with-heading">
+                    <h3 class="box-title">Billing Address</h3>
+                  </div>
+                  <div class="box-body">
+                    <div class="row">
+                      <div class="col-md-6">
+                        <div class="form-group">
+                          <label>Company</label>
+                          <input
+                            type="text"
+                            name="company"
+                            class="form-control"
+                            value=""
+                            id="company"
+                          />
+                        </div>
+                      </div>
+                      <div class="col-md-6">
+                        <div class="form-group">
+                          <label>Phone</label>
+                          <input
+                            type="text"
+                            name="first_name"
+                            class="form-control"
+                            value=""
+                            id="phone"
+                          />
+                        </div>
+                      </div>
+                    </div>
+  
+                    <div class="form-group">
+                      <input
+                        type="text"
+                        name=""
+                        class="form-control"
+                        id="searchInput"
+                        placeholder="input the location"
+                      />
+                      <div
+                        id="map"
+                        style="width: 750px; height: 500px,display: none"
+                      ></div>
+  
+                      <input
+                        type="text"
+                        hidden=""
+                        name="location"
+                        id="location"
+                        value="Nepal"
+                      />
+                    </div>
+                    <div class="row">
+                      <div class="col-md-6">
+                        <div class="form-group">
+                          <label for="">Country</label>
+                          <input
+                            type="text"
+                            name="country"
+                            class="form-control"
+                            id="country"
+                          />
+                        </div>
+                      </div>
+                      <div class="col-md-6">
+                        <div class="form-group">
+                          <label for="">Address1*</label>
+                          <input
+                            type="text"
+                            name="address1"
+                            class="form-control"
+                            id="address1"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-md-6">
+                        <div class="form-group">
+                          <label for="">Address2</label>
+                          <input
+                            type="text"
+                            name="address2"
+                            class="form-control"
+                            id="address2"
+                          />
+                        </div>
+                      </div>
+                      <div class="col-md-6">
+                        <div class="form-group">
+                          <label for="">City*</label>
+                          <input
+                            type="text"
+                            name="city"
+                            class="form-control"
+                            id="city"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-md-6">
+                        <div class="form-group">
+                          <label for="">State/Country*</label>
+                          <input
+                            type="text"
+                            name="state"
+                            class="form-control"
+                            id="state"
+                          />
+                        </div>
+                      </div>
+                      <div class="col-md-6">
+                        <div class="form-group">
+                          <label for="">Post Code</label>
+                          <input
+                            type="text"
+                            name="post_code"
+                            class="form-control"
+                            id="postcode"
+                          />
+                        </div>
+                      </div>
+                      <div class="col-md-6">
+                        <div class="form-group">
+                           <label><input type="checkbox" name="is_wholesale" value="1" id="is_wholesale">is wholesale</label><br>
+                        </div>
+                     </div>
+                    </div>
+                    <div class="row">
+                      <div class="form-group">
+                        <input type="submit" value="Save" class="btn btn-success saveCustomer">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </form>
+            
+          </div>
+        </div>
+        <div class="modal-footer"></div>
+      </div>
+    </div>
+  </div>
+  <!--==============MODEL ===================-->
+  <!-- /.container -->
+</body>
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAjQbpLmWtP5SBJQ6RWzplfIg0Sd0rpDYg&libraries=places&sensor=true"></script>
+
+
+<script type="text/javascript">
+  $(document).ready(function(){
+
+    //save
+    $('.saveButton').on('click',function(e){
+      e.preventDefault()
+      item_counter_list = $('#item_counter_list').val()
+      arrayvalue = item_counter_list.split(',')
+      orderItems = []
+      customerId = $('#customer_id').val()
+      console.log('customer_id',customerId);
+      grand_total = $('#grand_total').val()
+      if(parseInt(grand_total)===0){
+          alert('There is no grand total')
+          return;
+      }
+      if(!customerId){
+        alert('Please select customer')
+        return;
+      }
+      main_percent_input = $('#main_percent_input').val()
+      main_amount_input = $('#main_amount_input').val()
+      grand_total = $('#grand_total').val()
+      if(parseInt(grand_total)===0){
+        alert('Please select some products')
+        return;
+      }
+
+      $.each(arrayvalue,function(index,value){
+        obj = {};
+        obj['product'] = $('#item_id_'+value).val()
+        obj['percent_input'] = $('#percent_input_'+value).val()
+        obj['amount_input'] = $('#amount_input_'+value).val()
+        obj['product_description'] = $('#item_desc_'+value).text()
+        obj['item_quantity'] = $('#item_quantity_'+value).val()
+        obj['unit_price'] = $('#unit_price_'+value).val()
+        obj['sub_total'] = $('#sub_total_'+value).val()
+
+        orderItems.push(obj)
+      })
+      
+      console.log(typeof orderItems)
+      var data = {};
+      data['myObjects'] = orderItems;
+      data['customer_id'] = customerId;
+      data['main_percent_input'] = main_percent_input
+      data['main_amount_input'] = main_amount_input
+      data['grand_total'] = grand_total
+
+      convertedData = JSON.stringify(data)
+      $.ajax({
+        method:"POST",
+        url: "/save-order",
+        contentType: "application/json; charset=utf-8",
+        dataType: "json",
+        data: JSON.stringify(data),
+        success:function(res){
+          console.log(res)
+        }
+      })
+      
+      
+      
+    });
+
+    
+  })
+
+  //change main discount checkbox
+  function mainDiscountCheckBox(){
+    if($('.main_discount').is(":checked")){
+      $(`#main_amount_input`).css("display","block");
+      $(`#main_percent_input`).css("display","none");
+      $(`#main_percent_input`).val('')
+      calculate_total()
+    }else{
+      $(`#main_amount_input`).css("display","none");
+      $(`#main_percent_input`).css("display","block");
+      $(`#main_amount_input`).val('')
+      calculate_total()
+    }
+  }
+  function changeDiscountInput(data_id){
+    id = data_id
+    isProductSelected = $('#item_id_'+id).val()
+    if(parseInt(isProductSelected)>0){
+      quantity =  parseInt($("#item_quantity_"+id).val());
+      if(quantity>0){
+        if($('#is_discount_amount_'+id).is(":checked")){
+          console.log('small amount checked')
+          unit_price = $("#unit_price_"+id).val();
+          
+          sub_total = quantity * unit_price;
+        
+          sub_total = parseFloat(sub_total).toFixed(2);
+          $('#sub_total_'+id).val(sub_total);
+          calculate_total()
+          $(`#amount_input_${id}`).css("display","block");
+          $(`#percent_input_${id}`).css("display","none");
+          $(`#percent_input_${id}`).val('')
+          if($('.main_discount').is(":checked")){
+            mainAmountDiscount()
+          }else{
+            mainPercentDiscount()
+          }
+          
+        }else{
+          console.log('small discount checked')
+          unit_price = $("#unit_price_"+id).val();
+          
+          sub_total = quantity * unit_price;
+          sub_total = parseFloat(sub_total).toFixed(2);
+          $('#sub_total_'+id).val(sub_total);
+          calculate_total()
+          $(`#amount_input_${id}`).css("display","none");
+          $(`#percent_input_${id}`).css("display","block");
+          $(`#amount_input_${id}`).val('')
+          if($('.main_discount').is(":checked")){
+            mainAmountDiscount()
+          }else{
+            mainPercentDiscount()
+          }
+        }
+      }else{
+        alert('please select quantity')
+        $('#is_discount_amount_'+id).prop('checked', false); 
+      }
+      
+    }else{
+      alert('please select product')
+      $('#is_discount_amount_'+id).prop('checked', false); 
+    }
+    
+
+  }
+
+  function percentInput(data_id){
+    id=data_id
+    console.log('data_id',id)
+    value = $('#percent_input_'+id).val()
+    console.log('discount',value)
+    quantity =  parseInt($("#item_quantity_"+id).val());
+    if(quantity===0){
+      alert('please input quantity number')
+      $(this).val('')
+      return;
+    }else{
+
+      unit_price = $("#unit_price_"+id).val();
+      sub_total = quantity * unit_price;
+      if(value){
+        var disc = parseFloat(value / 100) * parseFloat(sub_total) ;
+        discounted_amount = parseFloat(sub_total)-parseFloat(disc)
+        sub_total = parseFloat(discounted_amount).toFixed(2);
+        console.log('sub_total',sub_total);
+        $('#sub_total_'+id).val(sub_total);
+        calculate_total()
+        if($('.main_discount').is(":checked")){
+          mainAmountDiscount()
+        }else{
+          mainPercentDiscount()
+        }
+      }else{
+        $('#sub_total_'+id).val(sub_total);
+      }
+      
+    }
+  }
+
+
+
+  function amountInput(data_id){
+    id = data_id
+    value = $('#amount_input_'+id).val()
+    quantity =  parseInt($("#item_quantity_"+id).val());
+    if(quantity===0){
+      alert('please input quantity number')
+      $('#amount_input_'+id).val('')
+    }else{
+      unit_price = $("#unit_price_"+id).val();
+      
+      sub_total = quantity * unit_price;
+      discounted_amount = parseFloat(sub_total)-parseFloat(value)
+      sub_total = parseFloat(discounted_amount).toFixed(2);
+      
+      $('#sub_total_'+id).val(sub_total);
+      calculate_total()
+      if($('.main_discount').is(":checked")){
+        mainAmountDiscount()
+      }else{
+        mainPercentDiscount()
+      }
+      return sub_total
+    }
+  }
+
+
+  function mainAmountDiscount(){
+    value = $('#main_amount_input').val()
+    var item_counters = $("#item_counter").val();
+    var item_counter_list = $("#item_counter_list").val();
+    var itemList = getItemAsList(item_counter_list);
+    total = 0;
+    for(i=0;i<item_counters;i++){
+        var item = itemList[i];
+        if(item === undefined){
+          
+        }
+        else {
+          sub_total = $('#sub_total_'+item).val();
+          total = parseFloat(total) + parseFloat(sub_total); 
+        }
+    }
+    total = parseFloat(total).toFixed(2)
+    grand_total = total
+    console.log('grand_total',grand_total)
+    if(parseInt(grand_total)===0){
+      alert('there is no grand total')
+    }else{
+      console.log('main Amount discount')
+      discounted_amount = parseFloat(grand_total)-parseFloat(value)
+      $('#grand_total').val(discounted_amount)
+    }
+    
+  }
+    
+
+  function mainPercentDiscount(){
+    value = $('#main_percent_input').val()
+    var item_counters = $("#item_counter").val();
+    var item_counter_list = $("#item_counter_list").val();
+    var itemList = getItemAsList(item_counter_list);
+    total = 0;
+    for(i=0;i<item_counters;i++){
+        var item = itemList[i];
+        if(item === undefined){
+          
+        }
+        else {
+          sub_total = $('#sub_total_'+item).val();
+          total = parseFloat(total) + parseFloat(sub_total); 
+        }
+    }
+    total = parseFloat(total).toFixed(2)
+    grand_total = total
+    if(parseInt(grand_total)===0){
+      alert('there is no grand total')
+    }else{
+      console.log('main percent discount')
+      var disc = parseFloat(value / 100) * parseFloat(grand_total) ;
+      discounted_amount = parseFloat(grand_total)-parseFloat(disc)
+      $('#grand_total').val(discounted_amount)
+    }
+    
+  }
+
+
+
+  $(function () {
+
+
+    // Start counting from the third row
+    var table = document.getElementById("po_table");
+    var tbodyRowCount = table.tBodies[0].rows.length; // 3
+    var counter = tbodyRowCount;
+    var itemlist = "";
+    
+    $("#insertRow").on("click", function (event) {
+        event.preventDefault()
+        var item_counter_list = $('#item_counter_list').val();
+        itemList = getItemAsList(item_counter_list);
+        item_count = itemList.length
+        console.log('item_count',item_count)
+        value = $('#item_id_'+itemList.length).val()
+        if(!value){
+          alert('please select product for previous row')
+          return;
+        }
+      
+        console.log('ya chircha ke')
+        
+        //var item_array = item_counter_list.split(",");
+        event.preventDefault();
+    
+        var newRow = $("<tr>");
+        var cols = '';
+        
+        // Increase counter after each row insertion
+        counter++;
+        // Table columns
+        $("#item_counter").val(counter);
+        itemList.push(counter);
+        cols += `<td>
+                                <div class="btn-group bootstrap-select">
+                                  <div id="vendor_item_list_${counter}">
+                                    <select class="selectpicker dropup" data-container="body" data-live-search="true" name="item_id_${counter} " id="item_id_${counter}" title="Select Item..." onchange="populateItemDetails(this.value,this.name)" required>
+                                    
+                                    </select>
+                                  </div>
+                                </div>
+                              </td>
+                              <td id="item_desc_${counter}">description</td>
+                              <td class="text-left">
+                                <input type="number" class="form-control" onchange="calculate_item_total(this.name)" value="0" name="item_quantity_${counter}" id="item_quantity_${counter}"/>
+                              </td>
+                              <td class="text-right">
+                                <div class="input-group mb-3">
+                                  <span class="input-group-text border-0 bg-white" id="basic-addon1">$</span>
+                                  <input class="form-control-plaintext" type="number" name="unit_price_${counter}" id="unit_price_${counter}" value="0" readonly></input>
+                                </div>
+                              </td>
+                              <td>
+                                <label><input type="checkbox" name="is_wholesale" value="1" id="is_discount_amount_${counter}" class="is_discount_amount" data-id="${counter}" onclick=changeDiscountInput(${counter})>Amount?</label>
+                       
+                                </td>
+                              <td>
+                                <input type="number" onchange=percentInput(${counter}) id="percent_input_${counter}" placeholder="%" class="form-control percent_input" data-id="${counter}" style="display:block"/>
+
+                                <input type="text" onchange=amountInput(${counter}) id="amount_input_${counter}" placeholder="$" class="form-control hidden amount_input" style="display:none" data-id="${counter}"/>
+                              </td>
+                              
+                              <td class="text-left border-left">
+                                <div class="input-group mb-3">
+                                  <span class="input-group-text border-0 bg-white" id="basic-addon1">$</span>
+                                  <input class="form-control-plaintext" type="number" name="sub_total_${counter}" id="sub_total_${counter}" value="0" readonly></input> 
+                                </div>
+                                </td>`;
+        cols += `<td class="text-right"><a class="btn btn-sm danger" id ="deleteRow_${counter}" onclick="remove_po_item(this.id)"><i class="fa fa-remove"></i></a></td>`;
+        
+        // Insert the columns inside a row
+        newRow.append(cols);
+    
+        // Insert the row inside a table
+        $("#po_table").append(newRow);
+        $("#item_counter_list").val(itemList);
+        $.ajax({
+          type: "GET",
+          url: "/get-products-for-order",
+          success: function(data,status,xhr){
+            populateDropdown(data);
+            $(".selectpicker").selectpicker('refresh');
+          }
+        });
+
+        $(".selectpicker").selectpicker('refresh');
+    
+    });
+
+  });
+
+
+    function getItemAsList(string){
+      return string.toString().split(",");
+    }
+    function removeFromArray(array,item){
+      var index = array.indexOf(item);
+      if (index > -1) { // only splice array when item is found
+          array.splice(index, 1); // 2nd parameter means remove one item only
+      }
+      return array;
+    }
+    function calculate_total(){
+      var item_counters = $("#item_counter").val();
+      var item_counter_list = $("#item_counter_list").val();
+      var itemList = getItemAsList(item_counter_list);
+      total = 0;
+      for(i=0;i<item_counters;i++){
+          var item = itemList[i];
+          if(item === undefined){
+            
+          }
+          else {
+            sub_total = $('#sub_total_'+item).val();
+            total = parseFloat(total) + parseFloat(sub_total); 
+          }
+      }
+      total = parseFloat(total).toFixed(2)
+      $('#grand_total').val(total);
+    }
+  
+      function populateItemDetails(value,name){
+        
+        console.log(name);
+        var row_num = name.split("_").slice(-1)[0];
+        $.ajax({
+          type: "GET",
+          url: "/populateItems/"+value,
+          success: function(data,status,xhr){
+            console.log('ananta',data);
+            $('#item_desc_'+row_num).text(data.description);
+            unit_price = parseFloat(data.sales_price).toFixed(2);
+            $('#unit_price_'+row_num).val(unit_price);
+          }
+        });
+      }
+      function populateDropdown(data){
+        html = "";
+        var item_counters = $("#item_counter").val();
+        
+        if (jQuery.isEmptyObject(data)){
+          for(var i = 1;i<=parseInt(item_counters);i++){
+            html = '<select class="selectpicker dropup" style="display: block !important" data-container="body" data-live-search="true" name="item_id_'+ i+'" id="item_id_'+ i +'" title="Select Item..." onchange="populateItemDetails(this.value,this.name)" required></select>'
+            $("#vendor_item_list_"+i).html(html).selectpicker('refresh');
+            $("#item_desc_"+i).val("");
+            $("#item_quantity_"+i).val(0);
+            $("#unit_price_"+i).val(0);
+            $("#sub_total_"+i).val(0);
+          }
+        }
+        else {
+          var options = ""
+          $.each(data, function (idx, obj) {
+            options+= '<option value="' + obj.product_id + '">' + obj.product_code + '</option>'
+          });
+          
+          for(var i = 1;i<=parseInt(item_counters);i++){
+            html = '<select class="selectpicker dropup" style="display: block !important" data-container="body" data-live-search="true" name="item_id_'+ i+'" id="item_id_'+ i +'" title="Select Item..." onchange="populateItemDetails(this.value,this.name)" required>'+ options +'</select>'
+            
+            var selectVal = $('#item_id_'+i).val();
+            if(!selectVal){
+              $("#vendor_item_list_"+i).html(html).selectpicker('refresh');
+            }
+          }
+        }
+        
+      }
+      
+      function populateItems(){
+        $.ajax({
+          type: "GET",
+          url: "/get_vendor_items?id="+value,
+          success: function(data,status,xhr){
+            populateDropdown(data);
+            $(".selectpicker").selectpicker('refresh');
+          }
+        });
+      }
+      
+  
+      
+      // Remove row when delete btn is clicked
+      /* $("table").on("click", "#deleteRow", function (event) {
+          $(this).closest("tr").remove();
+          counter -= 1
+          $("#item_counter").val(counter);
+          calculate_total();
+      });
+      */
+      
+      function remove_po_item(value){
+        console.log(value)
+        var itemList = getItemAsList($("#item_counter_list").val());
+        
+        var row_num = value.split("_").slice(-1)[0];
+        var counter = $("#item_counter").val();
+        $('#deleteRow_'+row_num).closest("tr").remove();
+        counter -= 1
+        $("#item_counter").val(counter);
+        itemList = removeFromArray(itemList,row_num);
+        console.log('itemList',itemList)
+        $("#item_counter_list").val(itemList);
+        calculate_total();
+        grand_total = $('#grand_total').val()
+        if(parseInt(grand_total)>0){
+          console.log('ya chiryo')
+          if($('.main_discount').is(":checked")){
+            mainAmountDiscount()
+          }else{
+            mainPercentDiscount()
+          }
+        }
+        
+      }
+
+
+function calculate_item_total(name){
+  var row_num = name.split("_").slice(-1)[0];
+  product = $('#item_id_'+row_num).val()
+  // there should be product to increase quantity
+  if(product){
+    quantity =  parseInt($("#item_quantity_"+row_num).val());
+    console.log('quantity',quantity)
+    unit_price = $("#unit_price_"+row_num).val();
+    sub_total = quantity * unit_price;
+    console.log('subbbb',sub_total)
+    sub_total = parseFloat(sub_total).toFixed(2);
+    let new_sub_total = null
+    console.log('#is_discount_amount_'+row_num)
+    if($('#is_discount_amount_'+row_num).is(":checked")){
+      console.log('checked')
+      amountInput(row_num)
+    }else{
+      console.log('not checked')
+      percentInput(row_num)
+
+    }
+    
+    
+    calculate_total();
+    grand_total = $('#grand_total').val()
+    if(parseInt(grand_total)>0){
+      console.log('ya chiryo')
+      if($('.main_discount').is(":checked")){
+        mainAmountDiscount()
+      }else{
+        mainPercentDiscount()
+      }
+    }
+  }else{
+    alert('please select product')
+    $('#item_quantity_'+row_num).val('')
+    return;
+  }
+  
+  
+
+}
+
+function calculate_total(){
+var item_counters = $("#item_counter").val();
+var item_counter_list = $("#item_counter_list").val();
+var itemList = getItemAsList(item_counter_list);
+total = 0;
+for(i=0;i<item_counters;i++){
+    var item = itemList[i];
+    if(item === undefined){
+      
+    }
+    else {
+      sub_total = $('#sub_total_'+item).val();
+      total = parseFloat(total) + parseFloat(sub_total); 
+    }
+}
+total = parseFloat(total).toFixed(2)
+$('#grand_total').val(total);
+}
+
+
+    function initialize() {
+      var latlng = new google.maps.LatLng(27.732323, 85.326601);
+      var map = new google.maps.Map(document.getElementById("map"), {
+        center: latlng,
+        zoom: 13,
+      });
+      var marker = new google.maps.Marker({
+        map: map,
+        position: latlng,
+        draggable: true,
+        anchorPoint: new google.maps.Point(0, -29),
+      });
+      var input = document.getElementById("searchInput");
+      map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
+      var geocoder = new google.maps.Geocoder();
+      var autocomplete = new google.maps.places.Autocomplete(input);
+      autocomplete.bindTo("bounds", map);
+      var infowindow = new google.maps.InfoWindow();
+      autocomplete.addListener("place_changed", function () {
+        infowindow.close();
+        marker.setVisible(false);
+        var place = autocomplete.getPlace();
+        console.log(place.address_components);
+        console.log(place.address_components.at(-2));
+        var reserved = 4;
+        address_place =
+          parseInt(place.address_components.length) - parseInt(reserved);
+        combined_address = "";
+        for (i = 0; i < address_place; i++) {
+          combined_address += place.address_components[i].long_name + ", ";
+        }
+        console.log("combined", combined_address.slice(0, -2));
+  
+        if (!place.geometry) {
+          window.alert("Autocomplete's returned place contains no geometry");
+          return;
+        }
+  
+        // If the place has a geometry, then present it on a map.
+        if (place.geometry.viewport) {
+          map.fitBounds(place.geometry.viewport);
+        } else {
+          map.setCenter(place.geometry.location);
+          map.setZoom(17);
+        }
+  
+        marker.setPosition(place.geometry.location);
+        marker.setVisible(true);
+  
+        bindDataToForm(
+          place.formatted_address,
+          place.geometry.location.lat(),
+          place.geometry.location.lng(),
+  
+          place.address_components.at(-2),
+          place.address_components.at(-3),
+          place.address_components.at(-4),
+  
+          place.address_components.at(-1),
+          combined_address
+        );
+        infowindow.setContent(place.formatted_address);
+      });
+    }
+    function bindDataToForm(
+      address,
+      lat,
+      lng,
+      country,
+      state,
+      city,
+      postal_code,
+      combined_address
+    ) {
+      document.getElementById("location").value = address;
+      document.getElementById("country").value = country.long_name;
+      document.getElementById("address1").value = combined_address.slice(0, -2);
+      document.getElementById("city").value = city.long_name;
+      document.getElementById("state").value = state.long_name;
+      document.getElementById("post_code").value = postal_code.long_name;
+    }
+    google.maps.event.addDomListener(window, "load", initialize);
+
+
+</script>
+<script>
+
+  $('.addCustomer').on('click',function(e){
+    e.preventDefault()
+    $('.myModal').modal('show')
+  });
+  $('.saveCustomer').on('click',function(e){
+    e.preventDefault();
+    $("#exampleModal-1").addClass('show');
+    $("#exampleModal-1").removeClass('hide');
+    $('.modal-backdrop').addClass('show')
+    $('.modal-backdrop').removeClass('hide')
+    first_name = $('#first_name').val()
+    last_name = $('#last_name').val()
+    email = $('#email').val()
+    company = $('#company').val()
+    phone = $('#phone').val()
+    l1=$('#location').val()
+    country = $('#country').val()
+    address1=$('#address1').val()
+    address2=$('#address2').val()
+    city = $('#city').val()
+    state = $('#state').val()
+    postcode = $('#postcode').val()
+    is_wholesale = $('#is_wholesale').val()
+       if($('#is_wholesale').is(":checked")){
+         is_wholesale=1
+       }else{
+         is_wholesale=0
+       }
+    $.ajax({
+        url:"/save-customer",
+        contentType: 'application/json;charset=UTF-8',
+        data:JSON.stringify({
+          first_name:first_name,
+          last_name:last_name,
+          email:email,
+          company:company,
+          phone:phone,
+          l1:l1,
+          country:country,
+          address1:address1,
+          address2:address2,
+          city:city,
+          state:state,
+          postcode:postcode,
+          is_wholesale:is_wholesale
+        }),
+        method:"post",
+        success:function(data){
+          $('.myModal').modal('hide')
+          $('#first_name').val('')
+          $('#last_name').val('')
+          $('#email').val('')
+          $('#company').val('')
+          $('#phone').val('')
+          $('#location').val('')
+          $('#country').val('')
+          $('#address1').val('')
+          $('#address2').val('')
+          $('#city').val('')
+          $('#state').val('')
+          $('#postcode').val('')
+          $("#item_id_222").append('<option value="'+data.id+'" selected>'+data.first_name+' '+data.last_name+'</option>');
+          $('#item_id_222').selectpicker('refresh');
+        }
+      });
+    });
+  
+</script>
+
+{% endblock %}
