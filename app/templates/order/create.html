@@ -131,9 +131,15 @@
                 </div>
                 <div class="col-sm-3 col-xs-12">
                   <div class="row">
-                    <label><input type="checkbox" name="discount" value="1" id="" class="main_discount" data-id="1" onclick=mainDiscountCheckBox()>Discount in amount</label>
-                    <input type="number" id="main_percent_input" placeholder="input discount in %" class="form-control" style="display:block" data-id="1" name="main_percent_input" onchange="mainPercentDiscount()"/>
-                    <input type="text" id="main_amount_input" placeholder="input discount in amount" class="form-control hidden" style="display:none" data-id="1" name="main_amount_input" onchange="mainAmountDiscount()"/>
+                    <div class="col-md-6">
+                      <label><input type="checkbox" name="discount" value="1" id="" class="main_discount" data-id="1" onclick=mainDiscountCheckBox()>Amount</label>
+                    </div>
+                    <div class="col-md-6">
+                      <input type="number" id="main_percent_input" placeholder="%" class="form-control" style="display:block" data-id="1" name="main_percent_input" onchange="mainPercentDiscount()"/>
+                      <input type="text" id="main_amount_input" placeholder="$" class="form-control hidden" style="display:none" data-id="1" name="main_amount_input" onchange="mainAmountDiscount()"/>
+                    </div>
+                    
+                    
                   </div>
                 </div>
                 <div class="col-sm-3 col-xs-12">
@@ -406,6 +412,8 @@
     //save
     $('.saveButton').on('click',function(e){
       e.preventDefault()
+      
+      
       item_counter_list = $('#item_counter_list').val()
       arrayvalue = item_counter_list.split(',')
       orderItems = []
@@ -456,10 +464,12 @@
         contentType: "application/json; charset=utf-8",
         dataType: "json",
         data: JSON.stringify(data),
-        success:function(res){
-          console.log(res)
+        success: function(res,status,xhr){
+          console.log('ananta last')
+          
         }
       })
+      window.location.replace('/orders');
       
       
       
@@ -615,13 +625,12 @@
     }
     total = parseFloat(total).toFixed(2)
     grand_total = total
-    console.log('grand_total',grand_total)
     if(parseInt(grand_total)===0){
       alert('there is no grand total')
     }else{
       console.log('main Amount discount')
       discounted_amount = parseFloat(grand_total)-parseFloat(value)
-      $('#grand_total').val(discounted_amount)
+      $('#grand_total').val(parseFloat(discounted_amount).toFixed(2))
     }
     
   }
@@ -651,7 +660,7 @@
       console.log('main percent discount')
       var disc = parseFloat(value / 100) * parseFloat(grand_total) ;
       discounted_amount = parseFloat(grand_total)-parseFloat(disc)
-      $('#grand_total').val(discounted_amount)
+      $('#grand_total').val(parseFloat(discounted_amount).toFixed(2))
     }
     
   }

@@ -2,7 +2,21 @@
 <div class="row">
   <div class="col-md-12">
     <div class="card">
-      <div class="card-header">Order List</div>
+      <div
+        class="card-header"
+        style="
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+        "
+      >
+        <div>Order List</div>
+        <div>
+          <a href="{{url_for('create_order')}}" class="btn btn-info"
+            >Create Order</a
+          >
+        </div>
+      </div>
       <div class="card-body">
         <table class="table table-bordered">
           <thead>
