@@ -1,0 +1,52 @@
+{% extends './base.html' %} {% block title %}List Sale{% endblock title %} {% block body %}
+<div class="flex flex-row justify-between py-2">
+	<div></div>
+	<a href="/create-sale"><button type="button" class="py-2.5 px-5 mr-2 mb-2 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-full border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-200">Create Sales</button></a>
+</div>
+
+<div class="relative shadow-lg sm:rounded-lg py-2 px-3">
+	<table class="min-w-full divide-y divide-gray-200">
+		<thead>
+			<tr>
+				<th class="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-800 uppercase tracking-wider"><input type="checkbox" class="appearance-none checked:bg-blue-500 mx-2 rounded text-center" /> <span>ID</span></th>
+
+				<th class="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-800 uppercase text-center tracking-wider">Name</th>
+				<th class="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-800 uppercase text-center tracking-wider">SKU</th>
+				<th class="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-800 uppercase text-center tracking-wider">Price</th>
+				<th class="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-800 uppercase text-center tracking-wider">Brand</th>
+				<th class="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-800 uppercase text-center tracking-wider">Description</th>
+				<th class="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-800 uppercase text-center tracking-wider">Action</th>
+				<!-- Add more table headers as needed -->
+			</tr>
+		</thead>
+		<tbody class="bg-white divide-y divide-gray-200">
+			{%for product in products%}
+			<tr class="px-6 py-4 h-[80px]">
+				<td class="px-6 whitespace-nowrap">
+					<input type="checkbox" class="appearance-none checked:bg-blue-500 mx-2 rounded text-center" />
+					<span>{{product[0].id}}</span>
+				</td>
+				<td class=" text-center">{{product[0].name}}</td>
+				
+				<td class=" text-center">{{product[0].sku}}</td>
+				<td class=" text-center">{{product[0].price}}</td>
+				<td class=" text-center">{{product[0].brand}}</td>
+				<td class=" text-center">{{product[0].description}}</td>
+
+				<td class=" text-center flex mt-6 justify-center items-center">
+					<a href="/update-sale/{{product[0].id}}" class="font-medium text-blue-600 dark:text-blue-500 hover:underline mx-2"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" id="edit">
+						<path fill="none" d="M0 0h24v24H0V0z"></path>
+						<path d="M3 17.46v3.04c0 .28.22.5.5.5h3.04c.13 0 .26-.05.35-.15L17.81 9.94l-3.75-3.75L3.15 17.1c-.1.1-.15.22-.15.36zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"></path></svg
+				></a>
+					<a href="/delete-sale/{{product[0].id}}" class="font-medium text-blue-600 dark:text-blue-500 hover:underline mx-2"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" id="delete">
+						<path fill="none" d="M0 0h24v24H0V0z"></path>
+						<path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V9c0-1.1-.9-2-2-2H8c-1.1 0-2 .9-2 2v10zm3.17-7.83c.39-.39 1.02-.39 1.41 0L12 12.59l1.42-1.42c.39-.39 1.02-.39 1.41 0 .39.39.39 1.02 0 1.41L13.41 14l1.42 1.42c.39.39.39 1.02 0 1.41-.39.39-1.02.39-1.41 0L12 15.41l-1.42 1.42c-.39.39-1.02.39-1.41 0-.39-.39-.39-1.02 0-1.41L10.59 14l-1.42-1.42c-.39-.38-.39-1.02 0-1.41zM15.5 4l-.71-.71c-.18-.18-.44-.29-.7-.29H9.91c-.26 0-.52.11-.7.29L8.5 4H6c-.55 0-1 .45-1 1s.45 1 1 1h12c.55 0 1-.45 1-1s-.45-1-1-1h-2.5z"></path></svg
+				></a>
+				</td>
+			</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+</div>
+
+{% endblock body %}

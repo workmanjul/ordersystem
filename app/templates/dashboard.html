@@ -1,0 +1,328 @@
+{% extends './base.html' %} {% block title %}Create Order {% endblock title %} {% block body %}
+<!-- <script src="../static/JS/main.js"></script> -->
+
+<div class="w-full h-[650px] shadow-xl flex flex-col p-4">
+	<div class="h-[30%] border-b-4 border-gray-500 text-gray-900 shadow-xl rounded-lg">
+		<h1 class="text-3xl font-bold text-gray-700 px-4">Choose Customer</h1>
+		<div class="flex gap-x-8 px-4">
+			<select data-te-select-init data-te-select-filter="true" id="my-options" class="rounded w-[50%] px-2">
+				{% for customer in customers %}
+				<option value="{{customer.first_name}}">{{customer.first_name}}</option>
+				{%endfor%}
+			</select>
+
+			<button data-modal-target="defaultModal" data-modal-toggle="defaultModal" class="block text-gray-900 bg-gray-300 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center" type="button">Create New Customer</button>
+		</div>
+	</div>
+
+	<div id="defaultModal" tabindex="-1" aria-hidden="true" class="fixed top-0 left-0 right-0 z-50 hidden w-full p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-[calc(100%-1rem)] max-h-full">
+		<div class="relative w-full max-h-full">
+			<div class="relative bg-white rounded-lg shadow">
+				<div class="flex items-start justify-between p-4 border-b rounded-t">
+					<h3 class="text-xl font-semibold text-gray-900">Terms of Service</h3>
+					<button type="button" class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center" data-modal-hide="defaultModal">
+						<svg aria-hidden="true" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
+						<span class="sr-only">Close modal</span>
+					</button>
+				</div>
+
+				<div class="px-64 py-16">
+					<form action="{{url_for('createCustomer')}}" method="POST">
+						<div class="grid md:grid-cols-2 md:gap-6">
+							<div class="relative z-0 w-full mb-6 group">
+								<input type="text" name="first_name" id="floating_first_name" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " required />
+								<label for="floating_first_name" class="peer-focus:font-medium absolute text-sm text-gray-800 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">First name</label>
+							</div>
+							<div class="relative z-0 w-full mb-6 group">
+								<input type="text" name="last_name" id="floating_last_name" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " required />
+								<label for="floating_last_name" class="peer-focus:font-medium absolute text-sm text-gray-800 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Last name</label>
+							</div>
+						</div>
+						<div class="grid md:grid-cols-2 md:gap-6">
+							<div class="relative z-0 w-full mb-6 group">
+								<input type="email" name="email" id="floating_first_name" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " required />
+								<label for="floating_first_name" class="peer-focus:font-medium absolute text-sm text-gray-800 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Email</label>
+							</div>
+							<div class="relative z-0 w-full mb-6 group">
+								<input type="text" name="company" id="floating_last_name" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " required />
+								<label for="floating_last_name" class="peer-focus:font-medium absolute text-sm text-gray-800 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Company</label>
+							</div>
+						</div>
+						<div class="grid md:grid-cols-2 md:gap-6">
+							<div class="relative z-0 w-full mb-6 group">
+								<input type="text" name="phone" id="floating_phone" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " required />
+								<label for="floating_phone" class="peer-focus:font-medium absolute text-sm text-gray-800 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Phone number</label>
+							</div>
+							<div class="relative z-0 w-full mb-6 group">
+								<input type="text" name="country" id="country" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " required />
+								<label for="floating_company" class="peer-focus:font-medium absolute text-sm text-gray-800 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Country</label>
+							</div>
+						</div>
+						<div class="relative z-0 w-full mb-6 group">
+							<input type="text" name="location" id="locationInput" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " required />
+							<label for="floating_email" class="peer-focus:font-medium absolute text-sm text-gray-800 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Input Location</label>
+						</div>
+						<div class="relative z-0 w-full mb-6 group">
+							<input type="text" name="address1" id="address" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " required />
+							<label for="floating_email" class="peer-focus:font-medium absolute text-sm text-gray-800 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Address1</label>
+						</div>
+						<div class="grid md:grid-cols-2 md:gap-6">
+							<div class="relative z-0 w-full mb-6 group">
+								<input type="text" name="address2" id="address" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " />
+								<label for="floating_phone" class="peer-focus:font-medium absolute text-sm text-gray-800 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Address2</label>
+							</div>
+							<div class="relative z-0 w-full mb-6 group">
+								<input type="text" name="state" id="state" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " required />
+								<label for="floating_company" class="peer-focus:font-medium absolute text-sm text-gray-800 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">State</label>
+							</div>
+						</div>
+						<div class="grid md:grid-cols-2 md:gap-6">
+							<div class="relative z-0 w-full mb-6 group">
+								<input type="text" name="post_code" id="postalCode" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " required />
+								<label for="floating_phone" class="peer-focus:font-medium absolute text-sm text-gray-800 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Postal Code</label>
+							</div>
+							<div class="relative z-0 w-full mb-6 group">
+								<input type="text" name="city" id="city" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " required />
+								<label for="floating_company" class="peer-focus:font-medium absolute text-sm text-gray-800 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">City</label>
+							</div>
+						</div>
+
+						<div class="flex items-center mb-4">
+							<input id="default-checkbox" type="checkbox" value="" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500" />
+							<label for="default-checkbox" class="ml-2 text-sm font-medium text-gray-900">Is Wholesale</label>
+						</div>
+						<div class="flex justify-center my-6">
+							<a href="url_for('dashboard')"> <button type="submit" class="w-64 h-[60px] py-2.5 px-5 mr-2 mb-2 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-200">Submit</button></a>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!--for making order-->
+
+
+	<div class="mt-4 bg-white relative h-[60%] border-b-2 text-gray-900 shadow-xl rounded-lg flex flex-col">
+		<div class="text-3xl font-bold text-gray-700 px-4">Create Order</div>
+		<table class="border rounded border-gray-600 w-full my-2 mx-auto">
+			<thead>
+				<tr>
+					<th class="px-6 py-3 bg-gray-300 text-left text-xs font-medium text-gray-900 uppercase tracking-wider">SN</th>
+					<th class="px-6 py-3 bg-gray-300 text-left text-xs font-medium text-gray-900 uppercase tracking-wider">Item</th>
+					<th class="px-6 py-3 bg-gray-300 text-left text-xs font-medium text-gray-900 uppercase tracking-wider">Description</th>
+					<th class="px-6 py-3 bg-gray-300 text-left text-xs font-medium text-gray-900 uppercase tracking-wider">Quantity</th>
+					<th class="px-6 py-3 bg-gray-300 text-left text-xs font-medium text-gray-900 uppercase tracking-wider">Unit Price</th>
+					<th class="px-6 py-3 bg-gray-300 text-left text-xs font-medium text-gray-900 uppercase tracking-wider">Discount Type</th>
+					<th class="px-6 py-3 bg-gray-300 text-left text-xs font-medium text-gray-900 uppercase tracking-wider">Discount</th>
+					<th class="px-6 py-3 bg-gray-300 text-left text-xs font-medium text-gray-900 uppercase tracking-wider">Amount</th>
+					<th class="px-6 py-3 bg-gray-300 text-center text-xs font-medium text-gray-900 uppercase tracking-wider">Actions</th>
+				</tr>
+			</thead>
+			<tbody class="bg-white divide-y divide-gray-200" id="orderTable">
+				<tr id="defaultRow">
+					<td class="px-6 py-4 whitespace-nowrap">1</td>
+					<td class="px-6 py-4 whitespace-nowrap">
+						<label for="products" class="block mb-2 text-sm font-medium text-gray-900">Select a Product</label>
+						<select id="products" class="product-select bg-white border-lg text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" onchange="fillProductData(this)">
+							<!-- Products options will be dynamically generated by Flask -->
+							{% for product in products %}
+							<option value="{{ product[0].product_id }}" data-description="{{ product[1].description }}" data-price="{{ product[1].price }}">{{ product[0].name }}</option>
+							{% endfor %}
+						</select>
+					</td>
+
+					<td class="px-6 py-4 whitespace-nowrap" id="descriptionCell"></td>
+
+					<td class="px-6 py-4 whitespace-nowrap"><input type="number" class="quantity-input w-16 text-gray-900 bg-white rounded-lg" min="1" value="0" oninput="calculateTotal(this)" /></td>
+					<td class="px-6 py-4 whitespace-nowrap unit-price-cell">$12</td>
+					<td class="px-6 py-4 whitespace-nowrap">
+						<select class="discount-type-select bg-white border-lg text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" onchange="calculateTotal(this)">
+							<option value="percentage">%</option>
+							<option value="amount">$</option>
+						</select>
+					</td>
+					<td class="px-6 py-4 whitespace-nowrap"><input type="number" class="discount-input w-16 text-gray-900 bg-white rounded-lg" min="0" value="0" oninput="calculateTotal(this)" /></td>
+					<td class="px-6 py-4 whitespace-nowrap">$<input type="number" class="amount-input rounded-lg text-gray-900 bg-white" min="0" value="" disabled /></td>
+					<td class="px-6 py-4 whitespace-nowrap text-center">
+						<button class="delete-row-button" disabled onclick="deleteRow(this)">&#10005;</button>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+		<div class="flex flex-row">
+			<button class="w-[100px] h-[50px] text-center rounded-xl bg-gray-300 text-gray-900" onclick="addRow()">ADD</button>
+			<button class="w-32 h-[50px] mx-auto text-center rounded-full bg-gray-300 text-gray-900" onclick="saveOrder()">Save</button>
+		</div>
+	</div>
+</div>
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAjQbpLmWtP5SBJQ6RWzplfIg0Sd0rpDYg&libraries=places&callback=initAutocomplete"></script>
+
+<script>
+	function initAutocomplete() {
+		const locationInput = document.getElementById("locationInput");
+		const countryInput = document.getElementById("country");
+		const cityInput = document.getElementById("city");
+		const stateInput = document.getElementById("state");
+		const postalCodeInput = document.getElementById("postalCode");
+		const addressInput = document.getElementById("address");
+
+		// Create the autocomplete object
+		const autocomplete = new google.maps.places.Autocomplete(locationInput);
+
+		// Event listener when a place is selected
+		autocomplete.addListener("place_changed", function () {
+			const place = autocomplete.getPlace();
+
+			// Clear the previous values
+			countryInput.value = "";
+			cityInput.value = "";
+			stateInput.value = "";
+			postalCodeInput.value = "";
+			addressInput.value = "";
+
+			// Set the new values
+			for (const component of place.address_components) {
+				const componentType = component.types[0];
+
+				if (componentType === "country") {
+					countryInput.value = component.long_name;
+				} else if (componentType === "locality" || componentType === "administrative_area_level_2") {
+					cityInput.value = component.long_name;
+				} else if (componentType === "administrative_area_level_1") {
+					stateInput.value = component.long_name;
+				} else if (componentType === "postal_code") {
+					postalCodeInput.value = component.long_name;
+				}
+			}
+
+			addressInput.value = place.formatted_address;
+		});
+	}
+
+	// Load the Google Maps API and initialize the autocomplete
+	function loadScript() {
+		const script = document.createElement("script");
+		script.src = "https://maps.googleapis.com/maps/api/js?key=AIzaSyAjQbpLmWtP5SBJQ6RWzplfIg0Sd0rpDYg&libraries=places&callback=initAutocomplete";
+		script.defer = true;
+		script.async = true;
+		document.body.appendChild(script);
+	}
+
+	// Call the loadScript function to load the API and initialize
+	loadScript();
+</script>
+
+<script>
+	
+	let sn = 1; // Keeps track of the serial number
+
+	// Function to fill the product data based on the selected option
+	function fillProductData(select) {
+		const option = select.options[select.selectedIndex];
+		const description = option.getAttribute("data-description");
+		const price = option.getAttribute("data-price");
+		const row = select.closest("tr");
+		const descriptionCell = row.querySelector("#descriptionCell");
+		const unitPriceCell = row.querySelector(".unit-price-cell");
+		const quantityInput = row.querySelector(".quantity-input");
+		const discountTypeSelect = row.querySelector(".discount-type-select");
+		const discountInput = row.querySelector(".discount-input");
+		const amountInput = row.querySelector(".amount-input");
+
+		descriptionCell.textContent = description;
+		unitPriceCell.textContent = `$${price}`;
+		quantityInput.value = 0;
+		discountTypeSelect.value = "percentage";
+		discountInput.value = 0;
+		amountInput.value = "";
+	}
+
+	// Function to calculate the total amount based on quantity and discount
+	function calculateTotal(input) {
+		const row = input.closest("tr");
+		const quantity = parseFloat(row.querySelector(".quantity-input").value);
+		const unitPrice = parseFloat(row.querySelector(".unit-price-cell").textContent.slice(1));
+		const discountType = row.querySelector(".discount-type-select").value;
+		const discount = parseFloat(row.querySelector(".discount-input").value);
+		const amountInput = row.querySelector(".amount-input");
+
+		let total = quantity * unitPrice;
+		if (discountType === "percentage") {
+			total -= (discount / 100) * total;
+		} else if (discountType === "amount") {
+			total -= discount;
+		}
+		amountInput.value = total.toFixed(2);
+	}
+
+	// Function to delete the row
+	function deleteRow(button) {
+		const row = button.closest("tr");
+		row.remove();
+	}
+
+	// Function to add a new row
+	function addRow() {
+		const tableBody = document.getElementById("orderTable");
+		const defaultRow = document.getElementById("defaultRow").cloneNode(true);
+
+		defaultRow.id = "";
+		defaultRow.querySelector("td:first-child").textContent = ++sn;
+		defaultRow.querySelector(".delete-row-button").removeAttribute("disabled");
+		defaultRow.querySelectorAll("input").forEach((input) => {
+			input.value = "";
+			input.removeAttribute("disabled");
+		});
+
+		tableBody.appendChild(defaultRow);
+	}
+
+	// Function to save the order data
+	function saveOrder() {
+		const tableRows = document.querySelectorAll("#orderTable tr:not(#defaultRow)");
+		const orderData = [];
+
+		tableRows.forEach((row) => {
+			const productSelect = row.querySelector(".product-select");
+			const quantityInput = row.querySelector(".quantity-input");
+			const discountTypeSelect = row.querySelector(".discount-type-select");
+			const discountInput = row.querySelector(".discount-input");
+			const amountInput = row.querySelector(".amount-input");
+
+			const productId = productSelect.value;
+			const quantity = parseFloat(quantityInput.value);
+			const discountType = discountTypeSelect.value;
+			const discount = parseFloat(discountInput.value);
+			const amount = parseFloat(amountInput.value);
+
+			orderData.push({
+				productId,
+				quantity,
+				discountType,
+				discount,
+				amount,
+			});
+		});
+
+		// Send the order data to the backend using AJAX or submit the form
+		// Example AJAX request using fetch API:
+		fetch("/save_order", {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify(orderData),
+		})
+			.then((response) => response.json())
+			.then((data) => {
+				// Handle the response from the backend
+				console.log(data);
+			})
+			.catch((error) => {
+				// Handle any error that occurs during the request
+				console.error(error);
+			});
+	}
+</script>
+{% endblock %}
