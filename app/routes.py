@@ -55,18 +55,16 @@ def signin():
 
 @app.route('/')
 def dashboard():
-	# if 'user_id' in session:
-	# 	user_id=session['user_id']
-	# user=User.query.get(user_id)
-
 	products=Product.query.all()
-
-	products_with_inventory_prices=db.session.query(Product,InventoryPrice).join(InventoryPrice,Product.product_id==InventoryPrice.product_id).all()
+	#products_with_inventory_prices=db.session.query(Product,InventoryPrice).join(InventoryPrice,Product.product_id==InventoryPrice.product_id).all()
 	customers=Customer.query.all()
 	
-	return render_template('dashboard.html',customers=customers,products=products_with_inventory_prices)
+	return render_template('dashboard.html',products=products,customers=customers)
 
-
+@app.route('/get_item_details')
+def get_item_details():
+	product = Product.query.filter_by(product_id=request.args['id']).first()
+	return jsonify(product.as_dict())
 
 
 

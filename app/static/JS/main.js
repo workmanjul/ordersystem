@@ -1,4 +1,6 @@
 $(document).ready(function () {
+
+	$('.select2-js').select2();
 	//save
 	$(".saveButton").on("click", function (e) {
 		e.preventDefault();
