@@ -10,23 +10,20 @@ def login():
         username = request.form['username']
         password = request.form['password']
 
-        # Find the user in the database
+        # Find the user by username
         user = User.query.filter_by(username=username).first()
 
+        # Check if the user exists and the password is correct
         if user and user.check_password(password):
-            # User exists and password is correct
-            # Perform login logic, such as setting session variables
-            flash('Login successful!', 'success')
-            # session['user_id'] = user.id  # Set the user_id in the session
-            return redirect(url_for('dashboard'))  # Redirect to dashboard route
-
+            session['user_id'] = user.id
+            return redirect('/')
         else:
-            # Invalid credentials
-            flash('Invalid username or password', 'error')
+            error = 'Invalid username or password'
+            return render_template('login.html', error=error)
 
     return render_template('login.html')
 
-    
+
 @app.route('/signin', methods=['GET', 'POST'])
 def signin():
     if request.method == 'POST':
@@ -36,19 +33,18 @@ def signin():
         # Check if the username already exists
         existing_user = User.query.filter_by(username=username).first()
         if existing_user:
-            flash('Username already exists.', 'error')
-            return redirect(url_for('signin'))
+            error = 'Username already exists. Please choose a different username.'
+            return render_template('signin.html', error=error)
 
-        # Create a new user object and set the password
+        # Create a new user
         new_user = User(username=username)
         new_user.set_password(password)
 
-        # Save the user object to the database
+        # Save the user to the database
         db.session.add(new_user)
         db.session.commit()
 
-        flash('Registration successful! You can now sign in.', 'success')
-	
+        session['user_id'] = new_user.id
         return redirect(url_for('dashboard'))
 
     return render_template('signin.html')
@@ -58,8 +54,9 @@ def dashboard():
 	products=Product.query.all()
 	#products_with_inventory_prices=db.session.query(Product,InventoryPrice).join(InventoryPrice,Product.product_id==InventoryPrice.product_id).all()
 	customers=Customer.query.all()
+	user=User.query.get(session['user_id'])
 	
-	return render_template('dashboard.html',products=products,customers=customers)
+	return render_template('dashboard.html',products=products,customers=customers,user=user)
 
 @app.route('/get_item_details')
 def get_item_details():
@@ -68,39 +65,39 @@ def get_item_details():
 
 
 
-# @app.route('/save-order',methods=['POST'])
-# def saveOrder():
-# 	ajax_data = request.json
+@app.route('/save-order',methods=['POST'])
+def saveOrder():
+	ajax_data = request.json
 	
-# 	custommer_id = ajax_data['customer_id']
-# 	total_amount = ajax_data['grand_total']
-# 	discount_per = ajax_data['main_percent_input'] if ajax_data['main_percent_input'] else None
-# 	discount_amt = ajax_data['main_amount_input'] if ajax_data['main_amount_input'] else None
-# 	shipping_cost = None
-# 	gross_cost = None
-# 	order = Order(customer_id=custommer_id,total_amount=total_amount,discount_per=discount_per,discount_amt=discount_amt,shipping_cost=shipping_cost,gross_cost=gross_cost)
+	custommer_id = ajax_data['customer_id']
+	total_amount = ajax_data['grand_total']
+	discount_per = ajax_data['main_percent_input'] if ajax_data['main_percent_input'] else None
+	discount_amt = ajax_data['main_amount_input'] if ajax_data['main_amount_input'] else None
+	shipping_cost = None
+	gross_cost = None
+	order = Order(customer_id=custommer_id,total_amount=total_amount,discount_per=discount_per,discount_amt=discount_amt,shipping_cost=shipping_cost,gross_cost=gross_cost)
 	
-# 	db.session.add(order)
-# 	db.session.commit()
+	db.session.add(order)
+	db.session.commit()
 
-# 	for product in ajax_data['myObjects']:
-# 		print('###################')
-# 		print(product)
-# 		print('###################')
-# 		print(product.get('sub_total'))
-# 		order_id = order.id
-# 		product_id = product.get('product')
-# 		unit_price  =product.get('unit_price')
-# 		discount_perc = product.get('percent_input') if product.get('percent_input') else None
-# 		discount_amt = product.get('amount_input') if product.get('amount_input') else None
-# 		product_cost = product.get('sub_total') if product.get('sub_total') else None
-# 		product_description = product.get('product_description')
+	for product in ajax_data['myObjects']:
+		print('###################')
+		print(product)
+		print('###################')
+		print(product.get('sub_total'))
+		order_id = order.id
+		product_id = product.get('product')
+		unit_price  =product.get('unit_price')
+		discount_perc = product.get('percent_input') if product.get('percent_input') else None
+		discount_amt = product.get('amount_input') if product.get('amount_input') else None
+		product_cost = product.get('sub_total') if product.get('sub_total') else None
+		product_description = product.get('product_description')
 
-# 		order_detail = OrderDetails(order_id=order_id,product_id=product_id,unit_price=unit_price,discount_perc=discount_perc,discount_amt=discount_amt,product_cost=product_cost,product_description=product_description)
-# 		db.session.add(order_detail)
-# 		db.session.commit()
-# 		return redirect(url_for('dashboard'))
-# 	return 'hello'
+		order_detail = OrderDetails(order_id=order_id,product_id=product_id,unit_price=unit_price,discount_perc=discount_perc,discount_amt=discount_amt,product_cost=product_cost,product_description=product_description)
+		db.session.add(order_detail)
+		db.session.commit()
+		return redirect(url_for('dashboard'))
+	return 'hello'
 
 
 
@@ -116,9 +113,9 @@ def listOrder():
     page = request.args.get('page', 1, type=int)
     per_page=request.args.get('per_page',10,type=int)
     orders=db.session.query(Order,Customer).join(Customer,Order.customer_id==Customer.id).order_by(Order.id.desc()).paginate(page=page,per_page=per_page)
-    # user=User.query.get(session['user_id'])
+    user=User.query.get(session['user_id'])
     
-    return render_template('order/listOrder.html',orders=orders)
+    return render_template('order/listOrder.html',orders=orders,user=user)
 
 
 
@@ -170,8 +167,8 @@ def createCustomer():
 		db.session.commit()
 		
 		return redirect(url_for('listCustomer'))
-	# user=User.query.get(session['user_id'])
-	return render_template('customer/create.html')
+	user=User.query.get(session['user_id'])
+	return render_template('customer/create.html',user=user)
 
 
 @app.route('/list-customer')
@@ -179,10 +176,10 @@ def listCustomer():
 	page = request.args.get('page', 1, type=int)
 	per_page = request.args.get('per_page',10,type=int)
 	customers = Customer.query.order_by(Customer.id.desc()).paginate(page=page,per_page=per_page)
-	# user=User.query.get(session['user_id'])
+	user=User.query.get(session['user_id'])
 
 
-	return render_template('customer/listCustomer.html',customers=customers)
+	return render_template('customer/listCustomer.html',customers=customers,user=user)
 
 @app.route('/update-customer/<int:id>',methods=['GET','POST'])
 def updateCustomer(id):
@@ -207,8 +204,8 @@ def updateCustomer(id):
 	
 		db.session.commit()
 		return redirect(url_for('listCustomer'))
-	# user=User.query.get(session['user_id'])
-	return render_template('customer/update.html',customer=customer)
+	user=User.query.get(session['user_id'])
+	return render_template('customer/update.html',customer=customer,user=user)
 
 @app.route('/delete-customer/<int:id>')
 def deleteCustomer(id):
@@ -227,9 +224,9 @@ def deleteCustomer(id):
 def listSale():
 
 	products = db.session.query(SalesDetails,Product).join(SalesDetails,Product.product_id==SalesDetails.product_id).order_by(SalesDetails.id.desc())
-	# user=User.query.get(session['user_id'])
+	user=User.query.get(session['user_id'])
 	customers=Customer.query.all()
-	return render_template('sales/listSale.html',products=products,customers=customers)
+	return render_template('sales/listSale.html',products=products,customers=customers,user=user)
 
 
 @app.route('/create-sale',methods=['POST','GET'])
@@ -251,9 +248,9 @@ def createSale():
 		print(request.form)
 		db.session.commit()
 		return redirect(url_for('listSale'))
-	# user=User.query.get(session['user_id'])
+	user=User.query.get(session['user_id'])
 
-	return render_template('sales/create.html',products=products)
+	return render_template('sales/create.html',products=products,user=user)
 
 
 @app.route('/update-sale/<int:id>',methods=['GET','POST'])
@@ -272,9 +269,9 @@ def updateSale(id):
 	
 		db.session.commit()
 		return redirect(url_for('listSale'))
-	# user=User.query.get(session['user_id'])
+	user=User.query.get(session['user_id'])
 	products=Product.query.all()
-	return render_template('sales/update.html',item=item,products=products)
+	return render_template('sales/update.html',item=item,products=products,user=user)
 
 @app.route('/delete-sale/<int:id>')
 def deleteSales(id):

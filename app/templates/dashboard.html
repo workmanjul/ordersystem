@@ -1,547 +1,296 @@
-{% extends './base.html' %} {% block title %}Create Order {% endblock title %}
-{% block css_block %}
+{% extends './base.html' %} {% block title %}Create Order {% endblock title %} {% block css_block %}
 <style type="text/css">
-    .custom-select + .select2-container .select2-selection--single {
-      height: 2.2rem; /* Adjust the height value as needed */
-    }
+	.custom-select + .select2-container .select2-selection--single {
+		height: 2.2rem; /* Adjust the height value as needed */
+	}
 
-    .custom-select + .select2-container .select2-selection__arrow {
-      height: 2.2rem; /* Adjust the height value as needed */
-    }
+	.custom-select + .select2-container .select2-selection__arrow {
+		height: 2.2rem; /* Adjust the height value as needed */
+	}
 </style>
-{% endblock css_block %}
-{% block body %}
-<!-- <script src="../static/JS/main.js"></script> -->
+{% endblock css_block %} {% block body %}
 
 <div class="w-full h-[650px] shadow-xl flex flex-col p-4">
-  <div
-    class="h-[22%] border-b-4 border-gray-500 text-gray-900 shadow-xl rounded-lg"
-  >
-    <h1 class="text-xl font-bold text-gray-700 px-4 py-4">Choose Customer</h1>
-    <div class="flex gap-x-8 px-4">
-      <select
-        data-te-select-init
-        data-te-select-filter="true"
-        id="my-options"
-        class="rounded w-[20%] px-4 select2-js custom-select"
-      >
-        {% for customer in customers %}
-        <option value="{{customer.id}}">{{customer.first_name}} {{customer.last_name}} </option>
-        {%endfor%}
-      </select>
+	<div class="h-[22%] border-b-4 border-gray-500 text-gray-900 shadow-xl rounded-lg">
+		<h1 class="text-xl font-bold text-gray-700 px-4 py-4">Choose Customer</h1>
+		<div class="flex gap-x-8 px-4">
+			<select data-te-select-init data-te-select-filter="true" id="my-options" class="rounded w-[50%] px-4 select2-js custom-select">
+				{% for customer in customers %}
+				<option value="{{customer.id}}">{{customer.first_name}} {{customer.last_name}}</option>
+				{%endfor%}
+			</select>
 
-      <button
-        data-modal-target="defaultModal"
-        data-modal-toggle="defaultModal"
-        class="block text-white bg-blue-500 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
-        type="button"
-      >
-        Create New Customer
-      </button>
-    </div>
-  </div>
+			<button data-modal-target="defaultModal" data-modal-toggle="defaultModal" class="block text-white bg-blue-500 font-medium rounded-lg text-sm px-5 text-center sm:h-8 md:h-[40px]" type="button">Create New Customer</button>
+		</div>
+	</div>
 
-  <div
-    id="defaultModal"
-    tabindex="-1"
-    aria-hidden="true"
-    class="fixed top-0 left-0 right-0 z-50 hidden w-full p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-[calc(100%-1rem)] max-h-full"
-  >
-    <div class="relative w-full max-h-full">
-      <div class="relative bg-white rounded-lg shadow">
-        <div class="flex items-start justify-between p-4 border-b rounded-t">
-          <h3 class="text-xl font-semibold text-gray-900">Terms of Service</h3>
-          <button
-            type="button"
-            class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center"
-            data-modal-hide="defaultModal"
-          >
-            <svg
-              aria-hidden="true"
-              class="w-5 h-5"
-              fill="currentColor"
-              viewBox="0 0 20 20"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                fill-rule="evenodd"
-                d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
-                clip-rule="evenodd"
-              ></path>
-            </svg>
-            <span class="sr-only">Close modal</span>
-          </button>
-        </div>
+	<div id="defaultModal" tabindex="-1" aria-hidden="true" class="fixed top-0 left-0 right-0 z-50 hidden w-full p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-[calc(100%-1rem)] max-h-full">
+		<div class="relative w-full max-h-full">
+			<div class="relative bg-white rounded-lg shadow">
+				<div class="flex items-start justify-between p-4 border-b rounded-t">
+					<h3 class="text-xl font-semibold text-gray-900">Terms of Service</h3>
+					<button type="button" class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center" data-modal-hide="defaultModal">
+						<svg aria-hidden="true" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+							<path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+						</svg>
+						<span class="sr-only">Close modal</span>
+					</button>
+				</div>
 
-        <div class="px-64 py-16">
-          <form action="{{url_for('createCustomer')}}" method="POST">
-            <div class="grid md:grid-cols-2 md:gap-6">
-              <div class="relative z-0 w-full mb-6 group">
-                <input
-                  type="text"
-                  name="first_name"
-                  id="floating_first_name"
-                  class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer"
-                  placeholder=" "
-                  required
-                />
-                <label
-                  for="floating_first_name"
-                  class="peer-focus:font-medium absolute text-sm text-gray-800 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
-                  >First name</label
-                >
-              </div>
-              <div class="relative z-0 w-full mb-6 group">
-                <input
-                  type="text"
-                  name="last_name"
-                  id="floating_last_name"
-                  class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer"
-                  placeholder=" "
-                  required
-                />
-                <label
-                  for="floating_last_name"
-                  class="peer-focus:font-medium absolute text-sm text-gray-800 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
-                  >Last name</label
-                >
-              </div>
-            </div>
-            <div class="grid md:grid-cols-2 md:gap-6">
-              <div class="relative z-0 w-full mb-6 group">
-                <input
-                  type="email"
-                  name="email"
-                  id="floating_first_name"
-                  class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer"
-                  placeholder=" "
-                  required
-                />
-                <label
-                  for="floating_first_name"
-                  class="peer-focus:font-medium absolute text-sm text-gray-800 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
-                  >Email</label
-                >
-              </div>
-              <div class="relative z-0 w-full mb-6 group">
-                <input
-                  type="text"
-                  name="company"
-                  id="floating_last_name"
-                  class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer"
-                  placeholder=" "
-                  required
-                />
-                <label
-                  for="floating_last_name"
-                  class="peer-focus:font-medium absolute text-sm text-gray-800 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
-                  >Company</label
-                >
-              </div>
-            </div>
-            <div class="grid md:grid-cols-2 md:gap-6">
-              <div class="relative z-0 w-full mb-6 group">
-                <input
-                  type="text"
-                  name="phone"
-                  id="floating_phone"
-                  class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer"
-                  placeholder=" "
-                  required
-                />
-                <label
-                  for="floating_phone"
-                  class="peer-focus:font-medium absolute text-sm text-gray-800 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
-                  >Phone number</label
-                >
-              </div>
-              <div class="relative z-0 w-full mb-6 group">
-                <input
-                  type="text"
-                  name="country"
-                  id="country"
-                  class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer"
-                  placeholder=" "
-                  required
-                />
-                <label
-                  for="floating_company"
-                  class="peer-focus:font-medium absolute text-sm text-gray-800 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
-                  >Country</label
-                >
-              </div>
-            </div>
-            <div class="relative z-0 w-full mb-6 group">
-              <input
-                type="text"
-                name="location"
-                id="locationInput"
-                class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer"
-                placeholder=" "
-                required
-              />
-              <label
-                for="floating_email"
-                class="peer-focus:font-medium absolute text-sm text-gray-800 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
-                >Input Location</label
-              >
-            </div>
-            <div class="relative z-0 w-full mb-6 group">
-              <input
-                type="text"
-                name="address1"
-                id="address"
-                class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer"
-                placeholder=" "
-                required
-              />
-              <label
-                for="floating_email"
-                class="peer-focus:font-medium absolute text-sm text-gray-800 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
-                >Address1</label
-              >
-            </div>
-            <div class="grid md:grid-cols-2 md:gap-6">
-              <div class="relative z-0 w-full mb-6 group">
-                <input
-                  type="text"
-                  name="address2"
-                  id="address"
-                  class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer"
-                  placeholder=" "
-                />
-                <label
-                  for="floating_phone"
-                  class="peer-focus:font-medium absolute text-sm text-gray-800 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
-                  >Address2</label
-                >
-              </div>
-              <div class="relative z-0 w-full mb-6 group">
-                <input
-                  type="text"
-                  name="state"
-                  id="state"
-                  class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer"
-                  placeholder=" "
-                  required
-                />
-                <label
-                  for="floating_company"
-                  class="peer-focus:font-medium absolute text-sm text-gray-800 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
-                  >State</label
-                >
-              </div>
-            </div>
-            <div class="grid md:grid-cols-2 md:gap-6">
-              <div class="relative z-0 w-full mb-6 group">
-                <input
-                  type="text"
-                  name="post_code"
-                  id="postalCode"
-                  class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer"
-                  placeholder=" "
-                  required
-                />
-                <label
-                  for="floating_phone"
-                  class="peer-focus:font-medium absolute text-sm text-gray-800 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
-                  >Postal Code</label
-                >
-              </div>
-              <div class="relative z-0 w-full mb-6 group">
-                <input
-                  type="text"
-                  name="city"
-                  id="city"
-                  class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer"
-                  placeholder=" "
-                  required
-                />
-                <label
-                  for="floating_company"
-                  class="peer-focus:font-medium absolute text-sm text-gray-800 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
-                  >City</label
-                >
-              </div>
-            </div>
+				<div class="px-64 py-16">
+					<form action="{{url_for('createCustomer')}}" method="POST">
+						<div class="grid md:grid-cols-2 md:gap-6">
+							<div class="relative z-0 w-full mb-6 group">
+								<input type="text" name="first_name" id="floating_first_name" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " required />
+								<label for="floating_first_name" class="peer-focus:font-medium absolute text-sm text-gray-800 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">First name</label>
+							</div>
+							<div class="relative z-0 w-full mb-6 group">
+								<input type="text" name="last_name" id="floating_last_name" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " required />
+								<label for="floating_last_name" class="peer-focus:font-medium absolute text-sm text-gray-800 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Last name</label>
+							</div>
+						</div>
+						<div class="grid md:grid-cols-2 md:gap-6">
+							<div class="relative z-0 w-full mb-6 group">
+								<input type="email" name="email" id="floating_first_name" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " required />
+								<label for="floating_first_name" class="peer-focus:font-medium absolute text-sm text-gray-800 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Email</label>
+							</div>
+							<div class="relative z-0 w-full mb-6 group">
+								<input type="text" name="company" id="floating_last_name" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " required />
+								<label for="floating_last_name" class="peer-focus:font-medium absolute text-sm text-gray-800 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Company</label>
+							</div>
+						</div>
+						<div class="grid md:grid-cols-2 md:gap-6">
+							<div class="relative z-0 w-full mb-6 group">
+								<input type="text" name="phone" id="floating_phone" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " required />
+								<label for="floating_phone" class="peer-focus:font-medium absolute text-sm text-gray-800 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Phone number</label>
+							</div>
+							<div class="relative z-0 w-full mb-6 group">
+								<input type="text" name="country" id="country" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " required />
+								<label for="floating_company" class="peer-focus:font-medium absolute text-sm text-gray-800 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Country</label>
+							</div>
+						</div>
+						<div class="relative z-0 w-full mb-6 group">
+							<input type="text" name="location" id="locationInput" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " required />
+							<label for="floating_email" class="peer-focus:font-medium absolute text-sm text-gray-800 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Input Location</label>
+						</div>
+						<div class="relative z-0 w-full mb-6 group">
+							<input type="text" name="address1" id="address" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " required />
+							<label for="floating_email" class="peer-focus:font-medium absolute text-sm text-gray-800 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Address1</label>
+						</div>
+						<div class="grid md:grid-cols-2 md:gap-6">
+							<div class="relative z-0 w-full mb-6 group">
+								<input type="text" name="address2" id="address" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " />
+								<label for="floating_phone" class="peer-focus:font-medium absolute text-sm text-gray-800 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Address2</label>
+							</div>
+							<div class="relative z-0 w-full mb-6 group">
+								<input type="text" name="state" id="state" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " required />
+								<label for="floating_company" class="peer-focus:font-medium absolute text-sm text-gray-800 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">State</label>
+							</div>
+						</div>
+						<div class="grid md:grid-cols-2 md:gap-6">
+							<div class="relative z-0 w-full mb-6 group">
+								<input type="text" name="post_code" id="postalCode" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " required />
+								<label for="floating_phone" class="peer-focus:font-medium absolute text-sm text-gray-800 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Postal Code</label>
+							</div>
+							<div class="relative z-0 w-full mb-6 group">
+								<input type="text" name="city" id="city" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " required />
+								<label for="floating_company" class="peer-focus:font-medium absolute text-sm text-gray-800 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">City</label>
+							</div>
+						</div>
 
-            <div class="flex items-center mb-4">
-              <input
-                id="default-checkbox"
-                type="checkbox"
-                value=""
-                class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
-              />
-              <label
-                for="default-checkbox"
-                class="ml-2 text-sm font-medium text-gray-900"
-                >Is Wholesale</label
-              >
-            </div>
-            <div class="flex justify-center my-6">
-              <a href="url_for('dashboard')">
-                <button
-                  type="submit"
-                  class="w-64 h-[60px] py-2.5 px-5 mr-2 mb-2 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-200"
-                >
-                  Submit
-                </button></a
-              >
-            </div>
-          </form>
-        </div>
-      </div>
-    </div>
-  </div>
+						<div class="flex items-center mb-4">
+							<input id="default-checkbox" type="checkbox" value="" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500" />
+							<label for="default-checkbox" class="ml-2 text-sm font-medium text-gray-900">Is Wholesale</label>
+						</div>
+						<div class="flex justify-center my-6">
+							<a href="url_for('dashboard')"> <button type="submit" class="w-64 h-[60px] py-2.5 px-5 mr-2 mb-2 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-200">Submit</button></a>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
 
-  <!--for making order-->
+	<!--for making order-->
 
-  <div
-    class="mt-4 bg-white w-auto relative h-[60%] border-b-2 text-gray-900 shadow-xl rounded-lg flex flex-col h-auto"
-  >
-    <div class="text-xl font-bold text-gray-700 px-4 py-4">Create Order</div>
-    <table
-      class="table-auto border rounded border-gray-200 w-full my-2 mx-auto"
-      id="order_table"
-    >
-      <thead>
-        <tr>
-          <th
-            class="w-1 px-6 py-3 bg-gray-300 text-left text-xs font-medium text-gray-900 uppercase tracking-wider"
-          >
-            SN
-          </th>
-          <th
-            class="w-64 px-6 py-3 bg-gray-300 text-left text-xs font-medium text-gray-900 uppercase tracking-wider"
-          >
-            Item
-          </th>
-          <th
-            class="w-80 px-6 py-3 bg-gray-300 text-left text-xs font-medium text-gray-900 uppercase tracking-wider"
-          >
-            Description
-          </th>
-          <th
-            class="w-22 px-6 py-3 bg-gray-300 text-left text-xs font-medium text-gray-900 uppercase tracking-wider"
-          >
-            Quantity
-          </th>
-          <th
-            class="px-6 py-3 bg-gray-300 text-left text-xs font-medium text-gray-900 uppercase tracking-wider"
-          >
-            Unit Price
-          </th>
-          <th
-            class="px-6 py-3 bg-gray-300 text-left text-xs font-medium text-gray-900 uppercase tracking-wider"
-          >
-            
-          </th>
-          <th
-            class="px-6 py-3 bg-gray-300 text-left text-xs font-medium text-gray-900 uppercase tracking-wider"
-          >
-            
-          </th>
-          <th
-            class="px-6 py-3 bg-gray-300 text-left text-xs font-medium text-gray-900 uppercase tracking-wider"
-          >
-            Amount
-          </th>
-          <th
-            class="px-6 py-3 bg-gray-300 text-center text-xs font-medium text-gray-900 uppercase tracking-wider"
-          >
-            Actions
-          </th>
-        </tr>
-      </thead>
-      <tbody class="bg-white divide-y divide-gray-200" id="orderTable">
-        <tr class="h-3" id="defaultRow">
-          <td class="px-6 w-1 py-4 whitespace-nowrap">1</td>
-          <td class="px-6 w-64 py-4 whitespace-nowrap">
-            <select
-              id="product_1"
-              class="product-select bg-white border-lg text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 select2-js custom-select"
-              data-live-search="true"
-              name="product_1"
-              onchange="populateItemDetails(this.value,this.name)"
-            >
-            <option value="0">Search Product</option>
-              <!-- Products options will be dynamically generated by Flask -->
-              {% for product in products %}
-              <option value="{{ product.product_id }}">{{product.name}}</option>
-              {% endfor %}
-            </select>
-          </td>
+	<div class="mt-4 bg-white md:w-auto sm:w-full relative border-b-2 text-gray-900 shadow-xl rounded-lg">
+		<div class="text-xl font-bold text-gray-700 px-4 py-4 overflow-x-auto">Create Order</div>
+		<div class="overflow-x-auto">
+			<table class="table-auto border rounded border-gray-200 w-full my-2 mx-auto" id="order_table">
+				<thead>
+					<tr>
+						<th class="w-1 px-6 py-3 bg-gray-300 text-left text-xs font-medium text-gray-900 uppercase tracking-wider">SN</th>
+						<th class="w-64 px-6 py-3 bg-gray-300 text-left text-xs font-medium text-gray-900 uppercase tracking-wider">Item</th>
+						<th class="w-80 px-6 py-3 bg-gray-300 text-left text-xs font-medium text-gray-900 uppercase tracking-wider">Description</th>
+						<th class="w-22 px-6 py-3 bg-gray-300 text-left text-xs font-medium text-gray-900 uppercase tracking-wider">Quantity</th>
+						<th class="px-6 py-3 bg-gray-300 text-left text-xs font-medium text-gray-900 uppercase tracking-wider">Unit Price</th>
+						<th class="px-6 py-3 bg-gray-300 text-left text-xs font-medium text-gray-900 uppercase tracking-wider"></th>
+						<th class="px-6 py-3 bg-gray-300 text-left text-xs font-medium text-gray-900 uppercase tracking-wider"></th>
+						<th class="px-6 py-3 bg-gray-300 text-left text-xs font-medium text-gray-900 uppercase tracking-wider">Amount</th>
+						<th class="px-6 py-3 bg-gray-300 text-center text-xs font-medium text-gray-900 uppercase tracking-wider">Actions</th>
+					</tr>
+				</thead>
+				<tbody class="bg-white divide-y divide-gray-200" id="orderTable">
+					<tr class="h-2" id="defaultRow">
+						<td class="px-6 w-1 py-4 whitespace-nowrap">1</td>
+						<td class="px-6 w-64 py-4 whitespace-nowrap sm:w-32">
+							<select id="product_1" class="product-select bg-white border-lg text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 select2-js custom-select" data-live-search="true" name="product_1" onchange="populateItemDetails(this.value,this.name)">
+								<option value="0">Search Product</option>
+								<!-- Products options will be dynamically generated by Flask -->
+								{% for product in products %}
+								<option value="{{ product.product_id }}">{{product.name}}</option>
+								{% endfor %}
+							</select>
+						</td>
 
-          <td class="px-6 py-4 whitespace-nowrap" id="descriptionCell">
-            <input name="item_desc_1" id="item_desc_1" disabled/>
-          </td>
+						<td class="px-6 py-4 whitespace-nowrap" id="descriptionCell">
+							<input name="item_desc_1" id="item_desc_1" disabled />
+						</td>
 
-          <td class="px-6 py-4 whitespace-nowrap">
-            <input
-              type="number"
-              class="quantity-input w-20 text-gray-900 bg-white rounded-lg border-none"
-              min="1"
-              value="0"
-              name="item_quantity_1"
-              id="item_quantity_1"
-              onchange="calculateItemTotal(this.name)"
-            />
-          </td>
-          <td class="px-6 py-4 whitespace-nowrap">
-            <input type="text" class="quantity-input text-gray-900 bg-white rounded-lg w-20 border-none" name="unit_price_1" id="unit_price_1" disabled/>
-          </td>
-          <td class="px-6 py-4 whitespace-nowrap">
-            <select
-              class="discount-type-select bg-white border-lg text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-16 p-2.5 border-none"
-              name="discount_type_1"
-              id="discount_type_1"
-              onchange="calculateItemTotal(this.name)"
-            >
-              <option value="percentage">%</option>
-              <option value="amount">$</option>
-            </select>
-          </td>
-          <td class="px-6 py-4 whitespace-nowrap">
-            <input
-              type="number"
-              class="discount-input w-16 text-gray-900 bg-white rounded-lg border-none"
-              min="0"
-              value="0"
-              name="discount_val_1"
-              id="discount_val_1"
-              oninput="calculateItemTotal(this.name)"
-            />
-          </td>
-          <td class="px-6 py-4 whitespace-nowrap">
-            $<input
-              type="number"
-              class="amount-input rounded-lg text-gray-900 bg-white w-28 border-none"
-              min="0"
-              value=""
-              name="sub_total_1"
-              id="sub_total_1"
-              disabled
-            />
-          </td>
-          <!--td class="px-6 py-4 whitespace-nowrap text-center">
-            <button
-              class="delete-row-button"
-              disabled
-              onclick="deleteRow(this)"
-            >
-              &#10005;
-            </button>
-          </td-->
-        </tr>
-      </tbody>
-    </table>
-    <div class="px-4 py-2 h-auto">
-      <button
-        class="px-2 w-[50px] h-[40px] rounded-xl bg-yellow-600 text-white"
-        id="insertRow"
-      >
-      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-8 h-8 text-white-900">
-        <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v6m3-3H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" />
-      </svg>
-      
-      </button>
-    <div class="flex flex-row float-right">
-      <button
-        class="w-32 h-[50px] mx-auto text-center rounded bg-green-500 text-white"
-        onclick="saveOrder()"
-      >
-        Save
-      </button>
-    </div>
-  </div>
+						<td class="px-6 py-4 whitespace-nowrap">
+							<input type="number" class="quantity-input w-20 text-gray-900 bg-white rounded-lg border-none" min="1" value="0" name="item_quantity_1" id="item_quantity_1" onchange="calculateItemTotal(this.name)" />
+						</td>
+						<td class="px-6 py-4 whitespace-nowrap">
+							<input type="text" class="quantity-input text-gray-900 bg-white rounded-lg w-20 border-none" name="unit_price_1" id="unit_price_1" disabled />
+						</td>
+						<td class="px-6 py-4 whitespace-nowrap">
+							<select class="discount-type-select bg-white border-lg text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-16 p-2.5 border-none" name="discount_type_1" id="discount_type_1" onchange="calculateItemTotal(this.name)">
+								<option value="percentage">%</option>
+								<option value="amount">$</option>
+							</select>
+						</td>
+						<td class="px-6 py-4 whitespace-nowrap">
+							<input type="number" class="discount-input w-20 text-gray-900 bg-white rounded-lg border-none" min="0" value="0" name="discount_val_1" id="discount_val_1" oninput="calculateItemTotal(this.name)" />
+						</td>
+						<td class="px-6 py-4 whitespace-nowrap"><span class="ml-2">$</span><input type="number" class="amount-input rounded-lg text-gray-900 bg-white w-28 border-none" min="0" value="" name="sub_total_1" id="sub_total_1" disabled /></td>
+					</tr>
+				</tbody>
+			</table>
+
+			<div class="px-2 h-[160px] flex justify-between">
+				<button class="px-2 w-[50px] h-[40px] rounded-xl bg-yellow-600 text-white" id="insertRow">
+					<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-8 h-8 text-white-900">
+						<path stroke-linecap="round" stroke-linejoin="round" d="M12 9v6m3-3H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+					</svg>
+				</button>
+
+				<div class="flex flex-col justify-between mr-[130px]">
+					<div class="ml-[106px]">
+						<span class="font-semibold">Subtotal</span><span class="ml-3">$</span>
+						<span class="ml-[6px]"><input disabled type="text" class="w-24 text-gray-900 bg-white rounded-lg border-none" id="grand_total" /></span>
+					</div>
+					<div class="flex">
+						<div class="flex gap-x-6">
+							<select class="discount-type-select bg-white border-lg text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-16 border-none px-2" name="discount_type_total" id="discount_type_total" onchange="calculate_subtotal_discount()">
+								<option value="percentage">%</option>
+								<option value="amount">$</option>
+							</select>
+							<input type="number" name="discount_val_total" class="rounded w-16 border-none" value="0" onchange="calculate_subtotal_discount()" id="discount_val_total" />
+							<span class="my-2 ml-1">$</span><input type="text" id="grand_discount" class="w-24 text-gray-900 bg-white rounded-lg border-none -ml-3" disabled />
+						</div>
+					</div>
+					<div class="flex ml-[100px]">
+						<span class="font-semibold">Shipping</span>
+						<span class="ml-[15px] mr-[11px]">$</span>
+						<span class="mr-[5px]"><input type="text" disabled name="net_total" class="w-24 text-gray-900 bg-white rounded-lg border-none" id="net_total" /></span>
+					</div>
+					<div class="border-t ml">
+						<span class="font-semibold ml-[102px]">Net Total</span>
+						<span class="ml-[7px]">$</span>
+						<span class="ml-[6px]"><input type="text" disabled name="net_total" class="w-24 text-gray-900 bg-white rounded-lg border-none" id="net_total" /></span>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="flex justify-end">
+			<button class="w-32 h-[50px] text-center rounded bg-green-500 text-white" onclick="saveOrder()">Save</button>
+		</div>
+	</div>
 </div>
-</div>
-<input type="hidden" style="display: none" name="item_counter" id="item_counter" value="1"></input>
-<input type="hidden" style="display: none" name="item_counter_list" id="item_counter_list" value="1"></input>
+<input type="hidden" style="display: none" name="item_counter" id="item_counter" value="1" />
+<input type="hidden" style="display: none" name="item_counter_list" id="item_counter_list" value="1" />
 <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAjQbpLmWtP5SBJQ6RWzplfIg0Sd0rpDYg&libraries=places&callback=initAutocomplete"></script>
 
 <script>
-  function initAutocomplete() {
-    const locationInput = document.getElementById("locationInput");
-    const countryInput = document.getElementById("country");
-    const cityInput = document.getElementById("city");
-    const stateInput = document.getElementById("state");
-    const postalCodeInput = document.getElementById("postalCode");
-    const addressInput = document.getElementById("address");
+	function initAutocomplete() {
+		const locationInput = document.getElementById("locationInput");
+		const countryInput = document.getElementById("country");
+		const cityInput = document.getElementById("city");
+		const stateInput = document.getElementById("state");
+		const postalCodeInput = document.getElementById("postalCode");
+		const addressInput = document.getElementById("address");
 
-    // Create the autocomplete object
-    const autocomplete = new google.maps.places.Autocomplete(locationInput);
+		// Create the autocomplete object
+		const autocomplete = new google.maps.places.Autocomplete(locationInput);
 
-    // Event listener when a place is selected
-    autocomplete.addListener("place_changed", function () {
-      const place = autocomplete.getPlace();
+		// Event listener when a place is selected
+		autocomplete.addListener("place_changed", function () {
+			const place = autocomplete.getPlace();
 
-      // Clear the previous values
-      countryInput.value = "";
-      cityInput.value = "";
-      stateInput.value = "";
-      postalCodeInput.value = "";
-      addressInput.value = "";
+			// Clear the previous values
+			countryInput.value = "";
+			cityInput.value = "";
+			stateInput.value = "";
+			postalCodeInput.value = "";
+			addressInput.value = "";
 
-      // Set the new values
-      for (const component of place.address_components) {
-        const componentType = component.types[0];
+			// Set the new values
+			for (const component of place.address_components) {
+				const componentType = component.types[0];
 
-        if (componentType === "country") {
-          countryInput.value = component.long_name;
-        } else if (
-          componentType === "locality" ||
-          componentType === "administrative_area_level_2"
-        ) {
-          cityInput.value = component.long_name;
-        } else if (componentType === "administrative_area_level_1") {
-          stateInput.value = component.long_name;
-        } else if (componentType === "postal_code") {
-          postalCodeInput.value = component.long_name;
-        }
-      }
+				if (componentType === "country") {
+					countryInput.value = component.long_name;
+				} else if (componentType === "locality" || componentType === "administrative_area_level_2") {
+					cityInput.value = component.long_name;
+				} else if (componentType === "administrative_area_level_1") {
+					stateInput.value = component.long_name;
+				} else if (componentType === "postal_code") {
+					postalCodeInput.value = component.long_name;
+				}
+			}
 
-      addressInput.value = place.formatted_address;
-    });
-  }
+			addressInput.value = place.formatted_address;
+		});
+	}
 
-  // Load the Google Maps API and initialize the autocomplete
-  function loadScript() {
-    const script = document.createElement("script");
-    script.src =
-      "https://maps.googleapis.com/maps/api/js?key=AIzaSyAjQbpLmWtP5SBJQ6RWzplfIg0Sd0rpDYg&libraries=places&callback=initAutocomplete";
-    script.defer = true;
-    script.async = true;
-    document.body.appendChild(script);
-  }
+	// Load the Google Maps API and initialize the autocomplete
+	function loadScript() {
+		const script = document.createElement("script");
+		script.src = "https://maps.googleapis.com/maps/api/js?key=AIzaSyAjQbpLmWtP5SBJQ6RWzplfIg0Sd0rpDYg&libraries=places&callback=initAutocomplete";
+		script.defer = true;
+		script.async = true;
+		document.body.appendChild(script);
+	}
 
-  // Call the loadScript function to load the API and initialize
-  loadScript();
+	// Call the loadScript function to load the API and initialize
+	loadScript();
 </script>
 <script>
-  $(function () {
-    // Start counting from the third row
-    var table = document.getElementById("order_table");
-    var tbodyRowCount = table.tBodies[0].rows.length; // 3
-    var counter = tbodyRowCount;
-    var itemlist = "";
+	$(function () {
+		$(".select2-js").select2();
 
-    $("#insertRow").on("click", function (event) {
-		var item_counter_list = $('#item_counter_list').val();
-		itemList = getItemAsList(item_counter_list);
-		//var item_array = item_counter_list.split(",");
-		event.preventDefault();
+		// Start counting from the third row
+		var table = document.getElementById("order_table");
+		var tbodyRowCount = table.tBodies[0].rows.length; // 3
+		var counter = tbodyRowCount;
+		var itemlist = "";
 
-		var newRow = $("<tr>");
-		var cols = '';
-		
-		// Increase counter after each row insertion
-		counter++;
-		// Table columns
-		$("#item_counter").val(counter);
-		itemList.push(counter);
+		$("#insertRow").on("click", function (event) {
+			var item_counter_list = $("#item_counter_list").val();
+			itemList = getItemAsList(item_counter_list);
+			//var item_array = item_counter_list.split(",");
+			event.preventDefault();
 
-		cols += `<td class="px-6 w-[1%] py-4 whitespace-nowrap">${counter}</td>
+			var newRow = $("<tr>");
+			var cols = "";
+
+			// Increase counter after each row insertion
+			counter++;
+			// Table columns
+			$("#item_counter").val(counter);
+			itemList.push(counter);
+
+			cols += `<td class="px-6 w-[1%] py-4 whitespace-nowrap">${counter}</td>
           <td class="px-6 w-64 py-4 whitespace-nowrap">
             <select
               id="product_${counter}"
@@ -589,7 +338,7 @@
           <td class="px-6 py-4 whitespace-nowrap">
             <input
               type="number"
-              class="discount-input w-16 text-gray-900 bg-white rounded-lg border-none"
+              class="discount-input w-24 text-gray-900 bg-white rounded-lg border-none"
               min="0"
               value="0"
               name="discount_val_${counter}"
@@ -616,96 +365,119 @@
             >
               &#10005;
             </button>
-          </td>`
-    // Insert the columns inside a row
-    newRow.append(cols);
-    // Insert the row inside a table
-    $("#order_table").append(newRow);
-    $("#item_counter_list").val(itemList);
-    $('.select2-js').select2();
+          </td>`;
+			// Insert the columns inside a row
+			newRow.append(cols);
+			// Insert the row inside a table
+			$("#order_table").append(newRow);
+			$("#item_counter_list").val(itemList);
+			$(".select2-js").select2();
+		});
 	});
-  });
 
-function getItemAsList(string){
-  return string.toString().split(",");
-}
+	function getItemAsList(string) {
+		return string.toString().split(",");
+	}
 
-function removeFromArray(array,item){
-  var index = array.indexOf(item);
-  if (index > -1) { // only splice array when item is found
-      array.splice(index, 1); // 2nd parameter means remove one item only
-  }
-  return array;
-}
+	function removeFromArray(array, item) {
+		var index = array.indexOf(item);
+		if (index > -1) {
+			// only splice array when item is found
+			array.splice(index, 1); // 2nd parameter means remove one item only
+		}
+		return array;
+	}
 
-// Remove Item
-function remove_order_item(value){
-  var itemList = getItemAsList($("#item_counter_list").val());
-  var row_num = value.split("_").slice(-1)[0];
-  var counter = $("#item_counter").val();
-  $('#deleteRow_'+row_num).closest("tr").remove();
-  counter -= 1
-  $("#item_counter").val(counter);
-  itemList = removeFromArray(itemList,row_num);
-  $("#item_counter_list").val(itemList);
-  //calculate_total();
-}
+	// Remove Item
+	function remove_order_item(value) {
+		var itemList = getItemAsList($("#item_counter_list").val());
+		var row_num = value.split("_").slice(-1)[0];
+		var counter = $("#item_counter").val();
+		$("#deleteRow_" + row_num)
+			.closest("tr")
+			.remove();
+		counter -= 1;
+		$("#item_counter").val(counter);
+		itemList = removeFromArray(itemList, row_num);
+		$("#item_counter_list").val(itemList);
+		//calculate_total();
+	}
 </script>
 <script>
+	// Populate Each Item/Product Details
+	function populateItemDetails(value, name) {
+		var row_num = name.split("_").slice(-1)[0];
+		$.ajax({
+			type: "GET",
+			url: "/get_item_details?id=" + value,
+			success: function (data, status, xhr) {
+				$("#item_desc_" + row_num).val(data.description);
+				$("#unit_price_" + row_num).val(data.price);
+				calculateItemTotal(name);
+			},
+		});
+	}
 
-  // Populate Each Item/Product Details
-  function populateItemDetails(value,name){
-    
-    var row_num = name.split("_").slice(-1)[0];
-      $.ajax({
-        type: "GET",
-        url: "/get_item_details?id="+value,
-        success: function(data,status,xhr){
-          $('#item_desc_'+row_num).val(data.description);
-          $('#unit_price_'+row_num).val(data.price);
-        }
-      });
-    }
-  
-  // Calculate Each Item Total
-  function calculateItemTotal(name){
-      var row_num = name.split("_").slice(-1)[0];
-      quantity =  parseInt($("#item_quantity_"+row_num).val());
-      unit_price = $("#unit_price_"+row_num).val();
-      sub_total = quantity * unit_price;
+	// Calculate Each Item Total
+	function calculateItemTotal(name) {
+		var row_num = name.split("_").slice(-1)[0];
+		quantity = parseInt($("#item_quantity_" + row_num).val());
+		unit_price = $("#unit_price_" + row_num).val();
+		sub_total = quantity * unit_price;
 
-      // Also calculate discount
-      discount_type = $("#discount_type_"+row_num).val();
-      discount_val = $("#discount_val_"+row_num).val();
+		// Also calculate discount
+		discount_type = $("#discount_type_" + row_num).val();
+		discount_val = $("#discount_val_" + row_num).val();
 
-      if (discount_type=='percentage'){
-        sub_total = sub_total - discount_val*sub_total/100;
-      } else if (discount_type=='amount'){
-        sub_total = sub_total - discount_val
-      }
-      // Calculate Sub Total
-      sub_total = parseFloat(sub_total).toFixed(2);
-      $('#sub_total_'+row_num).val(sub_total);
-      //calculate_total();
-  }
+		if (discount_type == "percentage") {
+			sub_total = sub_total - (discount_val * sub_total) / 100;
+		} else if (discount_type == "amount") {
+			sub_total = sub_total - discount_val;
+		}
+		// Calculate Sub Total
+		sub_total = parseFloat(sub_total).toFixed(2);
+		$("#sub_total_" + row_num).val(sub_total);
+		calculate_subtotal();
+		calculate_subtotal_discount();
+	}
 
-  function calculate_total(){
-      var item_counters = $("#item_counter").val();
-      var item_counter_list = $("#item_counter_list").val();
-      var itemList = getItemAsList(item_counter_list);
-      total = 0;
-      for(i=0;i<item_counters;i++){
-          var item = itemList[i];
-          if(item === undefined){
-            
-          }
-          else {
-            sub_total = $('#sub_total_'+item).val();
-            total = parseFloat(total) + parseFloat(sub_total); 
-          }
-      }
-      total = parseFloat(total).toFixed(2)
-      $('#grand_total').val(total);
-  }
+	function calculate_subtotal() {
+		var item_counters = $("#item_counter").val();
+		var item_counter_list = $("#item_counter_list").val();
+		var itemList = getItemAsList(item_counter_list);
+
+		total = 0;
+		for (i = 0; i < item_counters; i++) {
+			var item = itemList[i];
+			if (item === undefined) {
+			} else {
+				sub_total = $("#sub_total_" + item).val();
+				total = parseFloat(total) + parseFloat(sub_total);
+			}
+		}
+		total = parseFloat(total).toFixed(2);
+		$("#grand_total").val(total);
+	}
+
+	function calculate_subtotal_discount() {
+		// Also calculate discount
+		discount_type = $("#discount_type_total").val();
+		discount_val = $("#discount_val_total").val();
+
+		grand_total = $("#grand_total").val();
+
+		if (discount_type == "percentage") {
+			net_total = grand_total - (discount_val * grand_total) / 100;
+			percentage_change = (discount_val / 100) * grand_total;
+		} else if (discount_type == "amount") {
+			net_total = grand_total - discount_val;
+			percentage_change = discount_val;
+		}
+
+		grand_discount = parseFloat(percentage_change).toFixed(2);
+		$("#grand_discount").val(grand_discount);
+		net_total = parseFloat(net_total).toFixed(2);
+		$("#net_total").val(net_total);
+	}
 </script>
 {% endblock %}
