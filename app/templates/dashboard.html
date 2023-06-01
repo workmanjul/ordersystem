@@ -192,7 +192,7 @@
 					<div class="flex ml-[100px]">
 						<span class="font-semibold">Shipping</span>
 						<span class="ml-[15px] mr-[11px]">$</span>
-						<span class="mr-[5px]"><input type="text" disabled name="net_total" class="w-24 text-gray-900 bg-white rounded-lg border-none" id="net_total" /></span>
+						<span class="mr-[5px]"><input type="text" disabled name="ship_total" class="w-24 text-gray-900 bg-white rounded-lg border-none" id="ship_total" /></span>
 					</div>
 					<div class="border-t ml">
 						<span class="font-semibold ml-[102px]">Net Total</span>
@@ -476,6 +476,8 @@
 
 		grand_discount = parseFloat(percentage_change).toFixed(2);
 		$("#grand_discount").val(grand_discount);
+    console.log(net_total)
+    
 		net_total = parseFloat(net_total).toFixed(2);
 		$("#net_total").val(net_total);
 	}
