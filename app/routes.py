@@ -79,7 +79,7 @@ def saveCustomer():
     address2 = ajax_data['address2']
     
     state_country = ajax_data['state']
-    postcode=ajax_data['post_code']
+    postcode=ajax_data['postcode']
     city = ajax_data['city']
     is_wholesale = ajax_data.get('isWholesale_checkbox')
 
@@ -87,10 +87,13 @@ def saveCustomer():
 
     db.session.add(customer)
     db.session.commit()
-
-    response_data = {'message': 'Customer saved successfully'}
-    return response_data, 200
-
+    customer = Customer.query.filter_by(email=ajax_data['email']).first()
+    customer_data={
+	    'id':customer.id,
+	    'first_name':customer.first_name,
+	    'last_name':customer.last_name
+	}
+    return jsonify(customer_data)
 
 
 
@@ -180,7 +183,7 @@ def createCustomer():
 		address2=data['address2']
 		city=data['city']
 		state_country = data['state']
-		postcode=data['post_code']
+		postcode=data['postcode']
 		is_wholesale = int(request.form.get('is_wholesale')) if request.form.get('is_wholesale') else 0
 		
 		customer = Customer(first_name=first_name,last_name=last_name,email=email,company=company,phone=phone,location=location,country=country,address1=address1,address2=address2,city=city,state_country=state_country,postcode=postcode,is_wholesale=is_wholesale)
@@ -222,7 +225,7 @@ def updateCustomer(id):
 		customer.address2=request.form['address2']
 		customer.city=request.form['city']
 		customer.state_country = request.form['state']
-		customer.postcode=request.form['post_code']
+		customer.postcode=request.form['postcode']
 		customer.is_wholesale = int(request.form.get('is_wholesale')) if request.form.get('is_wholesale') else 0
 	
 		db.session.commit()
