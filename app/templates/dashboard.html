@@ -14,13 +14,13 @@
 	<div class="h-[22%] border-b-4 border-gray-500 text-gray-900 shadow-xl rounded-lg">
 		<h1 class="text-xl font-bold text-gray-700 px-4 py-4">Choose Customer</h1>
 		<div class="flex gap-x-8 px-4">
-			<select data-te-select-init data-te-select-filter="true" id="my-options" class="rounded w-[50%] px-4 select2-js custom-select">
+			<select data-te-select-init data-te-select-filter="true" class="rounded w-[50%] px-4 select2-js custom-select" id="current_customer" name="current_customer">
 				{% for customer in customers %}
 				<option value="{{customer.id}}">{{customer.first_name}} {{customer.last_name}}</option>
 				{%endfor%}
 			</select>
 
-			<button data-modal-target="defaultModal" data-modal-toggle="defaultModal" class="block text-white bg-blue-500 font-medium rounded-lg text-sm px-5 text-center sm:h-8 md:h-[40px]" type="button">Create New Customer</button>
+			<button data-modal-target="defaultModal" data-modal-toggle="defaultModal" class="block text-white bg-blue-500 font-medium rounded-lg text-sm px-5 text-center sm:h-8 md:h-[40px]" type="button" id="">Create New Customer</button>
 		</div>
 	</div>
 
@@ -29,7 +29,7 @@
 			<div class="relative bg-white rounded-lg shadow">
 				<div class="flex items-start justify-between p-4 border-b rounded-t">
 					<h3 class="text-xl font-semibold text-gray-900">Terms of Service</h3>
-					<button type="button" class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center" data-modal-hide="defaultModal">
+					<button type="button" class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center" data-modal-hide="defaultModal" id="modal-backdrop">
 						<svg aria-hidden="true" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
 							<path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path>
 						</svg>
@@ -38,7 +38,7 @@
 				</div>
 
 				<div class="px-64 py-16">
-					<form action="{{url_for('createCustomer')}}" method="POST">
+					<form id="my-form">
 						<div class="grid md:grid-cols-2 md:gap-6">
 							<div class="relative z-0 w-full mb-6 group">
 								<input type="text" name="first_name" id="floating_first_name" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " required />
@@ -51,11 +51,11 @@
 						</div>
 						<div class="grid md:grid-cols-2 md:gap-6">
 							<div class="relative z-0 w-full mb-6 group">
-								<input type="email" name="email" id="floating_first_name" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " required />
+								<input type="email" name="email" id="email" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " required />
 								<label for="floating_first_name" class="peer-focus:font-medium absolute text-sm text-gray-800 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Email</label>
 							</div>
 							<div class="relative z-0 w-full mb-6 group">
-								<input type="text" name="company" id="floating_last_name" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " required />
+								<input type="text" name="company" id="company" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " required />
 								<label for="floating_last_name" class="peer-focus:font-medium absolute text-sm text-gray-800 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Company</label>
 							</div>
 						</div>
@@ -103,7 +103,7 @@
 							<label for="default-checkbox" class="ml-2 text-sm font-medium text-gray-900">Is Wholesale</label>
 						</div>
 						<div class="flex justify-center my-6">
-							<a href="url_for('dashboard')"> <button type="submit" class="w-64 h-[60px] py-2.5 px-5 mr-2 mb-2 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-200">Submit</button></a>
+							<button class="w-64 h-[60px] py-2.5 px-5 mr-2 mb-2 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-200" id="add_customer_btn">Submit</button>
 						</div>
 					</form>
 				</div>
@@ -136,7 +136,6 @@
 						<td class="px-6 w-64 py-4 whitespace-nowrap sm:w-32">
 							<select id="product_1" class="product-select bg-white border-lg text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 select2-js custom-select" data-live-search="true" name="product_1" onchange="populateItemDetails(this.value,this.name)">
 								<option value="0">Search Product</option>
-								<!-- Products options will be dynamically generated by Flask -->
 								{% for product in products %}
 								<option value="{{ product.product_id }}">{{product.name}}</option>
 								{% endfor %}
@@ -190,9 +189,11 @@
 						</div>
 					</div>
 					<div class="flex ml-[100px]">
-						<span class="font-semibold">Shipping</span>
-						<span class="ml-[15px] mr-[11px]">$</span>
-						<span class="mr-[5px]"><input type="text" disabled name="ship_total" class="w-24 text-gray-900 bg-white rounded-lg border-none" id="ship_total" /></span>
+						<span class="font-semibold mt-2">Shipping</span>
+						<span class="ml-[15px] mr-[11px] mt-2">$</span>
+						<span class="mr-[5px]">
+							<input type="text" name="ship_total" class="w-24 text-gray-900 bg-white rounded-lg mb-2 h-[35px]" id="ship_total" onchange="{calculate_subtotal_discount()}" />
+						</span>
 					</div>
 					<div class="border-t ml">
 						<span class="font-semibold ml-[102px]">Net Total</span>
@@ -463,6 +464,8 @@
 		// Also calculate discount
 		discount_type = $("#discount_type_total").val();
 		discount_val = $("#discount_val_total").val();
+		shipping = $("#ship_total").val();
+		shipping = parseFloat(shipping);
 
 		grand_total = $("#grand_total").val();
 
@@ -474,12 +477,169 @@
 			percentage_change = discount_val;
 		}
 
+		if (shipping > 0) {
+			net_total = net_total + shipping;
+		}
+
 		grand_discount = parseFloat(percentage_change).toFixed(2);
 		$("#grand_discount").val(grand_discount);
-    console.log(net_total)
-    
+
 		net_total = parseFloat(net_total).toFixed(2);
 		$("#net_total").val(net_total);
 	}
 </script>
+
+<!-- For creating customer -->
+<!-- <script>
+	var form = document.getElementById("my-form");
+
+	form.addEventListener("submit", function (event) {
+		event.preventDefault();
+
+		var data = {};
+		var formData = new FormData(form);
+
+		// Convert form data to JSON
+		formData.forEach(function (value, key) {
+			data[key] = value;
+		});
+
+		$.ajax({
+			type: "POST",
+			url: "/save-customer",
+			success: function (data, status, xhr) {
+				alert(data);
+			},
+		});
+
+		/*
+		var xhr = new XMLHttpRequest();
+		xhr.open("POST", "/save-customer", true);
+		xhr.setRequestHeader("Content-Type", "application/json");
+
+		xhr.onreadystatechange = function () {
+			if (xhr.readyState === 4 && xhr.status === 200) {
+				var response = JSON.parse(xhr.responseText);
+				window.location.href = "/";
+
+				console.log(response.message);
+				
+				$("#current_customer").val(data["first_name"]);
+			}
+		};
+
+		xhr.send(JSON.stringify(data));
+		// console.log(data)
+		*/
+	});
+</script> -->
+<!-- <script>
+	var customer_id = document.getElementById("current_customer").value;
+	var discount_amt = document.getElementById("grand_discount").value;
+	var product = document.getElementById("product_1").value;
+	var quantity = document.getElementById("item_quantity_1").value;
+	var unit_price = document.getElementById("unit_price_1").value;
+	
+	var unit_discount_type = document.getElementById("discount_type_1").value;
+	var unit_discount_value = document.getElementById("discount_val_1").value;
+	
+
+
+
+	var amount = document.getElementById("sub_total_1").value;
+	var grand_total = document.getElementById("grand_total").value;
+	var shipping = document.getElementById("ship_total").value;
+	var net_total = document.getElementById("net_total").value;
+	
+
+	gross_cost = unit_price * quantity; //cost without deduction
+
+	
+	discount_per = db.Column(db.Numeric((precision = 8), (scale = 2)), (nullable = True));
+	
+	shipping_cost = db.Column(db.Numeric((precision = 8), (scale = 2)), (nullable = True));
+	total_amount = db.Column(db.Numeric((precision = 8), (scale = 2)), (nullable = True));
+
+	var data = {
+		customer: customer,
+		product: product,
+		quantity: quantity,
+		unit_price: unit_price,
+		// unit_discount_type: unit_discount_type,
+		// unit_discount_value: unit_discount_value,
+		amount: amount,
+		grand_total: grand_total,
+		grand_discount: grand_discount,
+		shipping: shipping,
+		net_total: net_total,
+	};
+
+	var xhr = new XMLHttpRequest();
+	xhr.open("POST", "/create-order", true);
+	xhr.setRequestHeader("Content-Type", "application/json");
+
+	xhr.onreadystatechange = function () {
+		if (xhr.readyState === 4 && xhr.status === 200) {
+			var response = JSON.parse(xhr.responseText);
+			console.log(response.message); // Log the response message
+		}
+	};
+
+	xhr.send(JSON.stringify(data));
+</script> -->
+<script>
+	$(".add_customer_btn").on("click", function (e) {
+		alert(1);
+		e.preventDefault();
+		var first_name = $("#floating_first_name").val();
+		var last_name = $("#floating_last_name").val();
+		var email = $("#email").val();
+		var company = $("#company").val();
+		var phone = $("#floating_phone").val();
+		var location = $("#locationInput").val();
+		var country = $("#country").val();
+		var address1 = $("#address").val();
+		var address2 = $("#address").val();
+		var city = $("#city").val();
+		var state = $("#state").val();
+		var postcode = $("#postalCode").val();
+		var is_wholesale = $("#default-checkbox").is(":checked") ? 1 : 0;
+
+		var requestData = {
+			first_name: first_name,
+			last_name: last_name,
+			email: email,
+			company: company,
+			phone: phone,
+			location: location,
+			country: country,
+			address1: address1,
+			address2: address2,
+			city: city,
+			state: state,
+			postcode: postcode,
+			is_wholesale: is_wholesale,
+		};
+		alert(requestData);
+		$.ajax({
+			url: "/save-customer",
+			data: requestData,
+			method: "POST",
+			success: function (data) {
+				var close_button = document.getElementById("modal-backdrop");
+				close_button.click();
+
+				
+
+				// $("#item_id_222").append('<option value="' + data.id + '" selected>' + data.first_name + " " + data.last_name + "</option>");
+				// $("#item_id_222").selectpicker("refresh");
+			},
+			error: function (xhr, textStatus, error) {
+				alert(xhr.responseText);
+				// Handle the error here
+			},
+		});
+	});
+</script>
+
 {% endblock %}

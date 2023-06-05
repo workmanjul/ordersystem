@@ -65,39 +65,31 @@ def get_item_details():
 
 
 
-@app.route('/save-order',methods=['POST'])
-def saveOrder():
-	ajax_data = request.json
-	
-	custommer_id = ajax_data['customer_id']
-	total_amount = ajax_data['grand_total']
-	discount_per = ajax_data['main_percent_input'] if ajax_data['main_percent_input'] else None
-	discount_amt = ajax_data['main_amount_input'] if ajax_data['main_amount_input'] else None
-	shipping_cost = None
-	gross_cost = None
-	order = Order(customer_id=custommer_id,total_amount=total_amount,discount_per=discount_per,discount_amt=discount_amt,shipping_cost=shipping_cost,gross_cost=gross_cost)
-	
-	db.session.add(order)
-	db.session.commit()
+@app.route('/save-customer', methods=['POST'])
+def saveCustomer():
+    ajax_data = request.get_json()
+    first_name = ajax_data['first_name']
+    last_name = ajax_data['last_name']
+    email = ajax_data['email']
+    company=ajax_data['company']
+    phone = ajax_data['phone']
+    country = ajax_data['country']
+    location = ajax_data['location']
+    address1 = ajax_data['address1']
+    address2 = ajax_data['address2']
+    
+    state_country = ajax_data['state']
+    postcode=ajax_data['post_code']
+    city = ajax_data['city']
+    is_wholesale = ajax_data.get('isWholesale_checkbox')
 
-	for product in ajax_data['myObjects']:
-		print('###################')
-		print(product)
-		print('###################')
-		print(product.get('sub_total'))
-		order_id = order.id
-		product_id = product.get('product')
-		unit_price  =product.get('unit_price')
-		discount_perc = product.get('percent_input') if product.get('percent_input') else None
-		discount_amt = product.get('amount_input') if product.get('amount_input') else None
-		product_cost = product.get('sub_total') if product.get('sub_total') else None
-		product_description = product.get('product_description')
+    customer=Customer(first_name=first_name,last_name=last_name,email=email,company=company,phone=phone,country=country,location=location,address1=address1,address2=address2, state_country=state_country,postcode=postcode,city=city,is_wholesale=is_wholesale)
 
-		order_detail = OrderDetails(order_id=order_id,product_id=product_id,unit_price=unit_price,discount_perc=discount_perc,discount_amt=discount_amt,product_cost=product_cost,product_description=product_description)
-		db.session.add(order_detail)
-		db.session.commit()
-		return redirect(url_for('dashboard'))
-	return 'hello'
+    db.session.add(customer)
+    db.session.commit()
+
+    response_data = {'message': 'Customer saved successfully'}
+    return response_data, 200
 
 
 
@@ -117,6 +109,37 @@ def listOrder():
     
     return render_template('order/listOrder.html',orders=orders,user=user)
 
+
+# @app.route('/create-order',methods=['POST','GET'])
+# def createOrder():
+# 	ajax_data = request.get_json()
+	
+# 	customer = ajax_data['customer']
+# 	product = ajax_data['product']
+# 	quantity = ajax_data['quantity']
+# 	unit_price = ajax_data['unit_price']
+# 	unit_discount_type = ajax_data['unit_discount_type']
+# 	unit_discount_value = ajax_data['unit_discount_value']
+# 	amount = ajax_data['amount']
+# 	grand_total = ajax_data['grand_total']
+# 	grand_discount = ajax_data['grand_discount']
+# 	discount_amt=ajax_data['grand_discount']
+# 	shipping_cost = ajax_data['shipping']
+# 	total_amount =ajax_data['net_total']
+
+# 	customer_id = ajax_data['customer']
+#     gross_cost = db.Column(db.Numeric(precision=8, scale=2),nullable=True)
+#     discount_per = db.Column(db.Numeric(precision=8, scale=2),nullable=True)
+#     discount_amt = db.Column(db.Numeric(precision=8, scale=2),nullable=True)
+#     shipping_cost = db.Column(db.Numeric(precision=8, scale=2),nullable=True)
+#     total_amount = db.Column(db.Numeric(precision=8, scale=2),nullable=True)
+
+
+#     db.session.add()
+#     db.session.commit()
+
+#     response_data = {'message': 'Customer saved successfully'}
+#     return response_data, 200
 
 
 
