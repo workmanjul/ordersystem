@@ -113,36 +113,60 @@ def listOrder():
     return render_template('order/listOrder.html',orders=orders,user=user)
 
 
-# @app.route('/create-order',methods=['POST','GET'])
-# def createOrder():
-# 	ajax_data = request.get_json()
+@app.route('/create-order',methods=['POST','GET'])
+def createOrder():
+	data = request.form
+	# print(data)
+	item_counter=data['item_counter']
+	customer_id = data['current_customer_hidden']
+	shipping_cost=data['ship_total']
+	total_amount=data['net_total_hidden']
+	discount_type=data['discount_type_total']
+	discount_value=data['discount_val_total']
+	discount_amount=data['grand_discount_hidden']
+	gross_cost=data['grand_total_hidden']
+
+	order=Order(customer_id=customer_id,
+	     total_amount=total_amount,
+		 shipping_cost=shipping_cost,
+		 discount_type=discount_type, 
+		 discount_value=discount_value,
+		 gross_cost=gross_cost,
+		 discount_amount=discount_amount)
+	db.session.add(order)
+	db.session.commit()
+		
 	
-# 	customer = ajax_data['customer']
-# 	product = ajax_data['product']
-# 	quantity = ajax_data['quantity']
-# 	unit_price = ajax_data['unit_price']
-# 	unit_discount_type = ajax_data['unit_discount_type']
-# 	unit_discount_value = ajax_data['unit_discount_value']
-# 	amount = ajax_data['amount']
-# 	grand_total = ajax_data['grand_total']
-# 	grand_discount = ajax_data['grand_discount']
-# 	discount_amt=ajax_data['grand_discount']
-# 	shipping_cost = ajax_data['shipping']
-# 	total_amount =ajax_data['net_total']
+	order_item_list=list()
+	for index in range(int(item_counter)):
+		
+		order_item={	
+			'order_id':order.id,
+			'product_code':data['product_code_hidden_'+str(index+1)],
+			'product_id':data['product_'+str(index+1)],
+			'product_description':data['item_desc_hidden_'+str(index+1)],
+			'item_quantity':data['item_quantity_'+str(index+1)],
+			'unit_price':data['unit_price_hidden_'+str(index+1)],
+			'discount_type':data['discount_type_'+str(index+1)],
+			'discount_val':data['discount_val_'+str(index+1)],
+			'subtotal_amount':data['sub_total_hidden_'+str(index+1)],
+		}
+		# print(order_item)
+		order_item_list.append(order_item)
+	
+	# print(order_item_list)
+	for i in order_item_list:
+		
+		orderDetail=OrderDetails(order_id=i['order_id'], product_id=i['product_id'], product_code=i['product_code'],product_description=i['product_description'],item_quantity=i['item_quantity'],unit_price=i['unit_price'],discount_type=i['discount_type'], discount_value=i['discount_val'], subtotal_amount=i['subtotal_amount'])
 
-# 	customer_id = ajax_data['customer']
-#     gross_cost = db.Column(db.Numeric(precision=8, scale=2),nullable=True)
-#     discount_per = db.Column(db.Numeric(precision=8, scale=2),nullable=True)
-#     discount_amt = db.Column(db.Numeric(precision=8, scale=2),nullable=True)
-#     shipping_cost = db.Column(db.Numeric(precision=8, scale=2),nullable=True)
-#     total_amount = db.Column(db.Numeric(precision=8, scale=2),nullable=True)
+		db.session.add(orderDetail)
+		db.session.commit()
 
-
-#     db.session.add()
-#     db.session.commit()
-
-#     response_data = {'message': 'Customer saved successfully'}
-#     return response_data, 200
+	
+	
+	return redirect(url_for('listOrder'))
+	
+	
 
 
 

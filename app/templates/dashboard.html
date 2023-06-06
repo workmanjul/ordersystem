@@ -14,7 +14,7 @@
 	<div class="h-[170px] border-b-4 border-gray-500 text-gray-900 shadow-xl rounded-lg">
 		<h1 class="text-xl font-bold text-gray-700 px-4 py-4">Choose Customer</h1>
 		<div class="flex gap-x-8 px-4">
-			<select data-te-select-init data-te-select-filter="true" class="rounded w-[50%] px-4 select2-js custom-select" id="current_customer" name="current_customer">
+			<select data-te-select-init data-te-select-filter="true" class="rounded w-[50%] px-4 select2-js custom-select" id="current_customer" name="current_customer" onchange="handleCustomer()">
 				{% for customer in customers %}
 				<option value="{{customer.id}}">{{customer.first_name}} {{customer.last_name}}</option>
 				{%endfor%}
@@ -112,102 +112,122 @@
 	<!--for making order-->
 
 	<div class="mt-4 bg-white md:w-auto sm:w-full relative border-b-2 text-gray-900 shadow-xl rounded-lg min-h-[320px]">
-		<div class="text-xl font-bold text-gray-700 px-4 py-4 overflow-x-auto">Create Order</div>
-		<div class="overflow-x-auto">
-			<table class="table-auto border rounded border-gray-200 w-full my-2 mx-auto" id="order_table">
-				<thead>
-					<tr>
-						<th class="w-1 px-6 py-3 bg-gray-300 text-left text-xs font-medium text-gray-900 uppercase tracking-wider">SN</th>
-						<th class="w-64 px-6 py-3 bg-gray-300 text-left text-xs font-medium text-gray-900 uppercase tracking-wider">Item</th>
-						<th class="w-80 px-6 py-3 bg-gray-300 text-left text-xs font-medium text-gray-900 uppercase tracking-wider">Description</th>
-						<th class="w-22 px-6 py-3 bg-gray-300 text-left text-xs font-medium text-gray-900 uppercase tracking-wider">Quantity</th>
-						<th class="px-6 py-3 bg-gray-300 text-left text-xs font-medium text-gray-900 uppercase tracking-wider">Unit Price</th>
-						<th class="px-6 py-3 bg-gray-300 text-left text-xs font-medium text-gray-900 uppercase tracking-wider"></th>
-						<th class="px-6 py-3 bg-gray-300 text-left text-xs font-medium text-gray-900 uppercase tracking-wider"></th>
-						<th class="px-6 py-3 bg-gray-300 text-left text-xs font-medium text-gray-900 uppercase tracking-wider">Amount</th>
-						<th class="px-6 py-3 bg-gray-300 text-center text-xs font-medium text-gray-900 uppercase tracking-wider">Actions</th>
-					</tr>
-				</thead>
-				<tbody class="bg-white divide-y divide-gray-200" id="orderTable">
-					<tr class="h-2" id="defaultRow">
-						<td class="px-6 w-1 py-4 whitespace-nowrap">1</td>
-						<td class="px-6 w-64 py-4 whitespace-nowrap sm:w-32">
-							<select id="product_1" class="product-select bg-white border-lg text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 select2-js custom-select" data-live-search="true" name="product_1" onchange="populateItemDetails(this.value,this.name)">
-								<option value="0">Search Product</option>
-								{% for product in products %}
-								<option value="{{ product.product_id }}">{{product.name}}</option>
-								{% endfor %}
-							</select>
-						</td>
+		<form action="{{url_for('createOrder')}}" method="POST">
+			<input type="hidden" id="current_customer_hidden" name="current_customer_hidden" value="" />
+			<div class="text-xl font-bold text-gray-700 px-4 py-4 overflow-x-auto">Create Order</div>
+			<div class="overflow-x-auto">
+				<table class="table-auto border rounded border-gray-200 w-full my-2 mx-auto" id="order_table">
+					<thead>
+						<tr>
+							<th class="w-1 px-6 py-3 bg-gray-300 text-left text-xs font-medium text-gray-900 uppercase tracking-wider">SN</th>
+							<th class="w-64 px-6 py-3 bg-gray-300 text-left text-xs font-medium text-gray-900 uppercase tracking-wider">Item</th>
+							<th class="w-80 px-6 py-3 bg-gray-300 text-left text-xs font-medium text-gray-900 uppercase tracking-wider">Description</th>
+							<th class="w-22 px-6 py-3 bg-gray-300 text-left text-xs font-medium text-gray-900 uppercase tracking-wider">Quantity</th>
+							<th class="px-6 py-3 bg-gray-300 text-left text-xs font-medium text-gray-900 uppercase tracking-wider">Unit Price</th>
+							<th class="px-6 py-3 bg-gray-300 text-left text-xs font-medium text-gray-900 uppercase tracking-wider"></th>
+							<th class="px-6 py-3 bg-gray-300 text-left text-xs font-medium text-gray-900 uppercase tracking-wider"></th>
+							<th class="px-6 py-3 bg-gray-300 text-left text-xs font-medium text-gray-900 uppercase tracking-wider">Amount</th>
+							<th class="px-6 py-3 bg-gray-300 text-center text-xs font-medium text-gray-900 uppercase tracking-wider">Actions</th>
+						</tr>
+					</thead>
+					<tbody class="bg-white divide-y divide-gray-200" id="orderTable">
+						<tr class="h-2" id="defaultRow">
+							<td class="px-6 w-1 py-4 whitespace-nowrap">1</td>
+							<td class="px-6 w-64 py-4 whitespace-nowrap sm:w-32">
+								<select id="product_1" class="product-select bg-white border-lg text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 select2-js custom-select" data-live-search="true" name="product_1" onchange="populateItemDetails(this.value,this.name)">
+									<option value="0">Search Product</option>
+									{% for product in products %}
+									<option value="{{ product.product_id }}">{{product.name}}</option>
+									{% endfor %}
+								</select>
+								<input type="hidden" name="product_code_hidden_1" id="product_code_hidden_1" value=""/>
+								
+							</td>
 
-						<td class="px-6 py-4 whitespace-nowrap" id="descriptionCell">
-							<input name="item_desc_1" id="item_desc_1" disabled />
-						</td>
+							<td class="px-6 py-4 whitespace-nowrap" id="descriptionCell">
+								<input name="item_desc_1" id="item_desc_1" disabled />
+								<input type="hidden" name="item_desc_hidden_1" id="item_desc_hidden_1" />
+							</td>
 
-						<td class="px-6 py-4 whitespace-nowrap">
-							<input type="number" class="quantity-input w-20 text-gray-900 bg-white rounded-lg border-none" min="1" value="0" name="item_quantity_1" id="item_quantity_1" onchange="calculateItemTotal(this.name)" />
-						</td>
-						<td class="px-6 py-4 whitespace-nowrap">
-							<input type="text" class="quantity-input text-gray-900 bg-white rounded-lg w-20 border-none" name="unit_price_1" id="unit_price_1" disabled />
-						</td>
-						<td class="px-6 py-4 whitespace-nowrap">
-							<select class="discount-type-select bg-white border-lg text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-16 p-2.5 border-none" name="discount_type_1" id="discount_type_1" onchange="calculateItemTotal(this.name)">
-								<option value="percentage">%</option>
-								<option value="amount">$</option>
-							</select>
-						</td>
-						<td class="px-6 py-4 whitespace-nowrap">
-							<input type="number" class="discount-input w-20 text-gray-900 bg-white rounded-lg border-none" min="0" value="0" name="discount_val_1" id="discount_val_1" oninput="calculateItemTotal(this.name)" />
-						</td>
-						<td class="px-6 py-4 whitespace-nowrap"><span class="ml-2">$</span><input type="number" class="amount-input rounded-lg text-gray-900 bg-white w-28 border-none" min="0" value="" name="sub_total_1" id="sub_total_1" disabled /></td>
-					</tr>
-				</tbody>
-			</table>
+							<td class="px-6 py-4 whitespace-nowrap">
+								<input type="number" class="quantity-input w-20 text-gray-900 bg-white rounded-lg border-none" min="1" value="0" name="item_quantity_1" id="item_quantity_1" onchange="calculateItemTotal(this.name)" />
+							</td>
+							<td class="px-6 py-4 whitespace-nowrap">
+								<input type="text" class="quantity-input text-gray-900 bg-white rounded-lg w-20 border-none" name="unit_price_1" id="unit_price_1" disabled />
+								<input type="hidden" name="unit_price_hidden_1" id="unit_price_hidden_1" />
+							</td>
+							<td class="px-6 py-4 whitespace-nowrap">
+								<select class="discount-type-select bg-white border-lg text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-16 p-2.5 border-none" name="discount_type_1" id="discount_type_1" onchange="calculateItemTotal(this.name)">
+									<option value="percentage">%</option>
+									<option value="amount">$</option>
+								</select>
+							</td>
+							<td class="px-6 py-4 whitespace-nowrap">
+								<input type="number" class="discount-input w-20 text-gray-900 bg-white rounded-lg border-none" min="0" value="0" name="discount_val_1" id="discount_val_1" oninput="calculateItemTotal(this.name)" />
+							</td>
+							<td class="px-6 py-4 whitespace-nowrap">
+								<span class="ml-2">$</span>
+								<input type="number" class="amount-input rounded-lg text-gray-900 bg-white w-28 border-none" min="0" value="" name="sub_total_1" id="sub_total_1" disabled />
+								<input type="hidden" value="" name="sub_total_hidden_1" id="sub_total_hidden_1" />
+							</td>
+						</tr>
+					</tbody>
+				</table>
 
-			<div class="px-2 h-[160px] flex justify-between">
-				<button class="px-2 w-[50px] h-[40px] rounded-xl bg-yellow-600 text-white" id="insertRow">
-					<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-8 h-8 text-white-900">
-						<path stroke-linecap="round" stroke-linejoin="round" d="M12 9v6m3-3H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" />
-					</svg>
-				</button>
+				<div class="px-2 h-[160px] flex justify-between">
+					<button class="px-2 w-[50px] h-[40px] rounded-xl bg-yellow-600 text-white" id="insertRow">
+						<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-8 h-8 text-white-900">
+							<path stroke-linecap="round" stroke-linejoin="round" d="M12 9v6m3-3H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+						</svg>
+					</button>
 
-				<div class="flex flex-col justify-between mr-[130px]">
-					<div class="ml-[106px]">
-						<span class="font-semibold">Subtotal</span><span class="ml-3">$</span>
-						<span class="ml-[6px]"><input disabled type="text" class="w-24 text-gray-900 bg-white rounded-lg border-none" id="grand_total" /></span>
-					</div>
-					<div class="flex">
-						<div class="flex gap-x-6">
-							<select class="discount-type-select bg-white border-lg text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-16 border-none px-2" name="discount_type_total" id="discount_type_total" onchange="calculate_subtotal_discount()">
-								<option value="percentage">%</option>
-								<option value="amount">$</option>
-							</select>
-							<input type="number" name="discount_val_total" class="rounded w-16 border-none" value="0" onchange="calculate_subtotal_discount()" id="discount_val_total" />
-							<span class="my-2 ml-1">$</span><input type="text" id="grand_discount" class="w-24 text-gray-900 bg-white rounded-lg border-none -ml-3" disabled />
+					<div class="flex flex-col justify-between mr-[130px]">
+						<div class="ml-[106px]">
+							<span class="font-semibold">Subtotal</span><span class="ml-3">$</span>
+							<span class="ml-[6px]">
+								<input disabled type="text" class="w-24 text-gray-900 bg-white rounded-lg border-none" id="grand_total" name="grand_total" />
+								<input type="hidden" id="grand_total_hidden" name="grand_total_hidden" />
+							</span>
 						</div>
-					</div>
-					<div class="flex ml-[100px]">
-						<span class="font-semibold mt-2">Shipping</span>
-						<span class="ml-[15px] mr-[11px] mt-2">$</span>
-						<span class="mr-[5px]">
-							<input type="text" name="ship_total" class="w-24 text-gray-900 bg-white rounded-lg mb-2 h-[35px]" id="ship_total" onchange="{calculate_subtotal_discount()}" />
-						</span>
-					</div>
-					<div class="border-t ml">
-						<span class="font-semibold ml-[102px]">Net Total</span>
-						<span class="ml-[7px]">$</span>
-						<span class="ml-[6px]"><input type="text" disabled name="net_total" class="w-24 text-gray-900 bg-white rounded-lg border-none" id="net_total" /></span>
+						<div class="flex">
+							<div class="flex gap-x-6">
+								<select class="discount-type-select bg-white border-lg text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-16 border-none px-2" name="discount_type_total" id="discount_type_total" onchange="calculate_subtotal_discount()">
+									<option value="percentage">%</option>
+									<option value="amount">$</option>
+								</select>
+								<input type="number" name="discount_val_total" class="rounded w-16 border-none" value="0" onchange="calculate_subtotal_discount()" id="discount_val_total" />
+								<span class="my-2 ml-1">$</span>
+								<input type="text" id="grand_discount" class="w-24 text-gray-900 bg-white rounded-lg border-none -ml-3" disabled />
+								<input type="hidden" id="grand_discount_hidden" name="grand_discount_hidden" />
+							</div>
+						</div>
+						<div class="flex ml-[100px]">
+							<span class="font-semibold mt-2">Shipping</span>
+							<span class="ml-[15px] mr-[11px] mt-2">$</span>
+							<span class="mr-[5px]">
+								<input type="text" name="ship_total" class="w-24 text-gray-900 bg-white rounded-lg mb-2 h-[35px]" id="ship_total" onchange="{calculate_subtotal_discount()}" />
+							</span>
+						</div>
+						<div class="border-t ml">
+							<span class="font-semibold ml-[102px]">Net Total</span>
+							<span class="ml-[7px]">$</span>
+							<span class="ml-[6px]">
+								<input type="text" disabled name="net_total" class="w-24 text-gray-900 bg-white rounded-lg border-none" id="net_total" />
+								<input type="hidden" name="net_total_hidden" id="net_total_hidden" />
+							</span>
+						</div>
 					</div>
 				</div>
 			</div>
-		</div>
-		<div class="flex justify-end">
-			<button class="w-32 h-[50px] text-center rounded bg-green-500 text-white" onclick="saveOrder()">Save</button>
-		</div>
+			<input type="hidden" style="display: none" name="item_counter" id="item_counter" value="1" />
+			<input type="hidden" style="display: none" name="item_counter_list" id="item_counter_list" value="1" />
+			<div class="flex justify-end">
+				<input type="submit" class="w-32 h-[50px] text-center rounded bg-green-500 text-white" />
+			</div>
+		</form>
 	</div>
 </div>
-<input type="hidden" style="display: none" name="item_counter" id="item_counter" value="1" />
-<input type="hidden" style="display: none" name="item_counter_list" id="item_counter_list" value="1" />
+
 <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAjQbpLmWtP5SBJQ6RWzplfIg0Sd0rpDYg&libraries=places&callback=initAutocomplete"></script>
 
 <script>
@@ -301,12 +321,15 @@
               <!-- Products options will be dynamically generated by Flask -->
               {% for product in products %}
               <option value="{{ product.product_id }}">{{product.name}}</option>
+			  
               {% endfor %}
             </select>
+			<input type="hidden" name="product_code_hidden_${counter}" id="product_code_hidden_${counter}" value=""/>
           </td>
 
           <td class="px-6 py-4 whitespace-nowrap" id="descriptionCell">
             <input name="item_desc_${counter}" class="border-none" id="item_desc_${counter}" disabled/>
+            <input type='hidden' name="item_desc_hidden_${counter}" id="item_desc_hidden_${counter}"/>
           </td>
 
           <td class="px-6 py-4 whitespace-nowrap">
@@ -322,6 +345,7 @@
           </td>
           <td class="px-6 py-4 whitespace-nowrap">
             <input type="text" class="quantity-input text-gray-900 bg-white rounded-lg w-20 border-none" name="unit_price_${counter}" id="unit_price_${counter}" disabled/>
+            <input type="hidden" name="unit_price_hidden_${counter}" id="unit_price_hidden_${counter}"/>
           </td>
           <td class="px-6 py-4 whitespace-nowrap">
             <select
@@ -354,6 +378,14 @@
               name="sub_total_${counter}"
               id="sub_total_${counter}"
               disabled
+            />
+            $<input
+              type="hidden"
+              min="0"
+              value=""
+              name="sub_total_hidden_${counter}"
+              id="sub_total_hidden_${counter}"
+              
             />
           </td>
           <td class="px-6 py-4 whitespace-nowrap text-center">
@@ -411,7 +443,12 @@
 			url: "/get_item_details?id=" + value,
 			success: function (data, status, xhr) {
 				$("#item_desc_" + row_num).val(data.description);
+				$("#item_desc_hidden_" + row_num).val(data.description);
 				$("#unit_price_" + row_num).val(data.price);
+				$("#unit_price_hidden_" + row_num).val(data.price);
+				// alert(data.product_code)
+				$("#product_code_hidden_" + row_num).val(data.product_code);
+
 				calculateItemTotal(name);
 			},
 		});
@@ -436,8 +473,10 @@
 		// Calculate Sub Total
 		sub_total = parseFloat(sub_total).toFixed(2);
 		$("#sub_total_" + row_num).val(sub_total);
+		$("#sub_total_hidden_" + row_num).val(sub_total);
 		calculate_subtotal();
 		calculate_subtotal_discount();
+		handleCustomer();
 	}
 
 	function calculate_subtotal() {
@@ -456,6 +495,7 @@
 		}
 		total = parseFloat(total).toFixed(2);
 		$("#grand_total").val(total);
+		$("#grand_total_hidden").val(total);
 	}
 
 	function calculate_subtotal_discount() {
@@ -481,9 +521,11 @@
 
 		grand_discount = parseFloat(percentage_change).toFixed(2);
 		$("#grand_discount").val(grand_discount);
+		$("#grand_discount_hidden").val(grand_discount);
 
 		net_total = parseFloat(net_total).toFixed(2);
 		$("#net_total").val(net_total);
+		$("#net_total_hidden").val(net_total);
 	}
 </script>
 
@@ -532,6 +574,7 @@
 				console.log(data);
 
 				$("#current_customer").append('<option value="' + data.id + '" selected>' + data.first_name + " " + data.last_name + "</option>");
+				$("#current_customer_hidden").val(data.id);
 				$("#current_customer").select2("refresh");
 			},
 			error: function (xhr, textStatus, error) {
@@ -541,62 +584,18 @@
 		});
 	});
 </script>
+<script>
+	function handleCustomer() {
+		// var customer = $("#current_customer").val();
+		// var selectedText = window.getSelection().toString();
+		// alert(selectedText);
+		// console.log(customer);
+		// $("#current_customer_hidden").val(customer);
 
-
-<!-- For order -->
-<!-- <script>
-	var customer_id = document.getElementById("current_customer").value;
-	var discount_amt = document.getElementById("grand_discount").value;
-	var product = document.getElementById("product_1").value;
-	var quantity = document.getElementById("item_quantity_1").value;
-	var unit_price = document.getElementById("unit_price_1").value;
-	
-	var unit_discount_type = document.getElementById("discount_type_1").value;
-	var unit_discount_value = document.getElementById("discount_val_1").value;
-	
-
-
-
-	var amount = document.getElementById("sub_total_1").value;
-	var grand_total = document.getElementById("grand_total").value;
-	var shipping = document.getElementById("ship_total").value;
-	var net_total = document.getElementById("net_total").value;
-	
-
-	gross_cost = unit_price * quantity; //cost without deduction
-
-	
-	discount_per = db.Column(db.Numeric((precision = 8), (scale = 2)), (nullable = True));
-	
-	shipping_cost = db.Column(db.Numeric((precision = 8), (scale = 2)), (nullable = True));
-	total_amount = db.Column(db.Numeric((precision = 8), (scale = 2)), (nullable = True));
-
-	var data = {
-		customer: customer,
-		product: product,
-		quantity: quantity,
-		unit_price: unit_price,
-		// unit_discount_type: unit_discount_type,
-		// unit_discount_value: unit_discount_value,
-		amount: amount,
-		grand_total: grand_total,
-		grand_discount: grand_discount,
-		shipping: shipping,
-		net_total: net_total,
-	};
-
-	var xhr = new XMLHttpRequest();
-	xhr.open("POST", "/create-order", true);
-	xhr.setRequestHeader("Content-Type", "application/json");
-
-	xhr.onreadystatechange = function () {
-		if (xhr.readyState === 4 && xhr.status === 200) {
-			var response = JSON.parse(xhr.responseText);
-			console.log(response.message); // Log the response message
-		}
-	};
-
-	xhr.send(JSON.stringify(data));
-</script> -->
+		var selectCustomer = document.getElementById("current_customer");
+		var selectedValue = selectCustomer.value;
+		$("#current_customer_hidden").val(selectedValue);
+	}
+</script>
 
 {% endblock %}

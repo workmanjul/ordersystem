@@ -56,13 +56,15 @@ class InventoryPrice(db.Model):
 class Order(db.Model):
     __tablename__='orders'
     id = db.Column(db.Integer,primary_key=True)
-    added_date = db.Column(db.DateTime, default=datetime.utcnow)
     customer_id = db.Column(db.Integer,nullable=False)
+    created_date = db.Column(db.DateTime, default=datetime.utcnow)
     gross_cost = db.Column(db.Numeric(precision=8, scale=2),nullable=True)
-    discount_per = db.Column(db.Numeric(precision=8, scale=2),nullable=True)
-    discount_amt = db.Column(db.Numeric(precision=8, scale=2),nullable=True)
-    shipping_cost = db.Column(db.Numeric(precision=8, scale=2),nullable=True)
-    total_amount = db.Column(db.Numeric(precision=8, scale=2),nullable=True)
+    discount_type = db.Column(db.String(255),nullable=True)
+    discount_value = db.Column(db.Numeric(precision=8, scale=2), nullable=True)
+    discount_amount=db.Column(db.Numeric(precision=8, scale=2), nullable=True)
+    shipping_cost = db.Column(db.Numeric(precision=8, scale=2), nullable=True)
+    total_amount = db.Column(db.Numeric(precision=8, scale=2), nullable=True)
+    
 
 class OrderDetails(db.Model):
     __tablename__='order_details'
@@ -72,9 +74,10 @@ class OrderDetails(db.Model):
     product_code = db.Column(db.String(255))
     product_description = db.Column(db.Text())
     unit_price = db.Column(db.Numeric(precision=8, scale=2),nullable=True)
-    discount_perc = db.Column(db.Numeric(precision=8, scale=2),nullable=True)
-    discount_amt = db.Column(db.Numeric(precision=8, scale=2),nullable=True)
-    product_cost = db.Column(db.Numeric(precision=8, scale=2),nullable=True)
+    discount_type = db.Column(db.String(255),nullable=True)
+    discount_value = db.Column(db.Numeric(precision=8, scale=2),nullable=True)
+    item_quantity=db.Column(db.Integer, nullable=False)
+    subtotal_amount = db.Column(db.Numeric(precision=8, scale=2),nullable=True)
 
 
 class SalesDetails(db.Model):
