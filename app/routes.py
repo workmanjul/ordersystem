@@ -2,6 +2,8 @@ from flask import redirect, render_template,url_for,request,session,flash,jsonif
 from app import app,db
 from .models import *
 from werkzeug.security import check_password_hash
+import pdfkit
+from flask import send_file
 
 # FOR Login
 @app.route('/login', methods=['GET', 'POST'])
@@ -165,28 +167,68 @@ def createOrder():
 	
 	
 	return redirect(url_for('listOrder'))
+
+
+@app.route('/update-order/<int:id>',methods=['GET','POST'])
+def updateOrder(id):
+	orders = db.session.query(Order, OrderDetails).join(OrderDetails, Order.id == OrderDetails.order_id).filter(OrderDetails.order_id == id).all()
+	products=Product.query.all()
+	customers=Customer.query.all()
+	current_customer=Customer.query.get(orders[0][0].customer_id)
+	user=User.query.get(session['user_id'])
+	return render_template('order/update.html', orders=orders,user=user,products=products,customers=customers,current_customer=current_customer)
+
+
+@app.route('/view-order/<int:id>',methods=['POST','GET'])
+def viewOrder(id):
+	orders = db.session.query(Order, OrderDetails).join(OrderDetails, Order.id == OrderDetails.order_id).filter(OrderDetails.order_id == id).all()
 	
-	
+	# for order, order_details in orders:
+	# 	print(order.id, order_details.product_code)
+	# 	print(order_details.subtotal_amount, order_details.item_quantity,order_details.product_code)
 
+	user=User.query.get(session['user_id'])
+	customer=Customer.query.get(orders[0][0].customer_id)
 
+	return render_template('order/viewOrder.html',orders=orders,user=user,customer=customer)
 
-@app.route('/update-order',methods=['GET','POST'])
-def updateOrder():
+@app.route('/download-pdf')
+def download_pdf():
+    # Path to the HTML template
+    template_path = 'order/viewOrder.html'
 
-	return render_template('order/update.html')
+    # Generate the PDF
+    pdfkit.from_file(template_path, 'output.pdf')
 
+    # Set the appropriate headers for the response
+    headers = {
+        'Content-Disposition': 'attachment; filename=output.pdf',
+        'Content-Type': 'application/pdf'
+    }
+
+    # Return the PDF file as a response
+    return send_file('output.pdf', as_attachment=True, headers=headers)
 
 
 @app.route('/delete-order/<int:id>')
 def deleteOrder(id):
-	order=Order.query.get(id)
-	if order is None:
-		return "Item not found",404
-	
-	db.session.delete(order)
-	db.session.commit()
-	return redirect(url_for('listOrder'))
+    try:
+        order = Order.query.get(id)
+        if order is None:
+            return "Item not found", 404
 
+        orderDetails = OrderDetails.query.filter_by(order_id=order.id).all()
+        
+        # Delete the order and its related order details
+        db.session.delete(order)
+        for order_detail in orderDetails:
+            db.session.delete(order_detail)
+
+        db.session.commit()
+        return redirect(url_for('listOrder'))
+    except Exception as e:
+        # Handle any exceptions that occur during the deletion process
+        return "Error occurred while deleting the order", 500
 
 
 

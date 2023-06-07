@@ -1,4 +1,4 @@
-{% extends './base.html' %} {% block title %}Create Order {% endblock title %} {% block css_block %}
+{% extends './base.html' %} {% block title %}View Order {% endblock title %} {% block css_block %}
 <style type="text/css">
 	.custom-select + .select2-container .select2-selection--single {
 		height: 2.2rem; /* Adjust the height value as needed */
@@ -13,11 +13,10 @@
 <div class="w-full flex flex-col p-4">
 	<div class="h-[170px] border-b-4 border-gray-500 text-gray-900 shadow-xl rounded-lg">
 		<h1 class="text-xl font-bold text-gray-700 px-4 py-4">Choose Customer</h1>
+
 		<div class="flex gap-x-8 px-4">
 			<select data-te-select-init data-te-select-filter="true" class="rounded w-[50%] px-4 select2-js custom-select" id="current_customer" name="current_customer" onchange="handleCustomer()">
-				{% for customer in customers %}
-				<option value="{{customer.id}}">{{customer.first_name}} {{customer.last_name}}</option>
-				{%endfor%}
+				<option value="{{orders[0][0].customer_id}}">{{customer.first_name}} {{customer.last_name}}</option>
 			</select>
 
 			<button data-modal-target="defaultModal" data-modal-toggle="defaultModal" class="block text-white bg-blue-500 font-medium rounded-lg text-sm px-5 text-center sm:h-8 md:h-[40px]" type="button" id="">Create New Customer</button>
@@ -111,11 +110,13 @@
 
 	<!--for making order-->
 
-	<div class="mt-4 bg-white md:w-auto sm:w-full relative border-b-2 text-gray-900 shadow-xl rounded-lg min-h-[320px]">
+	<div class="mt-4 bg-white md:w-auto sm:w-full relative border-b-2 text-gray-900 rounded-lg overflow-hidden">
 		<form action="{{url_for('createOrder')}}" method="POST">
 			<input type="hidden" id="current_customer_hidden" name="current_customer_hidden" value="" />
+
 			<div class="text-xl font-bold text-gray-700 px-4 py-4 overflow-x-auto">Create Order</div>
-			<div class="overflow-x-auto">
+
+			<div class="overflow-x-auto overflow-hidden">
 				<table class="table-auto border rounded border-gray-200 w-full my-2 mx-auto" id="order_table">
 					<thead>
 						<tr>
@@ -131,88 +132,93 @@
 						</tr>
 					</thead>
 					<tbody class="bg-white divide-y divide-gray-200" id="orderTable">
+						{% for order,orderDetail in orders %}
 						<tr class="h-2" id="defaultRow">
 							<td class="px-6 w-1 py-4 whitespace-nowrap">1</td>
 							<td class="px-6 w-64 py-4 whitespace-nowrap sm:w-32">
-								<select id="product_1" class="product-select bg-white border-lg text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 select2-js custom-select" data-live-search="true" name="product_1" onchange="populateItemDetails(this.value,this.name)">
-									<option value="0">Search Product</option>
-									{% for product in products %}
-									<option value="{{ product.product_id }}">{{product.name}}</option>
-									{% endfor %}
+								<select id="product_1" class="product-select bg-white border-lg text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 select2-js custom-select" data-live-search="true" name="product_1" onchange="populateItemDetails(this.value,this.name)" value="{{orderDetail.product_code}}">
+									<option value="{{ orderDetail.product_id }}">{{orderDetail.product_code}}</option>
 								</select>
-								<input type="hidden" name="product_code_hidden_1" id="product_code_hidden_1" value=""/>
-								
+								<input type="hidden" name="product_code_hidden_1" id="product_code_hidden_1" value="" />
 							</td>
 
 							<td class="px-6 py-4 whitespace-nowrap" id="descriptionCell">
-								<input name="item_desc_1" id="item_desc_1" disabled />
+								<input name="item_desc_1" id="item_desc_1" disabled value="{{orderDetail.product_description}}" />
 								<input type="hidden" name="item_desc_hidden_1" id="item_desc_hidden_1" />
 							</td>
 
 							<td class="px-6 py-4 whitespace-nowrap">
-								<input type="number" class="quantity-input w-20 text-gray-900 bg-white rounded-lg border-none" min="1" value="0" name="item_quantity_1" id="item_quantity_1" onchange="calculateItemTotal(this.name)" />
+								<input type="number" class="quantity-input w-20 text-gray-900 bg-white rounded-lg border-none" name="item_quantity_1" id="item_quantity_1" onchange="calculateItemTotal(this.name)" value="{{orderDetail.item_quantity}}" />
 							</td>
 							<td class="px-6 py-4 whitespace-nowrap">
-								<input type="text" class="quantity-input text-gray-900 bg-white rounded-lg w-20 border-none" name="unit_price_1" id="unit_price_1" disabled />
+								<input type="text" class="quantity-input text-gray-900 bg-white rounded-lg w-20 border-none" name="unit_price_1" id="unit_price_1" disabled value="{{orderDetail.unit_price}}" />
 								<input type="hidden" name="unit_price_hidden_1" id="unit_price_hidden_1" />
 							</td>
 							<td class="px-6 py-4 whitespace-nowrap">
 								<select class="discount-type-select bg-white border-lg text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-16 p-2.5 border-none" name="discount_type_1" id="discount_type_1" onchange="calculateItemTotal(this.name)">
+									{% if orderDetail.discount_type =='percentage' %}
 									<option value="percentage">%</option>
+									{% else %}
 									<option value="amount">$</option>
+									{% endif %}
 								</select>
 							</td>
 							<td class="px-6 py-4 whitespace-nowrap">
-								<input type="number" class="discount-input w-20 text-gray-900 bg-white rounded-lg border-none" min="0" value="0" name="discount_val_1" id="discount_val_1" oninput="calculateItemTotal(this.name)" />
+								<input type="number" class="discount-input w-20 text-gray-900 bg-white rounded-lg border-none" name="discount_val_1" id="discount_val_1" oninput="calculateItemTotal(this.name)" value="{{orderDetail.discount_value}}" />
 							</td>
 							<td class="px-6 py-4 whitespace-nowrap">
 								<span class="ml-2">$</span>
-								<input type="number" class="amount-input rounded-lg text-gray-900 bg-white w-28 border-none" min="0" value="" name="sub_total_1" id="sub_total_1" disabled />
+								<input type="number" class="amount-input rounded-lg text-gray-900 bg-white w-28 border-none" min="0" name="sub_total_1" id="sub_total_1" disabled value="{{orderDetail.subtotal_amount}}" />
 								<input type="hidden" value="" name="sub_total_hidden_1" id="sub_total_hidden_1" />
 							</td>
 						</tr>
+						{%endfor%}
 					</tbody>
 				</table>
 
 				<div class="px-2 h-[160px] flex justify-between">
-					<button class="px-2 w-[50px] h-[40px] rounded-xl bg-yellow-600 text-white" id="insertRow">
+					<!-- <button class="px-2 w-[50px] h-[40px] rounded-xl bg-yellow-600 text-white" id="insertRow">
 						<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-8 h-8 text-white-900">
 							<path stroke-linecap="round" stroke-linejoin="round" d="M12 9v6m3-3H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" />
 						</svg>
-					</button>
+					</button> -->
+					<div></div>
 
 					<div class="flex flex-col justify-between mr-[130px]">
 						<div class="ml-[106px]">
-							<span class="font-semibold">Subtotal</span><span class="ml-3">$</span>
+							<span class="font-semibold">Subtotal</span><span class="ml-6">$</span>
 							<span class="ml-[6px]">
-								<input disabled type="text" class="w-24 text-gray-900 bg-white rounded-lg border-none" id="grand_total" name="grand_total" />
+								<input disabled type="text" class="w-24 text-gray-900 bg-white rounded-lg border-none" id="grand_total" name="grand_total" value="{{orders[0][0].gross_cost}}" />
 								<input type="hidden" id="grand_total_hidden" name="grand_total_hidden" />
 							</span>
 						</div>
 						<div class="flex">
 							<div class="flex gap-x-6">
 								<select class="discount-type-select bg-white border-lg text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-16 border-none px-2" name="discount_type_total" id="discount_type_total" onchange="calculate_subtotal_discount()">
+									{% if orders[0][0].discount_type=="percentage" %}
 									<option value="percentage">%</option>
+									{%else%}
 									<option value="amount">$</option>
+									{%endif%}
 								</select>
-								<input type="number" name="discount_val_total" class="rounded w-16 border-none" value="0" onchange="calculate_subtotal_discount()" id="discount_val_total" />
-								<span class="my-2 ml-1">$</span>
-								<input type="text" id="grand_discount" class="w-24 text-gray-900 bg-white rounded-lg border-none -ml-3" disabled />
+								<input type="number" name="discount_val_total" class="rounded w-[80px] border-none" onchange="calculate_subtotal_discount()" id="discount_val_total" value="{{orders[0][0].discount_value}}" />
+								<span class="my-2">$</span>
+								<input type="text" id="grand_discount" class="w-24 text-gray-900 bg-white rounded-lg border-none -ml-3" disabled value="{{orders[0][0].discount_amount}}" />
 								<input type="hidden" id="grand_discount_hidden" name="grand_discount_hidden" />
 							</div>
 						</div>
-						<div class="flex ml-[100px]">
+						<div class="flex ml-[108px]">
 							<span class="font-semibold mt-2">Shipping</span>
-							<span class="ml-[15px] mr-[11px] mt-2">$</span>
+							<span class="ml-[18px] mr-[11px] mt-2">$</span>
 							<span class="mr-[5px]">
-								<input type="text" name="ship_total" class="w-24 text-gray-900 bg-white rounded-lg mb-2 h-[35px]" id="ship_total" onchange="{calculate_subtotal_discount()}" />
+								<input type="text" name="ship_total" class="w-24 text-gray-900 bg-white rounded-lg mb-2 h-[35px]" id="ship_total" onchange="{calculate_subtotal_discount()}" value="{{orders[0][0].shipping_cost}}" disabled />
 							</span>
 						</div>
 						<div class="border-t ml">
-							<span class="font-semibold ml-[102px]">Net Total</span>
+							<span class="font-semibold ml-[110px]">Net Total</span>
 							<span class="ml-[7px]">$</span>
 							<span class="ml-[6px]">
-								<input type="text" disabled name="net_total" class="w-24 text-gray-900 bg-white rounded-lg border-none" id="net_total" />
+								<input type="text" disabled name="net_total" class="w-24 text-gray-900 bg-white rounded-lg border-none" id="net_total" value="{{orders[0][0].total_amount}}" />
 								<input type="hidden" name="net_total_hidden" id="net_total_hidden" />
 							</span>
 						</div>
@@ -221,9 +227,9 @@
 			</div>
 			<input type="hidden" style="display: none" name="item_counter" id="item_counter" value="1" />
 			<input type="hidden" style="display: none" name="item_counter_list" id="item_counter_list" value="1" />
-			<div class="flex justify-end">
+			<!-- <div class="flex justify-end">
 				<input type="submit" class="w-32 h-[50px] text-center rounded bg-green-500 text-white" />
-			</div>
+			</div> -->
 		</form>
 	</div>
 </div>
@@ -574,8 +580,8 @@
 				console.log(data);
 
 				$("#current_customer").append('<option value="' + data.id + '" selected>' + data.first_name + " " + data.last_name + "</option>");
-				$("#current_customer").select2("refresh");
 				$("#current_customer_hidden").val(data.id);
+				$("#current_customer").select2("refresh");
 			},
 			error: function (xhr, textStatus, error) {
 				console.log(xhr.responseText);
