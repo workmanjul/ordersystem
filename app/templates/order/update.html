@@ -15,9 +15,11 @@
 		<h1 class="text-xl font-bold text-gray-700 px-4 py-4">Choose Customer</h1>
 		<div class="flex gap-x-8 px-4">
 			<select data-te-select-init data-te-select-filter="true" class="rounded w-[50%] px-4 select2-js custom-select" id="current_customer" name="current_customer" onchange="handleCustomer()" value="{{current_customer.first_name}} {{current_customer.last_name}}">
-				{% for customer in customers %}
+				{% for customer in customers %} {% if orders[0][0].customer_id == customer.id %}
+				<option value="{{customer.id}}" selected>{{customer.first_name}} {{customer.last_name}}</option>
+				{% else %}
 				<option value="{{customer.id}}">{{customer.first_name}} {{customer.last_name}}</option>
-				{%endfor%}
+				{% endif %} {% endfor %}
 			</select>
 
 			<button data-modal-target="defaultModal" data-modal-toggle="defaultModal" class="block text-white bg-blue-500 font-medium rounded-lg text-sm px-5 text-center sm:h-8 md:h-[40px]" type="button" id="">Create New Customer</button>
@@ -131,46 +133,56 @@
 						</tr>
 					</thead>
 					<tbody class="bg-white divide-y divide-gray-200" id="orderTable">
-						{% for order,orderDetail in orders %}
+						{%for order,orderDetail in orders%}
 						<tr class="h-2" id="defaultRow">
 							<td class="px-6 w-1 py-4 whitespace-nowrap">1</td>
 							<td class="px-6 w-64 py-4 whitespace-nowrap sm:w-32">
 								<select id="product_1" class="product-select bg-white border-lg text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 select2-js custom-select" data-live-search="true" name="product_1" onchange="populateItemDetails(this.value,this.name)">
 									<option value="0">Search Product</option>
-									{% for product in products %}
-									<option value="{{ product.product_id }}">{{product.name}}</option>
-									{% endfor %}
+
+									{% for product in products %} {% if orderDetail.product_id == product.product_id %}
+									<option value="{{ product.product_id }}" selected>{{product.product_code}}</option>
+									% else %
+									<option value="{{ product.product_id }}">{{product.product_code}}</option>
+									{%endif%} {% endfor %}
 								</select>
-								<input type="hidden" name="product_code_hidden_1" id="product_code_hidden_1" value=""/>
-								
+								<input type="hidden" name="product_code_hidden_1" id="product_code_hidden_1" value="" />
 							</td>
 
 							<td class="px-6 py-4 whitespace-nowrap" id="descriptionCell">
-								<input name="item_desc_1" id="item_desc_1" disabled value="{{orderDetail.product_description}}"/>
+								<input name="item_desc_1" id="item_desc_1" disabled value="{{orderDetail.product_description}}" />
 								<input type="hidden" name="item_desc_hidden_1" id="item_desc_hidden_1" />
 							</td>
 
 							<td class="px-6 py-4 whitespace-nowrap">
-								<input type="number" class="quantity-input w-20 text-gray-900 bg-white rounded-lg border-none" min="1" value="0" name="item_quantity_1" id="item_quantity_1" onchange="calculateItemTotal(this.name)" value="{{orderDetail.item_quantity}}"/>
+								<input type="number" class="quantity-input w-20 text-gray-900 bg-white rounded-lg border-none" min="1" name="item_quantity_1" id="item_quantity_1" onchange="calculateItemTotal(this.name)" value="{{orderDetail.item_quantity}}" />
 							</td>
 							<td class="px-6 py-4 whitespace-nowrap">
-								<input type="text" class="quantity-input text-gray-900 bg-white rounded-lg w-20 border-none" name="unit_price_1" id="unit_price_1" disabled value="{{orderDetail.unit_price}}"/>
+								<input type="text" class="quantity-input text-gray-900 bg-white rounded-lg w-20 border-none" name="unit_price_1" id="unit_price_1" disabled value="{{orderDetail.unit_price}}" />
 								<input type="hidden" name="unit_price_hidden_1" id="unit_price_hidden_1" />
 							</td>
 							<td class="px-6 py-4 whitespace-nowrap">
-								<select class="discount-type-select bg-white border-lg text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-16 p-2.5 border-none" name="discount_type_1" id="discount_type_1" onchange="calculateItemTotal(this.name)" value="{{orderDetail.discount_value}}">
+								<select class="discount-type-select bg-white border-lg text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-16 p-2.5 border-none" name="discount_type_1" id="discount_type_1" onchange="calculateItemTotal(this.name)" value="">
+									{% if orderDetail.discount_type == 'percentage'%}
 									<option value="percentage">%</option>
+									{%else%}
 									<option value="amount">$</option>
+									{%endif%}
 								</select>
 							</td>
 							<td class="px-6 py-4 whitespace-nowrap">
-								<input type="number" class="discount-input w-20 text-gray-900 bg-white rounded-lg border-none" min="0" value="0" name="discount_val_1" id="discount_val_1" oninput="calculateItemTotal(this.name)" />
+								<input type="number" class="discount-input w-20 text-gray-900 bg-white rounded-lg border-none" min="0" value="{{orderDetail.discount_value}}" name="discount_val_1" id="discount_val_1" oninput="calculateItemTotal(this.name)" />
 							</td>
 							<td class="px-6 py-4 whitespace-nowrap">
 								<span class="ml-2">$</span>
-								<input type="number" class="amount-input rounded-lg text-gray-900 bg-white w-28 border-none" min="0" value="" name="sub_total_1" id="sub_total_1" disabled value="{{orderDetail.subtotal_amount}}"/>
+								<input type="number" class="amount-input rounded-lg text-gray-900 bg-white w-28 border-none" min="0" value="{{orderDetail.subtotal_amount}}" name="sub_total_1" id="sub_total_1" disabled/>
 								<input type="hidden" value="" name="sub_total_hidden_1" id="sub_total_hidden_1" />
 							</td>
+							<td class="px-6 py-4 whitespace-nowrap text-center">
+								<button id="deleteRow_${counter}" class="delete-row-button" onclick="remove_order_item(this.id)">
+								  &#10005;
+								</button>
+							  </td>
 						</tr>
 						{%endfor%}
 					</tbody>
@@ -187,19 +199,22 @@
 						<div class="ml-[106px]">
 							<span class="font-semibold">Subtotal</span><span class="ml-3">$</span>
 							<span class="ml-[6px]">
-								<input disabled type="text" class="w-24 text-gray-900 bg-white rounded-lg border-none" id="grand_total" name="grand_total" />
+								<input disabled type="text" class="w-24 text-gray-900 bg-white rounded-lg border-none" id="grand_total" name="grand_total" value="{{orders[0][0].gross_cost}}"/>
 								<input type="hidden" id="grand_total_hidden" name="grand_total_hidden" />
 							</span>
 						</div>
 						<div class="flex">
 							<div class="flex gap-x-6">
 								<select class="discount-type-select bg-white border-lg text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-16 border-none px-2" name="discount_type_total" id="discount_type_total" onchange="calculate_subtotal_discount()">
+									{%if orders[0][0].discount_type=='percentage'%}
 									<option value="percentage">%</option>
+									{%else%}
 									<option value="amount">$</option>
+									{%endif%}
 								</select>
 								<input type="number" name="discount_val_total" class="rounded w-16 border-none" value="0" onchange="calculate_subtotal_discount()" id="discount_val_total" />
 								<span class="my-2 ml-1">$</span>
-								<input type="text" id="grand_discount" class="w-24 text-gray-900 bg-white rounded-lg border-none -ml-3" disabled />
+								<input type="text" id="grand_discount" class="w-24 text-gray-900 bg-white rounded-lg border-none -ml-3" disabled value="{{orders[0][0].discount_amount}}"/>
 								<input type="hidden" id="grand_discount_hidden" name="grand_discount_hidden" />
 							</div>
 						</div>
@@ -207,14 +222,14 @@
 							<span class="font-semibold mt-2">Shipping</span>
 							<span class="ml-[15px] mr-[11px] mt-2">$</span>
 							<span class="mr-[5px]">
-								<input type="text" name="ship_total" class="w-24 text-gray-900 bg-white rounded-lg mb-2 h-[35px]" id="ship_total" onchange="{calculate_subtotal_discount()}" />
+								<input type="text" name="ship_total" class="w-24 text-gray-900 bg-white rounded-lg mb-2 h-[35px]" id="ship_total" onchange="{calculate_subtotal_discount()}" value="{{orders[0][0].shipping_cost}}"/>
 							</span>
 						</div>
 						<div class="border-t ml">
 							<span class="font-semibold ml-[102px]">Net Total</span>
 							<span class="ml-[7px]">$</span>
 							<span class="ml-[6px]">
-								<input type="text" disabled name="net_total" class="w-24 text-gray-900 bg-white rounded-lg border-none" id="net_total" />
+								<input type="text" disabled name="net_total" class="w-24 text-gray-900 bg-white rounded-lg border-none" id="net_total" value="{{orders[0][0].total_amount}}"/>
 								<input type="hidden" name="net_total_hidden" id="net_total_hidden" />
 							</span>
 						</div>
@@ -313,14 +328,9 @@
 
 			cols += `<td class="px-6 w-[1%] py-4 whitespace-nowrap">${counter}</td>
           <td class="px-6 w-64 py-4 whitespace-nowrap">
-            <select
-              id="product_${counter}"
-              class="product-select bg-white border-lg text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 select2-js custom-select"
-              name="product_${counter}"
-              onchange="populateItemDetails(this.value,this.name)"
-            >
+            <select id="product_${counter}" class="product-select bg-white border-lg text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 select2-js custom-select" name="product_${counter}" onchange="populateItemDetails(this.value,this.name)">
             <option value="0">Search Product</option>
-              <!-- Products options will be dynamically generated by Flask -->
+              
               {% for product in products %}
               <option value="{{ product.product_id }}">{{product.name}}</option>
 			  
@@ -335,67 +345,27 @@
           </td>
 
           <td class="px-6 py-4 whitespace-nowrap">
-            <input
-              type="number"
-              class="quantity-input w-20 text-gray-900 bg-white rounded-lg border-none"
-              min="1"
-              value="0"
-              name="item_quantity_${counter}"
-              id="item_quantity_${counter}"
-              onchange="calculateItemTotal(this.name)"
-            />
+            <input type="number" class="quantity-input w-20 text-gray-900 bg-white rounded-lg border-none" min="1" value="0" name="item_quantity_${counter}" id="item_quantity_${counter}" onchange="calculateItemTotal(this.name)" />
           </td>
           <td class="px-6 py-4 whitespace-nowrap">
             <input type="text" class="quantity-input text-gray-900 bg-white rounded-lg w-20 border-none" name="unit_price_${counter}" id="unit_price_${counter}" disabled/>
             <input type="hidden" name="unit_price_hidden_${counter}" id="unit_price_hidden_${counter}"/>
           </td>
           <td class="px-6 py-4 whitespace-nowrap">
-            <select
-              class="discount-type-select bg-white border-lg text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-16 p-2.5 border-none"
-              name="discount_type_${counter}"
-              id="discount_type_${counter}"
-              onchange="calculateItemTotal(this.name)"
-            >
+            <select class="discount-type-select bg-white border-lg text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-16 p-2.5 border-none" name="discount_type_${counter}" id="discount_type_${counter}" onchange="calculateItemTotal(this.name)">
               <option value="percentage">%</option>
               <option value="amount">$</option>
             </select>
           </td>
           <td class="px-6 py-4 whitespace-nowrap">
-            <input
-              type="number"
-              class="discount-input w-24 text-gray-900 bg-white rounded-lg border-none"
-              min="0"
-              value="0"
-              name="discount_val_${counter}"
-              id="discount_val_${counter}"
-              oninput="calculateItemTotal(this.name)"
-            />
+            <input type="number" class="discount-input w-24 text-gray-900 bg-white rounded-lg border-none" min="0" value="0" name="discount_val_${counter}" id="discount_val_${counter}" oninput="calculateItemTotal(this.name)"/>
           </td>
           <td class="px-6 py-4 whitespace-nowrap">
-            $<input
-              type="number"
-              class="amount-input rounded-lg text-gray-900 bg-white w-28 border-none"
-              min="0"
-              value=""
-              name="sub_total_${counter}"
-              id="sub_total_${counter}"
-              disabled
-            />
-            $<input
-              type="hidden"
-              min="0"
-              value=""
-              name="sub_total_hidden_${counter}"
-              id="sub_total_hidden_${counter}"
-              
-            />
+            $<input type="number" class="amount-input rounded-lg text-gray-900 bg-white w-28 border-none" min="0" value="" name="sub_total_${counter}" id="sub_total_${counter}" disabled />
+            $<input type="hidden" min="0" value="" name="sub_total_hidden_${counter}" id="sub_total_hidden_${counter}"/>
           </td>
           <td class="px-6 py-4 whitespace-nowrap text-center">
-            <button
-              id="deleteRow_${counter}"
-              class="delete-row-button"
-              onclick="remove_order_item(this.id)"
-            >
+            <button id="deleteRow_${counter}" class="delete-row-button" onclick="remove_order_item(this.id)">
               &#10005;
             </button>
           </td>`;

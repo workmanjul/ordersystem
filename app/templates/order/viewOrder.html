@@ -15,8 +15,8 @@
 		<h1 class="text-xl font-bold text-gray-700 px-4 py-4">Choose Customer</h1>
 
 		<div class="flex gap-x-8 px-4">
-			<select data-te-select-init data-te-select-filter="true" class="rounded w-[50%] px-4 select2-js custom-select" id="current_customer" name="current_customer" onchange="handleCustomer()">
-				<option value="{{orders[0][0].customer_id}}">{{customer.first_name}} {{customer.last_name}}</option>
+			<select data-te-select-init data-te-select-filter="true" class="rounded w-[50%] px-4 select2-js custom-select" id="current_customer" name="current_customer" onchange="handleCustomer()" disabled>
+				<option value="{{orders[0][0].customer_id}}" selected>{{customer.first_name}} {{customer.last_name}}</option>
 			</select>
 
 			<button data-modal-target="defaultModal" data-modal-toggle="defaultModal" class="block text-white bg-blue-500 font-medium rounded-lg text-sm px-5 text-center sm:h-8 md:h-[40px]" type="button" id="">Create New Customer</button>
@@ -136,8 +136,8 @@
 						<tr class="h-2" id="defaultRow">
 							<td class="px-6 w-1 py-4 whitespace-nowrap">1</td>
 							<td class="px-6 w-64 py-4 whitespace-nowrap sm:w-32">
-								<select id="product_1" class="product-select bg-white border-lg text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 select2-js custom-select" data-live-search="true" name="product_1" onchange="populateItemDetails(this.value,this.name)" value="{{orderDetail.product_code}}">
-									<option value="{{ orderDetail.product_id }}">{{orderDetail.product_code}}</option>
+								<select id="product_1" class="product-select bg-white border-lg text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 select2-js custom-select" data-live-search="true" name="product_1" onchange="populateItemDetails(this.value,this.name)" value="{{orderDetail.product_code}}" disabled>
+									<option value="{{ orderDetail.product_id }}" selected>{{orderDetail.product_code}}</option>
 								</select>
 								<input type="hidden" name="product_code_hidden_1" id="product_code_hidden_1" value="" />
 							</td>
@@ -211,7 +211,7 @@
 							<span class="font-semibold mt-2">Shipping</span>
 							<span class="ml-[18px] mr-[11px] mt-2">$</span>
 							<span class="mr-[5px]">
-								<input type="text" name="ship_total" class="w-24 text-gray-900 bg-white rounded-lg mb-2 h-[35px]" id="ship_total" onchange="{calculate_subtotal_discount()}" value="{{orders[0][0].shipping_cost}}" disabled />
+								<input type="text" name="ship_total" class="w-24 text-gray-900 bg-white rounded-lg mb-2 h-[35px] border-none" id="ship_total" onchange="{calculate_subtotal_discount()}" value="{{orders[0][0].shipping_cost}}" disabled />
 							</span>
 						</div>
 						<div class="border-t ml">

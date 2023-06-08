@@ -118,7 +118,6 @@ def listOrder():
 @app.route('/create-order',methods=['POST','GET'])
 def createOrder():
 	data = request.form
-	# print(data)
 	item_counter=data['item_counter']
 	customer_id = data['current_customer_hidden']
 	shipping_cost=data['ship_total']
@@ -176,6 +175,7 @@ def updateOrder(id):
 	customers=Customer.query.all()
 	current_customer=Customer.query.get(orders[0][0].customer_id)
 	user=User.query.get(session['user_id'])
+
 	return render_template('order/update.html', orders=orders,user=user,products=products,customers=customers,current_customer=current_customer)
 
 
@@ -192,23 +192,18 @@ def viewOrder(id):
 
 	return render_template('order/viewOrder.html',orders=orders,user=user,customer=customer)
 
-@app.route('/download-pdf')
-def download_pdf():
-    # Path to the HTML template
-    template_path = 'order/viewOrder.html'
 
-    # Generate the PDF
-    pdfkit.from_file(template_path, 'output.pdf')
 
-    # Set the appropriate headers for the response
-    headers = {
-        'Content-Disposition': 'attachment; filename=output.pdf',
-        'Content-Type': 'application/pdf'
-    }
-
-    # Return the PDF file as a response
-    return send_file('output.pdf', as_attachment=True, headers=headers)
-
+# @app.route('/delete-order-item/<int:id>')
+# def deleteOrderItem(id):
+# 	try:
+# 		orderItem=OrderDetails.query.get(id)
+# 		db.session.delete(orderItem)
+# 		db.session.commit()
+# 		return redirect(url_for(''))
+# 	except Exception as e:
+# 		return "Error Occoured while deleting individual order item",500
+	
 
 @app.route('/delete-order/<int:id>')
 def deleteOrder(id):
