@@ -120,7 +120,7 @@ def createOrder():
 	data = request.form
 	item_counter=data['item_counter']
 	customer_id = data['current_customer_hidden']
-	shipping_cost=data['ship_total']
+	shipping_cost=data['ship_total'] if data['ship_total'] else 0
 	total_amount=data['net_total_hidden']
 	discount_type=data['discount_type_total']
 	discount_value=data['discount_val_total']
@@ -128,19 +128,17 @@ def createOrder():
 	gross_cost=data['grand_total_hidden']
 
 	order=Order(customer_id=customer_id,
-	     total_amount=total_amount,
-		 shipping_cost=shipping_cost,
-		 discount_type=discount_type, 
-		 discount_value=discount_value,
-		 gross_cost=gross_cost,
-		 discount_amount=discount_amount)
-	db.session.add(order)
-	db.session.commit()
-		
-	
+		total_amount=total_amount,
+		shipping_cost=shipping_cost,
+		discount_type=discount_type, 
+		discount_value=discount_value,
+		gross_cost=gross_cost,
+		discount_amount=discount_amount)
+	# db.session.add(order)
+	# db.session.commit()
+
 	order_item_list=list()
 	for index in range(int(item_counter)):
-		
 		order_item={	
 			'order_id':order.id,
 			'product_code':data['product_code_hidden_'+str(index+1)],
@@ -152,15 +150,12 @@ def createOrder():
 			'discount_val':data['discount_val_'+str(index+1)],
 			'subtotal_amount':data['sub_total_hidden_'+str(index+1)],
 		}
-		# print(order_item)
 		order_item_list.append(order_item)
 	
-	# print(order_item_list)
 	for i in order_item_list:
-		
 		orderDetail=OrderDetails(order_id=i['order_id'], product_id=i['product_id'], product_code=i['product_code'],product_description=i['product_description'],item_quantity=i['item_quantity'],unit_price=i['unit_price'],discount_type=i['discount_type'], discount_value=i['discount_val'], subtotal_amount=i['subtotal_amount'])
 
-		db.session.add(orderDetail)
+		db.session.add(order,orderDetail)
 		db.session.commit()
 
 	
