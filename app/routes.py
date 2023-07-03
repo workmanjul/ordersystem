@@ -21,7 +21,7 @@ def login():
             return redirect('/')
         else:
             error = 'Invalid username or password'
-            return render_template('login.html', error=error)
+            return redirect('/')
 
     return render_template('login.html')
 
@@ -53,16 +53,17 @@ def signin():
 
 @app.route('/')
 def dashboard():
-	products=Product.query.all()
-	#products_with_inventory_prices=db.session.query(Product,InventoryPrice).join(InventoryPrice,Product.product_id==InventoryPrice.product_id).all()
+	#products=Product.query.all()
+	products=db.session.query(Product,SalesDetails).join(SalesDetails,Product.product_id==SalesDetails.product_id).all()
 	customers=Customer.query.all()
-	user=User.query.get(session['user_id'])
+	#user=User.query.get(session['user_id'])
+	user =  None
 	
 	return render_template('dashboard.html',products=products,customers=customers,user=user)
 
 @app.route('/get_item_details')
 def get_item_details():
-	product = Product.query.filter_by(product_id=request.args['id']).first()
+	product = SalesDetails.query.filter_by(product_id=request.args['id']).first()
 	return jsonify(product.as_dict())
 
 
@@ -84,7 +85,7 @@ def saveCustomer():
     postcode=ajax_data['postcode']
     city = ajax_data['city']
     is_wholesale = ajax_data.get('isWholesale_checkbox')
-
+	
     customer=Customer(first_name=first_name,last_name=last_name,email=email,company=company,phone=phone,country=country,location=location,address1=address1,address2=address2, state_country=state_country,postcode=postcode,city=city,is_wholesale=is_wholesale)
 
     db.session.add(customer)
@@ -110,13 +111,35 @@ def listOrder():
     page = request.args.get('page', 1, type=int)
     per_page=request.args.get('per_page',10,type=int)
     orders=db.session.query(Order,Customer).join(Customer,Order.customer_id==Customer.id).order_by(Order.id.desc()).paginate(page=page,per_page=per_page)
-    user=User.query.get(session['user_id'])
-    
+    #user=User.query.get(session['user_id'])
+    user = None
     return render_template('order/listOrder.html',orders=orders,user=user)
+
+def get_order_items(data):
+	item_counter_list = data["item_counter_list"].split(",")
+	order_item_data_list = []
+	for i in range(0,len(item_counter_list)):
+		customer_id = data['customer_id']
+		product_id = data['product_'+ str(item_counter_list[i])]
+		item_quantity = data['item_quantity_'+ str(item_counter_list[i])]
+		item_price = data['unit_price_act_'+str(item_counter_list[i])]
+		sub_total = data['sub_total_act_'+str(item_counter_list[i])]
+
+		order_item_data = {
+			'customer_id': customer_id,
+			'product_id': product_id,
+			'item_quantity': item_quantity,
+			'item_price': item_price,
+			'sub_total': sub_total,
+		}
+		order_item_data_list.append(order_item_data)
+	return order_item_data_list
+
 
 
 @app.route('/create-order',methods=['POST','GET'])
 def createOrder():
+
 	data = request.form
 	item_counter=data['item_counter']
 	customer_id = data['current_customer_hidden']
@@ -134,8 +157,8 @@ def createOrder():
 		discount_value=discount_value,
 		gross_cost=gross_cost,
 		discount_amount=discount_amount)
-	# db.session.add(order)
-	# db.session.commit()
+	db.session.add(order)
+	db.session.commit()
 
 	order_item_list=list()
 	for index in range(int(item_counter)):
@@ -152,10 +175,11 @@ def createOrder():
 		}
 		order_item_list.append(order_item)
 	
+	print(order_item_list)
 	for i in order_item_list:
 		orderDetail=OrderDetails(order_id=i['order_id'], product_id=i['product_id'], product_code=i['product_code'],product_description=i['product_description'],item_quantity=i['item_quantity'],unit_price=i['unit_price'],discount_type=i['discount_type'], discount_value=i['discount_val'], subtotal_amount=i['subtotal_amount'])
 
-		db.session.add(order,orderDetail)
+		db.session.add(orderDetail)
 		db.session.commit()
 
 	
@@ -169,7 +193,8 @@ def updateOrder(id):
 	products=Product.query.all()
 	customers=Customer.query.all()
 	current_customer=Customer.query.get(orders[0][0].customer_id)
-	user=User.query.get(session['user_id'])
+	#user=User.query.get(session['user_id'])
+	user=None
 
 	return render_template('order/update.html', orders=orders,user=user,products=products,customers=customers,current_customer=current_customer)
 
@@ -182,7 +207,8 @@ def viewOrder(id):
 	# 	print(order.id, order_details.product_code)
 	# 	print(order_details.subtotal_amount, order_details.item_quantity,order_details.product_code)
 
-	user=User.query.get(session['user_id'])
+	#user=User.query.get(session['user_id'])
+	user = None
 	customer=Customer.query.get(orders[0][0].customer_id)
 
 	return render_template('order/viewOrder.html',orders=orders,user=user,customer=customer)
@@ -249,7 +275,8 @@ def createCustomer():
 		db.session.commit()
 		
 		return redirect(url_for('listCustomer'))
-	user=User.query.get(session['user_id'])
+	#user=User.query.get(session['user_id'])
+	user = None
 	return render_template('customer/create.html',user=user)
 
 
@@ -258,7 +285,8 @@ def listCustomer():
 	page = request.args.get('page', 1, type=int)
 	per_page = request.args.get('per_page',10,type=int)
 	customers = Customer.query.order_by(Customer.id.desc()).paginate(page=page,per_page=per_page)
-	user=User.query.get(session['user_id'])
+	#user=User.query.get(session['user_id'])
+	user = None
 
 
 	return render_template('customer/listCustomer.html',customers=customers,user=user)
@@ -306,7 +334,8 @@ def deleteCustomer(id):
 def listSale():
 
 	products = db.session.query(SalesDetails,Product).join(SalesDetails,Product.product_id==SalesDetails.product_id).order_by(SalesDetails.id.desc())
-	user=User.query.get(session['user_id'])
+	#user=User.query.get(session['user_id'])
+	user = None
 	customers=Customer.query.all()
 	return render_template('sales/listSale.html',products=products,customers=customers,user=user)
 
@@ -330,7 +359,8 @@ def createSale():
 		print(request.form)
 		db.session.commit()
 		return redirect(url_for('listSale'))
-	user=User.query.get(session['user_id'])
+	#user=User.query.get(session['user_id'])
+	user = None
 
 	return render_template('sales/create.html',products=products,user=user)
 

@@ -90,6 +90,9 @@ class SalesDetails(db.Model):
     price=db.Column(db.Numeric(precision=8, scale=2),nullable=True)
     product_id=db.Column(db.Integer,nullable=False)
 
+    def as_dict(self):
+       return {c.name: getattr(self, c.name) for c in self.__table__.columns}
+
 class User(db.Model):
     __tablename__ = 'users'
 
