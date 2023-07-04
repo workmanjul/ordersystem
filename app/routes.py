@@ -4,6 +4,16 @@ from .models import *
 from werkzeug.security import check_password_hash
 import pdfkit
 from flask import send_file
+from functools import wraps
+
+
+def login_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if 'user_id' not in session:
+            return redirect(url_for('login'))
+        return f(*args, **kwargs)
+    return decorated_function
 
 # FOR Login
 @app.route('/login', methods=['GET', 'POST'])
@@ -19,11 +29,12 @@ def login():
         if user and user.check_password(password):
             session['user_id'] = user.id
             return redirect('/')
-        else:
-            error = 'Invalid username or password'
-            return redirect('/')
+        error = 'Invalid username or password'
+        return render_template('login.html', error=error)
 
     return render_template('login.html')
+
+
 
 
 @app.route('/signin', methods=['GET', 'POST'])
@@ -51,24 +62,38 @@ def signin():
 
     return render_template('signin.html')
 
+@app.route('/logout')
+def logout():
+    session.clear()
+    return redirect(url_for('login'))
+# =============================================================================================
+
 @app.route('/')
+@login_required
 def dashboard():
 	#products=Product.query.all()
 	products=db.session.query(Product,SalesDetails).join(SalesDetails,Product.product_id==SalesDetails.product_id).all()
 	customers=Customer.query.all()
-	#user=User.query.get(session['user_id'])
-	user =  None
+	user=User.query.get(session['user_id'])
+	# user =  None
 	
 	return render_template('dashboard.html',products=products,customers=customers,user=user)
 
 @app.route('/get_item_details')
 def get_item_details():
-	product = SalesDetails.query.filter_by(product_id=request.args['id']).first()
+	
+	# product = SalesDetails.query.filter_by(product_id=request.args['id']).first()
+	product=Product.query.get(request.args['id'])
+	if product is not None:
+		print(f'product is : {product.as_dict()}')
+	else:
+		print("Not Found")
 	return jsonify(product.as_dict())
 
 
 
 @app.route('/save-customer', methods=['POST'])
+@login_required
 def saveCustomer():
     ajax_data = request.get_json()
     first_name = ajax_data['first_name']
@@ -98,21 +123,17 @@ def saveCustomer():
 	}
     return jsonify(customer_data)
 
-
-
-@app.route('/logout')
-def logout():
-    session.clear()
-    return redirect(url_for('login'))
+# =============================================================================================
 
 # FOR Order
 @app.route('/list-order')
+@login_required
 def listOrder():
     page = request.args.get('page', 1, type=int)
     per_page=request.args.get('per_page',10,type=int)
     orders=db.session.query(Order,Customer).join(Customer,Order.customer_id==Customer.id).order_by(Order.id.desc()).paginate(page=page,per_page=per_page)
-    #user=User.query.get(session['user_id'])
-    user = None
+    user=User.query.get(session['user_id'])
+    # user = None
     return render_template('order/listOrder.html',orders=orders,user=user)
 
 def get_order_items(data):
@@ -138,6 +159,7 @@ def get_order_items(data):
 
 
 @app.route('/create-order',methods=['POST','GET'])
+@login_required
 def createOrder():
 
 	data = request.form
@@ -188,45 +210,31 @@ def createOrder():
 
 
 @app.route('/update-order/<int:id>',methods=['GET','POST'])
+@login_required
 def updateOrder(id):
 	orders = db.session.query(Order, OrderDetails).join(OrderDetails, Order.id == OrderDetails.order_id).filter(OrderDetails.order_id == id).all()
 	products=Product.query.all()
 	customers=Customer.query.all()
 	current_customer=Customer.query.get(orders[0][0].customer_id)
-	#user=User.query.get(session['user_id'])
-	user=None
+	user=User.query.get(session['user_id'])
+	
+	print(request.form)
 
 	return render_template('order/update.html', orders=orders,user=user,products=products,customers=customers,current_customer=current_customer)
 
 
 @app.route('/view-order/<int:id>',methods=['POST','GET'])
+@login_required
 def viewOrder(id):
 	orders = db.session.query(Order, OrderDetails).join(OrderDetails, Order.id == OrderDetails.order_id).filter(OrderDetails.order_id == id).all()
-	
-	# for order, order_details in orders:
-	# 	print(order.id, order_details.product_code)
-	# 	print(order_details.subtotal_amount, order_details.item_quantity,order_details.product_code)
-
-	#user=User.query.get(session['user_id'])
-	user = None
+	user=User.query.get(session['user_id'])
+	# user = None
 	customer=Customer.query.get(orders[0][0].customer_id)
-
 	return render_template('order/viewOrder.html',orders=orders,user=user,customer=customer)
-
-
-
-# @app.route('/delete-order-item/<int:id>')
-# def deleteOrderItem(id):
-# 	try:
-# 		orderItem=OrderDetails.query.get(id)
-# 		db.session.delete(orderItem)
-# 		db.session.commit()
-# 		return redirect(url_for(''))
-# 	except Exception as e:
-# 		return "Error Occoured while deleting individual order item",500
 	
 
 @app.route('/delete-order/<int:id>')
+@login_required
 def deleteOrder(id):
     try:
         order = Order.query.get(id)
@@ -246,14 +254,16 @@ def deleteOrder(id):
         # Handle any exceptions that occur during the deletion process
         return "Error occurred while deleting the order", 500
 
-
+# =============================================================================================
 
 # FOR Customer
 
 @app.route('/create-customer',methods=['GET','POST'])
+@login_required
 def createCustomer():
 	if request.method=='POST':
 		data=request.form
+		print(data)
 		first_name=data['first_name']
 		last_name = data['last_name']
 		email = data['email']
@@ -265,7 +275,7 @@ def createCustomer():
 		address2=data['address2']
 		city=data['city']
 		state_country = data['state']
-		postcode=data['postcode']
+		postcode=data['post_code']
 		is_wholesale = int(request.form.get('is_wholesale')) if request.form.get('is_wholesale') else 0
 		
 		customer = Customer(first_name=first_name,last_name=last_name,email=email,company=company,phone=phone,location=location,country=country,address1=address1,address2=address2,city=city,state_country=state_country,postcode=postcode,is_wholesale=is_wholesale)
@@ -275,23 +285,26 @@ def createCustomer():
 		db.session.commit()
 		
 		return redirect(url_for('listCustomer'))
-	#user=User.query.get(session['user_id'])
-	user = None
+	user=User.query.get(session['user_id'])
+	# user = None
 	return render_template('customer/create.html',user=user)
 
 
 @app.route('/list-customer')
+@login_required
 def listCustomer():
 	page = request.args.get('page', 1, type=int)
 	per_page = request.args.get('per_page',10,type=int)
 	customers = Customer.query.order_by(Customer.id.desc()).paginate(page=page,per_page=per_page)
-	#user=User.query.get(session['user_id'])
-	user = None
+	user=User.query.get(session['user_id'])
+	# user = None
 
 
 	return render_template('customer/listCustomer.html',customers=customers,user=user)
 
+
 @app.route('/update-customer/<int:id>',methods=['GET','POST'])
+@login_required
 def updateCustomer(id):
 	customer=Customer.query.get(id)
 	if customer is None:
@@ -318,6 +331,7 @@ def updateCustomer(id):
 	return render_template('customer/update.html',customer=customer,user=user)
 
 @app.route('/delete-customer/<int:id>')
+@login_required
 def deleteCustomer(id):
 	customer=Customer.query.get(id)
 	if customer is None:
@@ -328,19 +342,34 @@ def deleteCustomer(id):
 	return redirect(url_for('listCustomer'))
 
 
+
+@app.route('/customer-details/<int:id>')
+@login_required
+def customerDetail(id):
+	customer=Customer.query.get(id)
+	return render_template('customer/viewDetails.html')
+
+
+
+
+# =============================================================================================
+
+
 # FOR Sales
 
 @app.route('/list-sale')
+@login_required
 def listSale():
 
 	products = db.session.query(SalesDetails,Product).join(SalesDetails,Product.product_id==SalesDetails.product_id).order_by(SalesDetails.id.desc())
-	#user=User.query.get(session['user_id'])
-	user = None
+	user=User.query.get(session['user_id'])
+	# user = None
 	customers=Customer.query.all()
 	return render_template('sales/listSale.html',products=products,customers=customers,user=user)
 
 
 @app.route('/create-sale',methods=['POST','GET'])
+@login_required
 def createSale():
 	products=Product.query.all()
 	
@@ -359,13 +388,14 @@ def createSale():
 		print(request.form)
 		db.session.commit()
 		return redirect(url_for('listSale'))
-	#user=User.query.get(session['user_id'])
-	user = None
+	user=User.query.get(session['user_id'])
+	# user = None
 
 	return render_template('sales/create.html',products=products,user=user)
 
 
 @app.route('/update-sale/<int:id>',methods=['GET','POST'])
+@login_required
 def updateSale(id):
 	item=SalesDetails.query.get(id)
 	if item is None:
@@ -386,6 +416,7 @@ def updateSale(id):
 	return render_template('sales/update.html',item=item,products=products,user=user)
 
 @app.route('/delete-sale/<int:id>')
+@login_required
 def deleteSales(id):
 	item=SalesDetails.query.get(id)
 	if item is None:
@@ -394,3 +425,5 @@ def deleteSales(id):
 	db.session.delete(item)
 	db.session.commit()
 	return redirect(url_for('listSale'))
+
+

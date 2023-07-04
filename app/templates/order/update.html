@@ -1,4 +1,4 @@
-	{% extends './base.html' %} {% block title %}Create Order {% endblock title %} {% block css_block %}
+{% extends './base.html' %} {% block title %}Create Order {% endblock title %} {% block css_block %}
 <style type="text/css">
 	.custom-select + .select2-container .select2-selection--single {
 		height: 2.2rem; /* Adjust the height value as needed */
@@ -114,7 +114,7 @@
 	<!--for making order-->
 
 	<div class="mt-4 bg-white md:w-auto sm:w-full relative border-b-2 text-gray-900 shadow-xl rounded-lg min-h-[320px]">
-		<form action="{{url_for('createOrder')}}" method="POST">
+		<form action="" method="POST">
 			<input type="hidden" id="current_customer_hidden" name="current_customer_hidden" value="" />
 			<div class="text-xl font-bold text-gray-700 px-4 py-4 overflow-x-auto">Create Order</div>
 			<div class="overflow-x-auto">
@@ -135,34 +135,39 @@
 					<tbody class="bg-white divide-y divide-gray-200" id="orderTable">
 						{%for order,orderDetail in orders%}
 						<tr class="h-2" id="defaultRow">
-							<td class="px-6 w-1 py-4 whitespace-nowrap">1</td>
+							<td class="px-6 w-1 py-4 whitespace-nowrap">{{loop.index}}</td>
 							<td class="px-6 w-64 py-4 whitespace-nowrap sm:w-32">
-								<select id="product_1" class="product-select bg-white border-lg text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 select2-js custom-select" data-live-search="true" name="product_1" onchange="populateItemDetails(this.value,this.name)">
+								<select id="product_{{loop.index}}" class="product-select bg-white border-lg text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 select2-js custom-select" data-live-search="true" name="product_{{loop.index}}" onchange="populateItemDetails(this.value,this.name)">
 									<option value="0">Search Product</option>
-
 									{% for product in products %} {% if orderDetail.product_id == product.product_id %}
-									<option value="{{ product.product_id }}" selected>{{product.product_code}}</option>
-									% else %
+
+									<option value="{{ product.product_id }}" selected>{{product.name}}</option>
+
+									{% else %}
+
 									<option value="{{ product.product_id }}">{{product.product_code}}</option>
+
 									{%endif%} {% endfor %}
 								</select>
-								<input type="hidden" name="product_code_hidden_1" id="product_code_hidden_1" value="" />
+								<input type="hidden" name="product_code_hidden_{{loop.index}}" id="product_code_hidden_{{loop.index}}" value="" />
+								<input type="hidden" name="orderDetail_id" id="orderDetail_id" value="{{orderDetail.id}}" />
 							</td>
 
 							<td class="px-6 py-4 whitespace-nowrap" id="descriptionCell">
-								<input name="item_desc_1" id="item_desc_1" disabled value="{{orderDetail.product_description}}" />
-								<input type="hidden" name="item_desc_hidden_1" id="item_desc_hidden_1" />
+								<input name="item_desc_{{loop.index}}" id="item_desc_{{loop.index}}" disabled value="{{orderDetail.product_description}}" />
+								<input type="hidden" name="item_desc_hidden_{{loop.index}}" id="item_desc_hidden_{{loop.index}}" value="{{orderDetail.product_description}}" />
 							</td>
 
 							<td class="px-6 py-4 whitespace-nowrap">
-								<input type="number" class="quantity-input w-20 text-gray-900 bg-white rounded-lg border-none" min="1" name="item_quantity_1" id="item_quantity_1" onchange="calculateItemTotal(this.name)" value="{{orderDetail.item_quantity}}" />
+								<input type="number" class="quantity-input w-20 text-gray-900 bg-white rounded-lg border-none" min="1" name="item_quantity_{{loop.index}}" id="item_quantity_{{loop.index}}" onchange="calculateItemTotal(this.name)" value="{{orderDetail.item_quantity}}" />
 							</td>
 							<td class="px-6 py-4 whitespace-nowrap">
-								<input type="text" class="quantity-input text-gray-900 bg-white rounded-lg w-20 border-none" name="unit_price_1" id="unit_price_1" disabled value="{{orderDetail.unit_price}}" />
-								<input type="hidden" name="unit_price_hidden_1" id="unit_price_hidden_1" />
+								<input type="text" class="quantity-input text-gray-900 bg-white rounded-lg w-20 border-none" name="unit_price_{{loop.index}}" id="unit_price_{{loop.index}}" disabled value="{{orderDetail.unit_price}}" />
+
+								<input type="hidden" name="unit_price_hidden_{{loop.index}}" id="unit_price_hidden_{{loop.index}}" value="{{orderDetail.unit_price}}" />
 							</td>
 							<td class="px-6 py-4 whitespace-nowrap">
-								<select class="discount-type-select bg-white border-lg text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-16 p-2.5 border-none" name="discount_type_1" id="discount_type_1" onchange="calculateItemTotal(this.name)" value="">
+								<select class="discount-type-select bg-white border-lg text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-16 p-2.5 border-none" name="discount_type_{{loop.index}}" id="discount_type_{{loop.index}}" onchange="calculateItemTotal(this.name)" value="">
 									{% if orderDetail.discount_type == 'percentage'%}
 									<option value="percentage">%</option>
 									{%else%}
@@ -171,18 +176,16 @@
 								</select>
 							</td>
 							<td class="px-6 py-4 whitespace-nowrap">
-								<input type="number" class="discount-input w-20 text-gray-900 bg-white rounded-lg border-none" min="0" value="{{orderDetail.discount_value}}" name="discount_val_1" id="discount_val_1" oninput="calculateItemTotal(this.name)" />
+								<input type="number" class="discount-input w-20 text-gray-900 bg-white rounded-lg border-none" min="0" value="{{orderDetail.discount_value}}" name="discount_val_{{loop.index}}" id="discount_val_{{loop.index}}" oninput="calculateItemTotal(this.name)" />
 							</td>
 							<td class="px-6 py-4 whitespace-nowrap">
 								<span class="ml-2">$</span>
-								<input type="number" class="amount-input rounded-lg text-gray-900 bg-white w-28 border-none" min="0" value="{{orderDetail.subtotal_amount}}" name="sub_total_1" id="sub_total_1" disabled/>
-								<input type="hidden" value="" name="sub_total_hidden_1" id="sub_total_hidden_1" />
+								<input type="number" class="amount-input rounded-lg text-gray-900 bg-white w-28 border-none" min="0" value="{{orderDetail.subtotal_amount}}" name="sub_total_{{loop.index}}" id="sub_total_{{loop.index}}" disabled />
+								<input type="hidden" name="sub_total_hidden_{{loop.index}}" id="sub_total_hidden_{{loop.index}}" />
 							</td>
 							<td class="px-6 py-4 whitespace-nowrap text-center">
-								<button id="deleteRow_${counter}" class="delete-row-button" onclick="remove_order_item(this.id)">
-								  &#10005;
-								</button>
-							  </td>
+								<button id="deleteRow_{{loop.index}}" class="delete-row-button" onclick="remove_order_item(this.id)">&#10005;</button>
+							</td>
 						</tr>
 						{%endfor%}
 					</tbody>
@@ -199,7 +202,7 @@
 						<div class="ml-[106px]">
 							<span class="font-semibold">Subtotal</span><span class="ml-3">$</span>
 							<span class="ml-[6px]">
-								<input disabled type="text" class="w-24 text-gray-900 bg-white rounded-lg border-none" id="grand_total" name="grand_total" value="{{orders[0][0].gross_cost}}"/>
+								<input disabled type="text" class="w-24 text-gray-900 bg-white rounded-lg border-none" id="grand_total" name="grand_total" value="{{orders[0][0].gross_cost}}" />
 								<input type="hidden" id="grand_total_hidden" name="grand_total_hidden" />
 							</span>
 						</div>
@@ -212,9 +215,9 @@
 									<option value="amount">$</option>
 									{%endif%}
 								</select>
-								<input type="number" name="discount_val_total" class="rounded w-16 border-none" value="0" onchange="calculate_subtotal_discount()" id="discount_val_total" />
+								<input type="number" name="discount_val_total" class="rounded w-16 border-none" value="{{orders[0][0].discount_value | int}}" onchange="calculate_subtotal_discount()" id="discount_val_total" />
 								<span class="my-2 ml-1">$</span>
-								<input type="text" id="grand_discount" class="w-24 text-gray-900 bg-white rounded-lg border-none -ml-3" disabled value="{{orders[0][0].discount_amount}}"/>
+								<input type="text" id="grand_discount" class="w-24 text-gray-900 bg-white rounded-lg border-none -ml-3" disabled value="" />
 								<input type="hidden" id="grand_discount_hidden" name="grand_discount_hidden" />
 							</div>
 						</div>
@@ -222,14 +225,14 @@
 							<span class="font-semibold mt-2">Shipping</span>
 							<span class="ml-[15px] mr-[11px] mt-2">$</span>
 							<span class="mr-[5px]">
-								<input type="text" name="ship_total" class="w-24 text-gray-900 bg-white rounded-lg mb-2 h-[35px]" id="ship_total" onchange="{calculate_subtotal_discount()}" value="{{orders[0][0].shipping_cost}}"/>
+								<input type="text" name="ship_total" class="w-24 text-gray-900 bg-white rounded-lg mb-2 h-[35px]" id="ship_total" onchange="{calculate_subtotal_discount()}" value="{{orders[0][0].shipping_cost}}" />
 							</span>
 						</div>
 						<div class="border-t ml">
 							<span class="font-semibold ml-[102px]">Net Total</span>
 							<span class="ml-[7px]">$</span>
 							<span class="ml-[6px]">
-								<input type="text" disabled name="net_total" class="w-24 text-gray-900 bg-white rounded-lg border-none" id="net_total" value="{{orders[0][0].total_amount}}"/>
+								<input type="text" disabled name="net_total" class="w-24 text-gray-900 bg-white rounded-lg border-none" id="net_total" value="" />
 								<input type="hidden" name="net_total_hidden" id="net_total_hidden" />
 							</span>
 						</div>
@@ -313,7 +316,9 @@
 
 		$("#insertRow").on("click", function (event) {
 			var item_counter_list = $("#item_counter_list").val();
+			// var item_counter_list = counter;
 			itemList = getItemAsList(item_counter_list);
+
 			//var item_array = item_counter_list.split(",");
 			event.preventDefault();
 
@@ -324,45 +329,49 @@
 			counter++;
 			// Table columns
 			$("#item_counter").val(counter);
-			itemList.push(counter);
+			for (let i = 2; i <= counter; i++) {
+				itemList.push(`${i}`);
+			}
+			console.log(itemList);
 
 			cols += `<td class="px-6 w-[1%] py-4 whitespace-nowrap">${counter}</td>
           <td class="px-6 w-64 py-4 whitespace-nowrap">
             <select id="product_${counter}" class="product-select bg-white border-lg text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 select2-js custom-select" name="product_${counter}" onchange="populateItemDetails(this.value,this.name)">
-            <option value="0">Search Product</option>
-              
+				<option value="0">Select a Product</option>
+              <!-- Products options will be dynamically generated by Flask -->
+			  
               {% for product in products %}
               <option value="{{ product.product_id }}">{{product.name}}</option>
 			  
               {% endfor %}
             </select>
-			<input type="hidden" name="product_code_hidden_${counter}" id="product_code_hidden_${counter}" value=""/>
+			<input type="hidden" name="product_code_hidden_${counter}" id="product_code_hidden_${counter}" value="" required/>
           </td>
 
           <td class="px-6 py-4 whitespace-nowrap" id="descriptionCell">
-            <input name="item_desc_${counter}" class="border-none" id="item_desc_${counter}" disabled/>
+            <input name="item_desc_${counter}" class="border-none" id="item_desc_${counter}" disabled required/>
             <input type='hidden' name="item_desc_hidden_${counter}" id="item_desc_hidden_${counter}"/>
           </td>
 
           <td class="px-6 py-4 whitespace-nowrap">
-            <input type="number" class="quantity-input w-20 text-gray-900 bg-white rounded-lg border-none" min="1" value="0" name="item_quantity_${counter}" id="item_quantity_${counter}" onchange="calculateItemTotal(this.name)" />
+            <input type="number" class="quantity-input w-20 text-gray-900 bg-white rounded-lg border-none" min="1" value="0" name="item_quantity_${counter}" id="item_quantity_${counter}" onchange="calculateItemTotal(this.name)" required/>
           </td>
           <td class="px-6 py-4 whitespace-nowrap">
-            <input type="text" class="quantity-input text-gray-900 bg-white rounded-lg w-20 border-none" name="unit_price_${counter}" id="unit_price_${counter}" disabled/>
+            <input type="text" class="quantity-input text-gray-900 bg-white rounded-lg w-20 border-none" name="unit_price_${counter}" id="unit_price_${counter}" disabled required/>
             <input type="hidden" name="unit_price_hidden_${counter}" id="unit_price_hidden_${counter}"/>
           </td>
           <td class="px-6 py-4 whitespace-nowrap">
-            <select class="discount-type-select bg-white border-lg text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-16 p-2.5 border-none" name="discount_type_${counter}" id="discount_type_${counter}" onchange="calculateItemTotal(this.name)">
+            <select class="discount-type-select bg-white border-lg text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-16 p-2.5 border-none" name="discount_type_${counter}" id="discount_type_${counter}" onchange="calculateItemTotal(this.name)" required>
               <option value="percentage">%</option>
               <option value="amount">$</option>
             </select>
           </td>
           <td class="px-6 py-4 whitespace-nowrap">
-            <input type="number" class="discount-input w-24 text-gray-900 bg-white rounded-lg border-none" min="0" value="0" name="discount_val_${counter}" id="discount_val_${counter}" oninput="calculateItemTotal(this.name)"/>
+            <input type="number" class="discount-input w-24 text-gray-900 bg-white rounded-lg border-none" min="0" value="0" name="discount_val_${counter}" id="discount_val_${counter}" oninput="calculateItemTotal(this.name)" required/>
           </td>
           <td class="px-6 py-4 whitespace-nowrap">
-            $<input type="number" class="amount-input rounded-lg text-gray-900 bg-white w-28 border-none" min="0" value="" name="sub_total_${counter}" id="sub_total_${counter}" disabled />
-            $<input type="hidden" min="0" value="" name="sub_total_hidden_${counter}" id="sub_total_hidden_${counter}"/>
+            $<input type="number" class="amount-input rounded-lg text-gray-900 bg-white w-28 border-none" min="0" value="" name="sub_total_${counter}" id="sub_total_${counter}" disabled required/>
+            <input type="hidden" min="0" value="" name="sub_total_hidden_${counter}" id="sub_total_hidden_${counter}"/>
           </td>
           <td class="px-6 py-4 whitespace-nowrap text-center">
             <button id="deleteRow_${counter}" class="delete-row-button" onclick="remove_order_item(this.id)">
@@ -374,7 +383,9 @@
 			// Insert the row inside a table
 			$("#order_table").append(newRow);
 			$("#item_counter_list").val(itemList);
+
 			$(".select2-js").select2();
+			
 		});
 	});
 
@@ -418,10 +429,11 @@
 				$("#item_desc_hidden_" + row_num).val(data.description);
 				$("#unit_price_" + row_num).val(data.price);
 				$("#unit_price_hidden_" + row_num).val(data.price);
-				// alert(data.product_code)
-				$("#product_code_hidden_" + row_num).val(data.product_code);
 
 				calculateItemTotal(name);
+				$("#sub_total_hidden_"+row_num).val(data.subtotal_amount)
+				$("#product_code_hidden_" + row_num).val(data.product_code);
+
 			},
 		});
 	}
@@ -446,6 +458,7 @@
 		sub_total = parseFloat(sub_total).toFixed(2);
 		$("#sub_total_" + row_num).val(sub_total);
 		$("#sub_total_hidden_" + row_num).val(sub_total);
+
 		calculate_subtotal();
 		calculate_subtotal_discount();
 		handleCustomer();
@@ -463,11 +476,11 @@
 			} else {
 				sub_total = $("#sub_total_" + item).val();
 				total = parseFloat(total) + parseFloat(sub_total);
+				total = parseFloat(total).toFixed(2);
+				$("#grand_total").val(total);
+				$("#grand_total_hidden").val(total);
 			}
 		}
-		total = parseFloat(total).toFixed(2);
-		$("#grand_total").val(total);
-		$("#grand_total_hidden").val(total);
 	}
 
 	function calculate_subtotal_discount() {
@@ -518,7 +531,10 @@
 		var state = $("#state").val();
 		var postcode = $("#postalCode").val();
 		var is_wholesale = $("#default-checkbox").is(":checked") ? 1 : 0;
-
+		if (first_name === "" || last_name === "" || email === "" || company === "" || phone === "" || location === "" || country === "" || address1 === "" || city === "" || state === "" || postcode === "") {
+			alert("Please fill in all the required fields.");
+			return;
+		}
 		var requestData = {
 			first_name: first_name,
 			last_name: last_name,
@@ -543,14 +559,11 @@
 			success: function (data) {
 				var close_button = document.getElementById("modal-backdrop");
 				close_button.click();
-				console.log(data);
 
 				$("#current_customer").append('<option value="' + data.id + '" selected>' + data.first_name + " " + data.last_name + "</option>");
-				$("#current_customer").select2("refresh");
 				$("#current_customer_hidden").val(data.id);
 			},
 			error: function (xhr, textStatus, error) {
-				console.log(xhr.responseText);
 				// Handle the error here
 			},
 		});
@@ -558,15 +571,24 @@
 </script>
 <script>
 	function handleCustomer() {
-		// var customer = $("#current_customer").val();
-		// var selectedText = window.getSelection().toString();
-		// alert(selectedText);
-		// console.log(customer);
-		// $("#current_customer_hidden").val(customer);
-
 		var selectCustomer = document.getElementById("current_customer");
 		var selectedValue = selectCustomer.value;
 		$("#current_customer_hidden").val(selectedValue);
+	}
+
+	function validateForm(e) {
+		// var row_num = name.split("_").slice(-1)[0];
+		var item_counters = $("#item_counter").val();
+		for (row_num = 1; row_num <= item_counters; row_num++) {
+			var selectElement = document.getElementById("product_" + row_num);
+			var selectedOption = selectElement.value;
+
+			if (selectedOption === "" || selectedOption == 0) {
+				alert("Please select an option.");
+				e.preventDefault();
+				return false;
+			}
+		}
 	}
 </script>
 

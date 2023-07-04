@@ -8,9 +8,11 @@
 	<table class="min-w-full divide-y divide-gray-200">
 		<thead>
 			<tr>
-				<th class="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-800 uppercase tracking-wider"><input type="checkbox" class="appearance-none checked:bg-blue-500 mx-2 rounded text-center" /> <span>ID</span></th>
+				<th class="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-800 uppercase tracking-wider">
+					<!-- <input type="checkbox" class="appearance-none checked:bg-blue-500 mx-2 rounded text-center" />  -->
+					<span class="mx-4 text-center">ID</span></th>
 
-				<th class="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-800 uppercase text-center tracking-wider">Name</th>
+				<th class="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-800 uppercase text-center tracking-wider font-bold">Name</th>
 				<th class="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-800 uppercase text-center tracking-wider">SKU</th>
 				<th class="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-800 uppercase text-center tracking-wider">Price</th>
 				<th class="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-800 uppercase text-center tracking-wider">Brand</th>
@@ -23,13 +25,13 @@
 			{%for product in products%}
 			<tr class="px-6 py-4 h-[80px]">
 				<td class="px-6 whitespace-nowrap">
-					<input type="checkbox" class="appearance-none checked:bg-blue-500 mx-2 rounded text-center" />
-					<span>{{product[0].id}}</span>
+					<!-- <input type="checkbox" class="appearance-none checked:bg-blue-500 mx-2 rounded text-center" /> -->
+					<span class="mx-4 text-center">{{loop.index}}</span>
 				</td>
 				<td class=" text-center">{{product[0].name}}</td>
 				
 				<td class=" text-center">{{product[0].sku}}</td>
-				<td class=" text-center">{{product[0].price}}</td>
+				<td class=" text-center">$ {{product[0].price}}</td>
 				<td class=" text-center">{{product[0].brand}}</td>
 				<td class=" text-center">{{product[0].description}}</td>
 

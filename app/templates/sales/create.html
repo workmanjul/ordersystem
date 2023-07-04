@@ -1,4 +1,13 @@
 {% extends './base.html' %} {% block title %}Create Sales{% endblock title %} {% block body %}
+<style type="text/css">
+	.custom-select + .select2-container .select2-selection--single {
+		height: 2.2rem; /* Adjust the height value as needed */
+	}
+
+	.custom-select + .select2-container .select2-selection__arrow {
+		height: 2.2rem; /* Adjust the height value as needed */
+	}
+</style>
 <div class="px-64 py-16">
 	<form action="{{url_for('createSale')}}" method="POST">
 		<div class="grid md:grid-cols-2 md:gap-6">
@@ -28,7 +37,9 @@
 		<div class="relative z-0 w-full mb-6 group flex flex-col">
 			<div>Product</div>
 
-			<select id="countries" name="product_id" class="block py-2.5 px-2 w-full h-[45px] bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5">
+			<select id="countries" name="product_id" class="block py-2.5 px-2 w-full h-[45px] bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 select2-js custom-select">
+				<option value="0">Select a Product</option>
+
 				{%for product in products%}
 
 				<option value="{{product.product_id}}">{{product.name}}</option>
@@ -36,8 +47,11 @@
 			</select>
 		</div>
 		<label for="message" class="block mb-2 text-sm font-medium text-gray-700">Description</label>
-		<textarea id="message" name="description" rows="3" class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500" placeholder="Description"></textarea>
+		<textarea id="message" name="description" rows="3" class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500" placeholder="Description" required></textarea>
 		<div class="flex justify-center my-6"><button type="submit" class="w-64 h-[60px] py-2.5 px-5 mr-2 mb-2 text-sm font-medium text-gray-900 focus:outline-none rounded-lg border border-gray-200 bg-gray-300 hover:bg-gray-400 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-200">Submit</button></div>
 	</form>
 </div>
+<script>
+	$(".select2-js").select2();
+</script>
 {% endblock body %}
