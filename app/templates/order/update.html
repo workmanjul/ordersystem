@@ -138,19 +138,20 @@
 							<td class="px-6 w-1 py-4 whitespace-nowrap">{{loop.index}}</td>
 							<td class="px-6 w-64 py-4 whitespace-nowrap sm:w-32">
 								<select id="product_{{loop.index}}" class="product-select bg-white border-lg text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 select2-js custom-select" data-live-search="true" name="product_{{loop.index}}" onchange="populateItemDetails(this.value,this.name)">
-									<option value="0">Search Product</option>
-									{% for product in products %} {% if orderDetail.product_id == product.product_id %}
+									<!-- <option value="0">Search Product</option> -->
+									{% for product in products %} 
+									
+										{% if orderDetail.product_id == product.product_id %}
+									
+									
+											<option value="{{ product.product_id }}" id="selected_product" selected>{{product.name}}</option>
+					
 
-									<option value="{{ product.product_id }}" selected>{{product.name}}</option>
-
-									{% else %}
-
-									<option value="{{ product.product_id }}">{{product.product_code}}</option>
-
-									{%endif%} {% endfor %}
+									{%endif%} 
+								{% endfor %}
 								</select>
-								<input type="hidden" name="product_code_hidden_{{loop.index}}" id="product_code_hidden_{{loop.index}}" value="" />
-								<input type="hidden" name="orderDetail_id" id="orderDetail_id" value="{{orderDetail.id}}" />
+								<input type="hidden" name="product_code_hidden_{{loop.index}}" id="product_code_hidden_{{loop.index}}" value="{{orderDetail.product_id}}" />
+								<input type="hidden" name="orderDetail_id_{{loop.index}}" id="orderDetail_id_{{loop.index}}" value="{{orderDetail.id}}" />
 							</td>
 
 							<td class="px-6 py-4 whitespace-nowrap" id="descriptionCell">
@@ -181,7 +182,7 @@
 							<td class="px-6 py-4 whitespace-nowrap">
 								<span class="ml-2">$</span>
 								<input type="number" class="amount-input rounded-lg text-gray-900 bg-white w-28 border-none" min="0" value="{{orderDetail.subtotal_amount}}" name="sub_total_{{loop.index}}" id="sub_total_{{loop.index}}" disabled />
-								<input type="hidden" name="sub_total_hidden_{{loop.index}}" id="sub_total_hidden_{{loop.index}}" />
+								<input type="hidden" name="sub_total_hidden_{{loop.index}}" id="sub_total_hidden_{{loop.index}}" value="{{orderDetail.subtotal_amount}}" />
 							</td>
 							<td class="px-6 py-4 whitespace-nowrap text-center">
 								<button id="deleteRow_{{loop.index}}" class="delete-row-button" onclick="remove_order_item(this.id)">&#10005;</button>
@@ -306,7 +307,7 @@
 </script>
 <script>
 	$(function () {
-		$(".select2-js").select2();
+		//$(".select2-js").select2();
 
 		// Start counting from the third row
 		var table = document.getElementById("order_table");
@@ -346,6 +347,7 @@
               {% endfor %}
             </select>
 			<input type="hidden" name="product_code_hidden_${counter}" id="product_code_hidden_${counter}" value="" required/>
+			<input type="hidden" name="orderDetail_id_${counter}" id="orderDetail_id_${counter}" value="" />
           </td>
 
           <td class="px-6 py-4 whitespace-nowrap" id="descriptionCell">
@@ -385,7 +387,6 @@
 			$("#item_counter_list").val(itemList);
 
 			$(".select2-js").select2();
-			
 		});
 	});
 
@@ -414,7 +415,7 @@
 		$("#item_counter").val(counter);
 		itemList = removeFromArray(itemList, row_num);
 		$("#item_counter_list").val(itemList);
-		//calculate_total();
+		calculate_total();
 	}
 </script>
 <script>
@@ -430,10 +431,9 @@
 				$("#unit_price_" + row_num).val(data.price);
 				$("#unit_price_hidden_" + row_num).val(data.price);
 
-				calculateItemTotal(name);
-				$("#sub_total_hidden_"+row_num).val(data.subtotal_amount)
+				$("#sub_total_hidden_" + row_num).val(data.subtotal_amount);
 				$("#product_code_hidden_" + row_num).val(data.product_code);
-
+				calculateItemTotal(name);
 			},
 		});
 	}
@@ -468,7 +468,7 @@
 		var item_counters = $("#item_counter").val();
 		var item_counter_list = $("#item_counter_list").val();
 		var itemList = getItemAsList(item_counter_list);
-
+		alert(itemList);
 		total = 0;
 		for (i = 0; i < item_counters; i++) {
 			var item = itemList[i];

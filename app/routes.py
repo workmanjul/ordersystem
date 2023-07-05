@@ -71,8 +71,8 @@ def logout():
 @app.route('/')
 @login_required
 def dashboard():
-	#products=Product.query.all()
-	products=db.session.query(Product,SalesDetails).join(SalesDetails,Product.product_id==SalesDetails.product_id).all()
+	products=Product.query.all()
+	# products=db.session.query(Product,SalesDetails).join(SalesDetails,Product.product_id==SalesDetails.product_id).all()
 	customers=Customer.query.all()
 	user=User.query.get(session['user_id'])
 	# user =  None
@@ -84,10 +84,10 @@ def get_item_details():
 	
 	# product = SalesDetails.query.filter_by(product_id=request.args['id']).first()
 	product=Product.query.get(request.args['id'])
-	if product is not None:
-		print(f'product is : {product.as_dict()}')
-	else:
-		print("Not Found")
+	# if product is not None:
+	# 	print(f'product is : {product.as_dict()}')
+	# else:
+	# 	print("Not Found")
 	return jsonify(product.as_dict())
 
 
@@ -203,8 +203,6 @@ def createOrder():
 
 		db.session.add(orderDetail)
 		db.session.commit()
-
-	
 	
 	return redirect(url_for('listOrder'))
 
@@ -218,7 +216,89 @@ def updateOrder(id):
 	current_customer=Customer.query.get(orders[0][0].customer_id)
 	user=User.query.get(session['user_id'])
 	
-	print(request.form)
+	# print(request.form)
+	orderUpdate=Order.query.get(id)
+	if request.method=="POST":
+		data=request.form
+		print(data)
+		item_counter=data['item_counter']
+		orderUpdate.customer_id=data['current_customer_hidden']
+		orderUpdate.shipping_cost=data['ship_total'] if data['ship_total'] else 0
+		orderUpdate.discount_value=data['discount_val_total']
+		orderUpdate.discount_amount=data['grand_discount_hidden']
+		orderUpdate.gross_cost=data['grand_total_hidden']
+		orderUpdate.total_amount=data['net_total_hidden']
+		
+		db.session.commit()
+
+		temp=list()
+		order_item_list=list()
+		for order,orderDetail in orders:
+			temp.append(orderDetail.id)
+			print(f"Temp has = {temp}")
+
+		for index in range(int(item_counter)):
+
+			# if str(temp[index]) == data['orderDetail_id_'+str(index+1)]:
+			if f'orderDetail_id_{str(index+1)}' in data:
+				order_item={	
+					'order_id':id,
+					'product_code':data['product_code_hidden_'+str(index+1)],
+					'product_id':data['product_'+str(index+1)],
+					'orderDetail_id':data['orderDetail_id_'+str(index+1)],
+					'product_description':data['item_desc_hidden_'+str(index+1)],
+					'item_quantity':data['item_quantity_'+str(index+1)],
+					'unit_price':data['unit_price_hidden_'+str(index+1)],
+					'discount_type':data['discount_type_'+str(index+1)],
+					'discount_val':data['discount_val_'+str(index+1)],
+					'subtotal_amount':data['sub_total_hidden_'+str(index+1)],
+				}
+
+				order_item_list.append(order_item)
+				temp.remove(order_item['orderDetail_id'])
+				
+			else:
+				print(f'Temp to query={temp[index]}')
+				orderDetails2 = OrderDetails.query.filter_by(id=str(temp[index])).first()
+        
+				print(orderDetails2.id)
+				db.session.delete(orderDetails2)
+				db.session.commit()
+
+			
+		for index,i in enumerate(order_item_list):
+			# this is for adding new order. orderDetail_id is sent blank from frontend. if it is blank then add new order, if it has id then update on that id
+			if order_item_list[index]['orderDetail_id'] == "":
+				add_new_order=OrderDetails(order_id=order_item_list[index]['order_id'],
+		   		product_id=order_item_list[index]['product_id'], 
+				product_code=order_item_list[index]['product_code'],
+				product_description=order_item_list[index]['product_description'],
+				item_quantity=order_item_list[index]['item_quantity'],
+				unit_price=order_item_list[index]['unit_price'],
+				discount_type=order_item_list[index]['discount_type'], 
+				discount_value=order_item_list[index]['discount_val'], 
+				subtotal_amount=order_item_list[index]['subtotal_amount'])
+
+				db.session.add(add_new_order)
+				db.session.commit()
+
+			orderDetailUpdate = OrderDetails.query.filter(OrderDetails.order_id == order_item_list[index]['order_id']).first()
+
+			orderDetailUpdate.order_id=order_item_list[index]['order_id']
+			orderDetailUpdate.product_id=order_item_list[index]['product_id'] 
+			orderDetailUpdate.product_code=order_item_list[index]['product_code']
+			orderDetailUpdate.product_description=order_item_list[index]['product_description']
+			orderDetailUpdate.item_quantity=order_item_list[index]['item_quantity']
+			orderDetailUpdate.unit_price=order_item_list[index]['unit_price']
+			orderDetailUpdate.discount_type=order_item_list[index]['discount_type']
+			orderDetailUpdate.discount_val=order_item_list[index]['discount_val']
+			orderDetailUpdate.subtotal_amount=order_item_list[index]['subtotal_amount']
+			
+			db.session.commit()
+
+		
+		return redirect(url_for('listOrder'))
+
 
 	return render_template('order/update.html', orders=orders,user=user,products=products,customers=customers,current_customer=current_customer)
 
@@ -263,7 +343,7 @@ def deleteOrder(id):
 def createCustomer():
 	if request.method=='POST':
 		data=request.form
-		print(data)
+		# print(data)
 		first_name=data['first_name']
 		last_name = data['last_name']
 		email = data['email']
@@ -385,7 +465,7 @@ def createSale():
 		sales = SalesDetails(name=name,product_id=product_id, description=description, sku=sku, price=price,brand=brand)
 
 		db.session.add(sales)
-		print(request.form)
+		# print(request.form)
 		db.session.commit()
 		return redirect(url_for('listSale'))
 	user=User.query.get(session['user_id'])
