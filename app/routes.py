@@ -2,9 +2,11 @@ from flask import redirect, render_template,url_for,request,session,flash,jsonif
 from app import app,db
 from .models import *
 from werkzeug.security import check_password_hash
+from flask import make_response
 import pdfkit
 from flask import send_file
 from functools import wraps
+import os
 
 
 def login_required(f):
@@ -192,7 +194,6 @@ def createOrder():
 		}
 		order_item_list.append(order_item)
 	
-	print(order_item_list)
 	for i in order_item_list:
 		orderDetail=OrderDetails(order_id=i['order_id'], product_id=i['product_id'], product_code=i['product_code'],product_description=i['product_description'],item_quantity=i['item_quantity'],unit_price=i['unit_price'],discount_type=i['discount_type'], discount_value=i['discount_val'], subtotal_amount=i['subtotal_amount'])
 
@@ -301,12 +302,40 @@ def updateOrder(id):
 def viewOrder(id):
 	order = db.session.query(Order).filter(Order.id == id).first()
 	order_details = db.session.query(OrderDetails,Product).join(Product,Product.product_id == OrderDetails.product_id).filter(OrderDetails.order_id == id).all()
-	print(order_details)
 	user=User.query.get(session['user_id'])
 	# user = None
 	customer=Customer.query.get(order.customer_id)
 	return render_template('order/viewOrder.html',order=order,orderDetails=order_details,user=user,customer=customer)
+
+@app.route('/print-order/<int:id>',methods=['GET'])
+@login_required
+def print_order(id):
+	order = db.session.query(Order).filter(Order.id == id).first()
+	order_details = db.session.query(OrderDetails,Product).join(Product,Product.product_id == OrderDetails.product_id).filter(OrderDetails.order_id == id).all()
+	user=User.query.get(session['user_id'])
+	customer=Customer.query.get(order.customer_id)
 	
+	image_path = os.path.abspath("/static/images/Entropy_Logo.png")
+	return render_template('order/printOrder.html',order=order,orderDetails=order_details,user=user,customer=customer,image_path=image_path)
+
+@app.route('/download-order/<int:id>',methods=['GET'])
+@login_required
+def download_order(id):
+	order = db.session.query(Order).filter(Order.id == id).first()
+	order_details = db.session.query(OrderDetails,Product).join(Product,Product.product_id == OrderDetails.product_id).filter(OrderDetails.order_id == id).all()
+	user=User.query.get(session['user_id'])
+	customer=Customer.query.get(order.customer_id)
+	
+	options = {
+        "enable-local-file-access": ""
+    }
+	image_path = os.path.abspath("/static/images/Entropy_Logo.png")
+	html = render_template('order/printOrder.html',order=order,orderDetails=order_details,user=user,customer=customer,image_path=image_path)
+	pdf = pdfkit.from_string(html, False,options=options)
+	response = make_response(pdf)
+	response.headers["Content-Type"] = "application/pdf"
+	response.headers["Content-Disposition"] = "inline; filename=PO-" + str(id)+".pdf"
+	return response
 
 @app.route('/delete-order/<int:id>')
 @login_required
