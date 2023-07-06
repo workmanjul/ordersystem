@@ -28,8 +28,8 @@
 						{% for order,orderDetail in orders %}
 						<tr class="h-2" id="defaultRow">
 							<td class="px-6 w-1 py-4 whitespace-nowrap">{{ loop.index }}</td>
-							<td class="px-6 w-64 py-4 whitespace-nowrap sm:w-32">
-								<input type="text" class="border-0" value="{{orderDetail.product_code}}">
+							<td class="px-6 w-64 py-4 whitespace-wrap sm:w-32">
+								<input type="text" class="border-0" value="{{orderDetail.product_code }}">
 							</td>
 
 							<td class="px-6 py-4 whitespace-nowrap" id="descriptionCell">

@@ -71,23 +71,18 @@ def logout():
 @app.route('/')
 @login_required
 def dashboard():
-	products=Product.query.all()
-	# products=db.session.query(Product,SalesDetails).join(SalesDetails,Product.product_id==SalesDetails.product_id).all()
+	products=db.session.query(Product,SalesDetails).join(SalesDetails,Product.product_id==SalesDetails.product_id).all()
+	print(products)
 	customers=Customer.query.all()
 	user=User.query.get(session['user_id'])
-	# user =  None
 	
 	return render_template('dashboard.html',products=products,customers=customers,user=user)
 
 @app.route('/get_item_details')
 def get_item_details():
 	
-	# product = SalesDetails.query.filter_by(product_id=request.args['id']).first()
-	product=Product.query.get(request.args['id'])
-	# if product is not None:
-	# 	print(f'product is : {product.as_dict()}')
-	# else:
-	# 	print("Not Found")
+	product = SalesDetails.query.filter_by(product_id=request.args['id']).first()
+
 	return jsonify(product.as_dict())
 
 
@@ -220,6 +215,10 @@ def updateOrder(id):
 	orderUpdate=Order.query.get(id)
 	if request.method=="POST":
 		data=request.form
+
+
+		
+
 		print(data)
 		item_counter=data['item_counter']
 		orderUpdate.customer_id=data['current_customer_hidden']
@@ -231,6 +230,13 @@ def updateOrder(id):
 		
 		db.session.commit()
 
+
+		#Delete
+		remove_list = request.form['remove_list'].split(",")
+		for item in remove_list:
+			# Delete specific order detail
+			pass
+		
 		temp=list()
 		order_item_list=list()
 		for order,orderDetail in orders:
