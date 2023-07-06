@@ -25,33 +25,33 @@
 						</tr>
 					</thead>
 					<tbody class="bg-white divide-y divide-gray-200" id="orderTable">
-						{% for order,orderDetail in orders %}
+						{% for orderDetail in orderDetails %}
 						<tr class="h-2" id="defaultRow">
 							<td class="px-6 w-1 py-4 whitespace-nowrap">{{ loop.index }}</td>
 							<td class="px-6 w-64 py-4 whitespace-wrap sm:w-32">
-								<input type="text" class="border-0" value="{{orderDetail.product_code }}">
+								<input type="text" class="border-0" value="{{ orderDetail.Product.product_code }}">
 							</td>
 
 							<td class="px-6 py-4 whitespace-nowrap" id="descriptionCell">
-								<input name="item_desc_1" id="item_desc_1" disabled value="{{orderDetail.product_description}}" />
+								<input name="item_desc_1" id="item_desc_1" disabled value="{{orderDetail.OrderDetails.product_description}}" />
 							</td>
 
 							<td class="px-6 py-4 whitespace-nowrap">
-								<input type="number" class="quantity-input w-20 text-gray-900 bg-white rounded-lg border-none" name="item_quantity_1" id="item_quantity_1" onchange="calculateItemTotal(this.name)" value="{{orderDetail.item_quantity}}" disabled/>
+								<input type="number" class="quantity-input w-20 text-gray-900 bg-white rounded-lg border-none" name="item_quantity_1" id="item_quantity_1" onchange="calculateItemTotal(this.name)" value="{{orderDetail.OrderDetails.item_quantity}}" disabled/>
 							</td>
 							<td class="px-6 py-4 whitespace-nowrap">
-								<input type="text" class="quantity-input text-gray-900 bg-white rounded-lg w-20 border-none" name="unit_price_1" id="unit_price_1" disabled value="{{orderDetail.unit_price}}" />
+								<input type="text" class="quantity-input text-gray-900 bg-white rounded-lg w-20 border-none" name="unit_price_1" id="unit_price_1" disabled value="{{orderDetail.OrderDetails.unit_price}}" />
 							</td>
 							<td class="px-6 py-4 whitespace-nowrap">
-								{% if orderDetail.discount_type =='percentage' %} 
-									{{orderDetail.discount_value}} %
+								{% if orderDetail.OrderDetails.discount_type =='percentage' %} 
+									{{orderDetail.OrderDetails.discount_value}} %
 								{% else %}
-									$ {{orderDetail.discount_value}}
+									$ {{orderDetail.OrderDetails.discount_value}}
 								{% endif %}
 							</td>
 							<td class="px-6 py-4 whitespace-nowrap">
 								<span class="ml-2">$</span>
-								<input type="number" class="amount-input rounded-lg text-gray-900 bg-white w-28 border-none" min="0" name="sub_total_1" id="sub_total_1" disabled value="{{orderDetail.subtotal_amount}}" />
+								<input type="number" class="amount-input rounded-lg text-gray-900 bg-white w-28 border-none" min="0" name="sub_total_1" id="sub_total_1" disabled value="{{orderDetail.OrderDetails.subtotal_amount}}" />
 							</td>
 						</tr>
 						{%endfor%}
@@ -68,7 +68,7 @@
 								<td>
 									<span>$</span>
 									<span>
-										<input disabled type="text" class="w-24 text-gray-900 bg-white rounded-lg border-none" id="grand_total" name="grand_total" value="{{orders[0][0].gross_cost}}" />
+										<input disabled type="text" class="w-24 text-gray-900 bg-white rounded-lg border-none" id="grand_total" name="grand_total" value="{{order.gross_cost}}" />
 										<input type="hidden" id="grand_total_hidden" name="grand_total_hidden" />
 									</span>
 								</td>
@@ -79,15 +79,15 @@
 								</td>
 								<td>
 									
-										{% if orders[0][0].discount_type=="percentage" %}
+										{% if order.discount_type=="percentage" %}
 										<span>&nbsp;&nbsp;</span>
 										<span>
-											<input type="text" name="ship_total" class="w-16 text-gray-900 bg-white rounded-lg mb-2 h-[35px] border-none" id="ship_total" onchange="{calculate_subtotal_discount()}" value="{{orders[0][0].discount_value}}" disabled /> %
+											<input type="text" name="ship_total" class="w-16 text-gray-900 bg-white rounded-lg mb-2 h-[35px] border-none" id="ship_total" onchange="{calculate_subtotal_discount()}" value="{{order.discount_value}}" disabled /> %
 										</span>
 										{% else %}
 										<span>$</span>
 										<span>
-											<input type="text" name="ship_total" class="w-24 text-gray-900 bg-white rounded-lg mb-2 h-[35px] border-none" id="ship_total" onchange="{calculate_subtotal_discount()}" value="{{orders[0][0].discount_value}}" disabled />
+											<input type="text" name="ship_total" class="w-24 text-gray-900 bg-white rounded-lg mb-2 h-[35px] border-none" id="ship_total" onchange="{calculate_subtotal_discount()}" value="{{order.discount_value}}" disabled />
 										</span>
 										{% endif %}
 									</td>
@@ -100,7 +100,7 @@
 									
 									<span>$</span>
 									<span>
-										<input type="text" name="ship_total" class="w-24 text-gray-900 bg-white rounded-lg mb-2 h-[35px] border-none" id="ship_total" onchange="{calculate_subtotal_discount()}" value="{{orders[0][0].shipping_cost}}" disabled />
+										<input type="text" name="ship_total" class="w-24 text-gray-900 bg-white rounded-lg mb-2 h-[35px] border-none" id="ship_total" onchange="{calculate_subtotal_discount()}" value="{{order.shipping_cost}}" disabled />
 									</span>
 								</td>
 							</tr>
@@ -112,7 +112,7 @@
 									
 									<span>$</span>
 									<span>
-									<input type="text" disabled name="net_total" class="w-24 text-gray-900 bg-white rounded-lg border-none" id="net_total" value="{{orders[0][0].total_amount}}" />
+									<input type="text" disabled name="net_total" class="w-24 text-gray-900 bg-white rounded-lg border-none" id="net_total" value="{{order.total_amount}}" />
 									<input type="hidden" name="net_total_hidden" id="net_total_hidden" />
 								</span>
 								</td>
