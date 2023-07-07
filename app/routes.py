@@ -321,21 +321,23 @@ def print_order(id):
 @app.route('/download-order/<int:id>',methods=['GET'])
 @login_required
 def download_order(id):
-	order = db.session.query(Order).filter(Order.id == id).first()
-	order_details = db.session.query(OrderDetails,Product).join(Product,Product.product_id == OrderDetails.product_id).filter(OrderDetails.order_id == id).all()
-	user=User.query.get(session['user_id'])
-	customer=Customer.query.get(order.customer_id)
-	
-	options = {
+    order = db.session.query(Order).filter(Order.id == id).first()
+    order_details = db.session.query(OrderDetails,Product).join(Product,Product.product_id == OrderDetails.product_id).filter(OrderDetails.order_id == id).all()
+    user=User.query.get(session['user_id'])
+    customer=Customer.query.get(order.customer_id)
+
+    options = {
         "enable-local-file-access": ""
     }
-	image_path = os.path.abspath("/static/images/Entropy_Logo.png")
-	html = render_template('order/printOrder.html',order=order,orderDetails=order_details,user=user,customer=customer,image_path=image_path)
-	pdf = pdfkit.from_string(html, False,options=options)
-	response = make_response(pdf)
-	response.headers["Content-Type"] = "application/pdf"
-	response.headers["Content-Disposition"] = "inline; filename=PO-" + str(id)+".pdf"
-	return response
+
+    image_path = os.path.join(app.root_path, 'static', 'images', 'Entropy_Logo.png')
+
+    html = render_template('order/printOrder.html', order=order, orderDetails=order_details, user=user, customer=customer, image_path=image_path)
+    pdf = pdfkit.from_string(html, False,options=options)
+    response = make_response(pdf)
+    response.headers["Content-Type"] = "application/pdf"
+    response.headers["Content-Disposition"] = "inline; filename=PO-" + str(id)+".pdf"
+    return response
 
 @app.route('/delete-order/<int:id>')
 @login_required

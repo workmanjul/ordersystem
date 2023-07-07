@@ -15,7 +15,6 @@
 		<script src="https://cdn.jsdelivr.net/npm/select2@latest/dist/js/select2.min.js"></script>
 
 		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tw-elements/dist/css/tw-elements.min.css" />
-		<script src="{{ url_for('static', filename='js/main.js') }}"></script>
 		{% block css_block %}
 		{% endblock css_block %}
 	</head>
@@ -23,7 +22,7 @@
 		<nav class="bg-gray-300 border-gray-600 h-62 border-b-2 rounded-lg border-gray-500 shadow-xl">
 			<div class="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
 				<a href="/" class="flex items-center">
-					<img src="../static/images/Entropy_Logo_Large.png" class="h-16 mr-3" alt="Logo" />
+					<img src="../static/images/Entropy_Logo.png" class="h-16 mr-3" alt="Logo" />
 				</a>
 				<div class="flex items-center md:order-2">
 					<button type="button" data-dropdown-toggle="language-dropdown-menu" class="inline-flex items-center text-xl justify-center px-4 py-2 text-gray-900 text-gray-900 capitalize font-extrabold rounded-lg cursor-pointer hover:bg-gray-100">{{user.username}}</button>
