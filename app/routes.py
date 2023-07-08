@@ -325,12 +325,16 @@ def download_order(id):
     order_details = db.session.query(OrderDetails,Product).join(Product,Product.product_id == OrderDetails.product_id).filter(OrderDetails.order_id == id).all()
     user=User.query.get(session['user_id'])
     customer=Customer.query.get(order.customer_id)
+    
 
+    # choose_image=db.session.query(SalesDetails).filter(SalesDetails.product_id==order_details.product_id).first()
+	
+    image_path = os.path.join(app.root_path, 'static', 'images', 'Entropy_Logo.png')
+    
     options = {
         "enable-local-file-access": ""
     }
 
-    image_path = os.path.join(app.root_path, 'static', 'images', 'Entropy_Logo.png')
 
     html = render_template('order/printOrder.html', order=order, orderDetails=order_details, user=user, customer=customer, image_path=image_path)
     pdf = pdfkit.from_string(html, False,options=options)
