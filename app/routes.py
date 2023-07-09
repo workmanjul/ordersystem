@@ -8,6 +8,7 @@ from flask import send_file
 from functools import wraps
 import os
 
+from sqlalchemy import func
 
 def login_required(f):
     @wraps(f)
@@ -38,7 +39,7 @@ def login():
 
 
 
-
+'''
 @app.route('/signin', methods=['GET', 'POST'])
 def signin():
     if request.method == 'POST':
@@ -64,6 +65,7 @@ def signin():
 
     return render_template('signin.html')
 
+'''
 @app.route('/logout')
 def logout():
     session.clear()
@@ -73,17 +75,17 @@ def logout():
 @app.route('/')
 @login_required
 def dashboard():
-	products=db.session.query(Product,SalesDetails).join(SalesDetails,Product.product_id==SalesDetails.product_id).all()
-	print(products)
-	customers=Customer.query.all()
+	products= SalesDetails.query.all()
+	customers= Customer.query.all()
+	shipTo = ShipTo.query.first()
 	user=User.query.get(session['user_id'])
 	
-	return render_template('dashboard.html',products=products,customers=customers,user=user)
+	return render_template('dashboard.html',products=products,customers=customers,shipTo=shipTo,user=user)
 
 @app.route('/get_item_details')
 def get_item_details():
 	
-	product = SalesDetails.query.filter_by(product_id=request.args['id']).first()
+	product = SalesDetails.query.filter_by(id=request.args['id']).first()
 
 	return jsonify(product.as_dict())
 
@@ -168,6 +170,7 @@ def createOrder():
 	discount_value=data['discount_val_total']
 	discount_amount=data['grand_discount_hidden']
 	gross_cost=data['grand_total_hidden']
+	ship_to = data['ship_to']
 
 	order=Order(customer_id=customer_id,
 		total_amount=total_amount,
@@ -175,7 +178,8 @@ def createOrder():
 		discount_type=discount_type, 
 		discount_value=discount_value,
 		gross_cost=gross_cost,
-		discount_amount=discount_amount)
+		discount_amount=discount_amount,
+		ship_to=ship_to)
 	db.session.add(order)
 	db.session.commit()
 
@@ -203,6 +207,12 @@ def createOrder():
 	return redirect(url_for('listOrder'))
 
 
+@app.route('/get_ship_to_details', methods=['GET'])
+@login_required
+def get_ship_to_details():
+    ship_to = ShipTo.query.first()
+    return render_template("widgets/ship_to_address.html",ship_to=ship_to)
+
 @app.route('/update-order/<int:id>',methods=['GET','POST'])
 @login_required
 def updateOrder(id):
@@ -212,6 +222,7 @@ def updateOrder(id):
 	customers=Customer.query.all()
 	current_customer=Customer.query.get(order.customer_id)
 	user=User.query.get(session['user_id'])
+	shipTo = ShipTo.query.first()
 	
 	# print(request.form)
 	orderUpdate=Order.query.get(id)
@@ -294,54 +305,84 @@ def updateOrder(id):
 		return redirect(url_for('listOrder'))
 
 
-	return render_template('order/update.html', order=order, orderDetails = order_details,user=user,products=products,customers=customers,current_customer=current_customer)
+	return render_template('order/update.html', order=order, orderDetails = order_details,user=user,products=products,customers=customers,current_customer=current_customer,ship_to=shipTo)
 
 
 @app.route('/view-order/<int:id>',methods=['POST','GET'])
 @login_required
 def viewOrder(id):
 	order = db.session.query(Order).filter(Order.id == id).first()
-	order_details = db.session.query(OrderDetails,Product).join(Product,Product.product_id == OrderDetails.product_id).filter(OrderDetails.order_id == id).all()
+	order_details = db.session.query(OrderDetails,SalesDetails).join(SalesDetails,SalesDetails.id == OrderDetails.product_id).filter(OrderDetails.order_id == id).all()
+	shipTo = ShipTo.query.first()
 	user=User.query.get(session['user_id'])
 	# user = None
 	customer=Customer.query.get(order.customer_id)
-	return render_template('order/viewOrder.html',order=order,orderDetails=order_details,user=user,customer=customer)
+	return render_template('order/viewOrder.html',order=order,orderDetails=order_details,user=user,ship_to=shipTo,customer=customer)
 
 @app.route('/print-order/<int:id>',methods=['GET'])
 @login_required
 def print_order(id):
 	order = db.session.query(Order).filter(Order.id == id).first()
-	order_details = db.session.query(OrderDetails,Product).join(Product,Product.product_id == OrderDetails.product_id).filter(OrderDetails.order_id == id).all()
+	order_details = db.session.query(OrderDetails,SalesDetails).join(SalesDetails,SalesDetails.id == OrderDetails.product_id).filter(OrderDetails.order_id == id).all()
 	user=User.query.get(session['user_id'])
 	customer=Customer.query.get(order.customer_id)
+	shipTo = ShipTo.query.first()
 	
-	image_path = os.path.abspath("/static/images/Entropy_Logo.png")
-	return render_template('order/printOrder.html',order=order,orderDetails=order_details,user=user,customer=customer,image_path=image_path)
+	#Calculate values and check if brand ecp or entropy is high
 
-@app.route('/download-order/<int:id>',methods=['GET'])
+	results = db.session.query(SalesDetails.brand, func.sum(OrderDetails.subtotal_amount).label('total_sum')).\
+    join(OrderDetails, OrderDetails.product_id == SalesDetails.id).\
+    filter(OrderDetails.order_id == id).\
+    group_by(SalesDetails.brand).all()
+
+	res_dict = {}
+	for res in results:
+		res_dict[res[0]] = res[1]
+	
+	ecp_total = res_dict['ecp']
+	entropy_total = res_dict['entropy']
+
+	if entropy_total > ecp_total:
+		image_path = os.path.abspath("/static/images/Entropy_Logo.png")
+	else:
+		image_path = os.path.abspath("/static/images/ECP_Logo.png")
+
+	return render_template('order/printOrder.html',order=order,orderDetails=order_details,user=user,customer=customer,image_path=image_path,ship_to=shipTo)
+
+
+@app.route('/download-order/<int:id>', methods=['GET'])
 @login_required
 def download_order(id):
     order = db.session.query(Order).filter(Order.id == id).first()
-    order_details = db.session.query(OrderDetails,Product).join(Product,Product.product_id == OrderDetails.product_id).filter(OrderDetails.order_id == id).all()
-    user=User.query.get(session['user_id'])
-    customer=Customer.query.get(order.customer_id)
-    
+    order_details = db.session.query(OrderDetails, SalesDetails).join(SalesDetails, SalesDetails.id == OrderDetails.product_id).filter(OrderDetails.order_id == id).all()
+    user = User.query.get(session['user_id'])
+    customer = Customer.query.get(order.customer_id)
+    shipTo = ShipTo.query.first()
 
-    # choose_image=db.session.query(SalesDetails).filter(SalesDetails.product_id==order_details.product_id).first()
-	
-    image_path = os.path.join(app.root_path, 'static', 'images', 'Entropy_Logo.png')
-    
+    results = db.session.query(SalesDetails.brand, func.sum(OrderDetails.subtotal_amount).label('total_sum')).join(OrderDetails, OrderDetails.product_id == SalesDetails.id).filter(OrderDetails.order_id == id).group_by(SalesDetails.brand).all()
+    res_dict = {}
+    for res in results:
+        res_dict[res[0]] = res[1]
+
+    ecp_total = res_dict.get('ecp', 0)
+    entropy_total = res_dict.get('entropy', 0)
+
+    if entropy_total > ecp_total:
+        image_path = os.path.join(app.root_path, 'static', 'images', 'Entropy_Logo.png')
+    else:
+        image_path = os.path.join(app.root_path, 'static', 'images', 'ECP_Logo.png')
+
     options = {
         "enable-local-file-access": ""
     }
 
-
-    html = render_template('order/printOrder.html', order=order, orderDetails=order_details, user=user, customer=customer, image_path=image_path)
-    pdf = pdfkit.from_string(html, False,options=options)
+    html = render_template('order/printOrder.html', order=order, orderDetails=order_details, user=user, customer=customer, image_path=image_path, ship_to=shipTo)
+    pdf = pdfkit.from_string(html, False, options=options)
     response = make_response(pdf)
     response.headers["Content-Type"] = "application/pdf"
-    response.headers["Content-Disposition"] = "inline; filename=PO-" + str(id)+".pdf"
+    response.headers["Content-Disposition"] = f"inline; filename=PO-{id}.pdf"
     return response
+
 
 @app.route('/delete-order/<int:id>')
 @login_required

@@ -64,6 +64,7 @@ class Order(db.Model):
     discount_amount=db.Column(db.Numeric(precision=8, scale=2), nullable=True)
     shipping_cost = db.Column(db.Numeric(precision=8, scale=2), nullable=True)
     total_amount = db.Column(db.Numeric(precision=8, scale=2), nullable=True)
+    ship_to = db.Column(db.Numeric(precision=8, scale=2), nullable=True)
     
 
 class OrderDetails(db.Model):
@@ -106,6 +107,21 @@ class User(db.Model):
     def check_password(self, password):
         return check_password_hash(self.password, password)
     
-    
+class ShipTo(db.Model):
+    __tablename__ = 'ship_to'
+    id = db.Column(db.Integer, primary_key=True)
+    name=db.Column(db.String(40),nullable=False)
+    address_1=db.Column(db.String(255),nullable=False)
+    address_2=db.Column(db.String(255),nullable=False)
+    city=db.Column(db.String(255),nullable=False)
+    state=db.Column(db.String(255),nullable=False)
+    postal_code=db.Column(db.String(255),nullable=False)
+    country=db.Column(db.String(255),nullable=False)
+    contact=db.Column(db.String(255),nullable=False)
+    phone_number=db.Column(db.String(255),nullable=False)
+
+    def as_dict(self):
+       return {c.name: getattr(self, c.name) for c in self.__table__.columns}
+
 with app.app_context():
     db.create_all()

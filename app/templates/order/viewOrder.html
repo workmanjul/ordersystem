@@ -29,7 +29,7 @@
 						<tr class="h-2" id="defaultRow">
 							<td class="px-6 w-1 py-4 whitespace-nowrap">{{ loop.index }}</td>
 							<td class="px-6 w-64 py-4 whitespace-wrap sm:w-32">
-								<input type="text" class="border-0" value="{{ orderDetail.Product.product_code }}">
+								<input type="text" class="border-0" value="{{ orderDetail.SalesDetails.sku }}">
 							</td>
 
 							<td class="px-6 py-4 whitespace-nowrap" id="descriptionCell">
@@ -126,6 +126,26 @@
 			<!-- <div class="flex justify-end">
 				<input type="submit" class="w-32 h-[50px] text-center rounded bg-green-500 text-white" />
 			</div> -->
+
+			<div class="flex justify-left mb-5 mr-5">
+				<div id="ship_to">
+					<div class="card w-64">
+						<h1 class="p-3 text-xl">Delivery Address</h1>
+						<div class="max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
+							
+							<a href="#">
+								<h5 class="mb-2 text-2xl font-semibold tracking-tight text-gray-900 dark:text-white">{{ ship_to.contact }}</h5>
+							</a>
+						  <h5 class="card-title text-xl"></h5>
+						  <p class="card-text">{{ ship_to.phone_number }}</p>
+						  <p class="card-text">{{ ship_to.name }}</p>
+						  <p class="card-text">{{ ship_to.address_1 }}</p>
+						  <p class="card-text">{{ ship_to.city }} {{ ship_to.state }} {{ ship_to.postal_code }}</p>
+						  <p class="card-text">{{ ship_to.country }}</p>
+						</div>
+					  </div>
+				</div>
+				</div>
 		</form>
 	</div>
 </div>

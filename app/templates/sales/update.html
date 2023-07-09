@@ -16,8 +16,14 @@
 				<div>Brand</div>
 
 				<select id="countries" name="brand" class="block py-2.5 px-0 w-full h-[45px] bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5" value="{{item.brand}}">
-					<option value="entropy">Entropy</option>
+					{% if item.brand == 'entropy' %}
+					<option value="entropy" selected >Entropy</option>
 					<option value="ecp">ECP</option>
+					{% else %}
+					<option value="entropy" >Entropy</option>
+					<option value="ecp" selected>ECP</option>
+					{% endif %}
+
 				</select>
 			</div>
 			<div class="relative z-0 w-full mb-6 group mt-6">
@@ -30,8 +36,11 @@
 
 			<select id="countries" name="product_id" class="block py-2.5 px-0 w-full h-[45px] bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5">
 				{%for product in products%}
-
+					{% if item.product_id == product.product_id %}
+				<option value="{{product.product_id}}" selected>{{product.name}}</option>
+				{% else %}
 				<option value="{{product.product_id}}">{{product.name}}</option>
+				{% endif %}
 				{%endfor%}
 			</select>
 		</div>
