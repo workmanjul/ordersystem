@@ -1,4 +1,4 @@
-from flask import redirect, render_template,url_for,request,session,flash,jsonify
+from flask import redirect, render_template, url_for, request, session, flash, jsonify
 from app import app,db
 from .models import *
 from werkzeug.security import check_password_hash
@@ -21,21 +21,25 @@ def login_required(f):
 # FOR Login
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-    if request.method == 'POST':
-        username = request.form['username']
-        password = request.form['password']
+	error = None
+	if request.method == 'POST':
+		username = request.form['username']
+		password = request.form['password']
 
-        # Find the user by username
-        user = User.query.filter_by(username=username).first()
+		# Find the user by username
+		user = User.query.filter_by(username=username).first()
+
 
         # Check if the user exists and the password is correct
-        if user and user.check_password(password):
-            session['user_id'] = user.id
-            return redirect('/')
-        error = 'Invalid username or password'
-        return render_template('login.html', error=error)
+		if user and user.check_password(password):
+			flash("You are successfully logged in")
+			session['user_id'] = user.id	
 
-    return render_template('login.html')
+			return redirect('/')
+		error = 'Invalid username or password'
+		return render_template('login.html', error=error)
+
+	return render_template('login.html')
 
 
 
@@ -64,11 +68,12 @@ def signin():
         return redirect(url_for('dashboard'))
 
     return render_template('signin.html')
-
 '''
+
 @app.route('/logout')
 def logout():
     session.clear()
+    # flash("User Logged Out!")
     return redirect(url_for('login'))
 # =============================================================================================
 
@@ -203,6 +208,7 @@ def createOrder():
 
 		db.session.add(orderDetail)
 		db.session.commit()
+	flash("Order created")
 	
 	return redirect(url_for('listOrder'))
 
@@ -301,7 +307,7 @@ def updateOrder(id):
 				orderDetailUpdate.subtotal_amount=order_item_list[index]['subtotal_amount']
 				db.session.commit()
 
-		
+		flash("Order Updated!")
 		return redirect(url_for('listOrder'))
 
 
@@ -380,31 +386,54 @@ def download_order(id):
     pdf = pdfkit.from_string(html, False, options=options)
     response = make_response(pdf)
     response.headers["Content-Type"] = "application/pdf"
-    response.headers["Content-Disposition"] = f"inline; filename=PO-{id}.pdf"
+    # response.headers["Content-Disposition"] = f"inline; filename=PO-{id}.pdf"
+    response.headers["Content-Disposition"] = f"attachment; filename=PO-{id}.pdf"
     return response
 
+
+# @app.route('/delete-order/<int:id>')
+# @login_required
+# def deleteOrder(id):
+#     try:
+#         order = Order.query.get(id)
+#         if order is None:
+#             return "Item not found", 404
+
+#         orderDetails = OrderDetails.query.filter_by(order_id=order.id).all()
+        
+#         # Delete the order and its related order details
+#         db.session.delete(order)
+#         for order_detail in orderDetails:
+#             db.session.delete(order_detail)
+
+#         db.session.commit()
+# 		flash("Sales Created")
+#         return redirect(url_for('listOrder'))
+#     except Exception as e:
+#         # Handle any exceptions that occur during the deletion process
+#         return "Error occurred while deleting the order", 500
 
 @app.route('/delete-order/<int:id>')
 @login_required
 def deleteOrder(id):
-    try:
-        order = Order.query.get(id)
-        if order is None:
-            return "Item not found", 404
+	try:
+		order = Order.query.get(id)
+		if order is None:
+			return "Item not found", 404
 
-        orderDetails = OrderDetails.query.filter_by(order_id=order.id).all()
-        
-        # Delete the order and its related order details
-        db.session.delete(order)
-        for order_detail in orderDetails:
-            db.session.delete(order_detail)
+		orderDetails = OrderDetails.query.filter_by(order_id=order.id).all()
 
-        db.session.commit()
-        return redirect(url_for('listOrder'))
-    except Exception as e:
-        # Handle any exceptions that occur during the deletion process
-        return "Error occurred while deleting the order", 500
+		# Delete the order and its related order details
+		db.session.delete(order)
+		for order_detail in orderDetails:
+			db.session.delete(order_detail)
 
+		db.session.commit()
+		flash("Order Deleted")
+		return redirect(url_for('listOrder'))
+	except Exception as e:
+		# Handle any exceptions that occur during the deletion process
+		return "Error occurred while deleting the order", 500
 # =============================================================================================
 
 # FOR Customer
@@ -434,6 +463,7 @@ def createCustomer():
 		db.session.add(customer)
 		# print(request.form)
 		db.session.commit()
+		flash("Customer created")
 		
 		return redirect(url_for('listCustomer'))
 	user=User.query.get(session['user_id'])
@@ -448,8 +478,6 @@ def listCustomer():
 	per_page = request.args.get('per_page',10,type=int)
 	customers = Customer.query.order_by(Customer.id.desc()).paginate(page=page,per_page=per_page)
 	user=User.query.get(session['user_id'])
-	# user = None
-
 
 	return render_template('customer/listCustomer.html',customers=customers,user=user)
 
@@ -473,10 +501,11 @@ def updateCustomer(id):
 		customer.address2=request.form['address2']
 		customer.city=request.form['city']
 		customer.state_country = request.form['state']
-		customer.postcode=request.form['postcode']
+		customer.postcode=request.form['post_code']
 		customer.is_wholesale = int(request.form.get('is_wholesale')) if request.form.get('is_wholesale') else 0
 	
 		db.session.commit()
+		flash("Customer Updated!")
 		return redirect(url_for('listCustomer'))
 	user=User.query.get(session['user_id'])
 	return render_template('customer/update.html',customer=customer,user=user)
@@ -490,6 +519,7 @@ def deleteCustomer(id):
 	
 	db.session.delete(customer)
 	db.session.commit()
+	flash("Customer Deleted!")
 	return redirect(url_for('listCustomer'))
 
 
@@ -516,6 +546,7 @@ def listSale():
 	user=User.query.get(session['user_id'])
 	# user = None
 	customers=Customer.query.all()
+	
 	return render_template('sales/listSale.html',products=products,customers=customers,user=user)
 
 
@@ -538,6 +569,7 @@ def createSale():
 		db.session.add(sales)
 		# print(request.form)
 		db.session.commit()
+		flash("Sales Created")
 		return redirect(url_for('listSale'))
 	user=User.query.get(session['user_id'])
 	# user = None
@@ -561,6 +593,7 @@ def updateSale(id):
 		item.brand=request.form['brand']
 	
 		db.session.commit()
+		flash("Sales Updated!")
 		return redirect(url_for('listSale'))
 	user=User.query.get(session['user_id'])
 	products=Product.query.all()
@@ -575,6 +608,7 @@ def deleteSales(id):
 	
 	db.session.delete(item)
 	db.session.commit()
+	flash("Sales Deleted!")
 	return redirect(url_for('listSale'))
 
 
