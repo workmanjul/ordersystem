@@ -49,8 +49,15 @@
 				<div class="col-1">
 				</div>
 				<div class="col-6">
-				  <h1 class="pull-right">ORDER: Order for: {{customer.first_name}} {{customer.last_name}}</h1>
+				  <h1 class="pull-right">ORDER</h1>
+			  	</div>
 			  </div>
+			  <div class="row">
+				<div class="col-8"></div>
+				<div class="col-4">
+					<h3 class="pull-right">{{customer.first_name}} {{customer.last_name}}</h3>
+				</div>
+				
 			  </div>
 			  <br/>
 			  <br/>
@@ -66,7 +73,6 @@
 			</section>
 			<section class="invoice">
 			  <br/>
-			  <h5>{{customer.first_name}} {{customer.last_name}}</h5>
 			  <div class="">
 				  <div class="card-body">
 							<!-- /.row -->
@@ -88,7 +94,7 @@
 							{% for orderDetail in orderDetails %}
 						  <tr>
 							<td>{{ orderDetail.SalesDetails.name }}</td>
-							<td>{{ orderDetail.OrderDetails.product_description }}</td>
+							<td style="width: 30%;">{{ orderDetail.OrderDetails.product_description }}</td>
 							<td>{{ orderDetail.OrderDetails.item_quantity }}</td>
 							<td>$ {{ "%.2f"|format(orderDetail.OrderDetails.unit_price) }}</td>
 							<td>{% if orderDetail.OrderDetails.discount_type =='percentage' %} {{orderDetail.OrderDetails.discount_value}} % {% else %} $ {{orderDetail.OrderDetails.discount_value}} {% endif %}</td>
