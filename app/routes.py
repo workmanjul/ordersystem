@@ -219,6 +219,12 @@ def get_ship_to_details():
     ship_to = ShipTo.query.first()
     return render_template("widgets/ship_to_address.html",ship_to=ship_to)
 
+@app.route('/customer_bill_address', methods=['GET'])
+@login_required
+def customer_bill_address():
+	bill_to = db.session.query(Customer).filter(Customer.id == request.args.get('id')).first()
+	return render_template("widgets/bill_to_address.html",bill_to=bill_to)
+
 @app.route('/update-order/<int:id>',methods=['GET','POST'])
 @login_required
 def updateOrder(id):
@@ -262,7 +268,6 @@ def updateOrder(id):
 
 		for index in range(int(item_counter)):
 			i = item_counter_list[index]
-			# if str(temp[index]) == data['orderDetail_id_'+str(index+1)]:
 			if f'orderDetail_id_{str(i)}' in data:
 				order_item={	
 					'order_id':id,

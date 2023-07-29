@@ -26,17 +26,41 @@
 </div>
 {% endfor %} {% endif %} {% endwith %}
 
-<div class="w-full flex flex-col p-4">
-	<div class="h-[170px] border-b-4 border-gray-500 text-gray-900 shadow-xl rounded-lg">
-		<h1 class="text-xl font-bold text-gray-700 px-4 py-4">Choose Customer</h1>
-		<div class="flex gap-x-8 px-4 w-[50%]">
-			<select data-te-select-init data-te-select-filter="true" class="rounded w-[50%] px-4 select2-js custom-select" id="current_customer" name="current_customer" onchange="handleCustomer()">
-				<option value="0">Select a Customer</option>
-				{% for customer in customers %}
-				<option value="{{customer.id}}">{{customer.first_name}} {{customer.last_name}}</option>
-				{%endfor%}
-			</select>
-			<button data-modal-target="defaultModal" data-modal-toggle="defaultModal" class="block text-white bg-blue-500 font-medium rounded-lg text-sm px-5 text-center sm:h-8 md:h-[40px] mx-4" type="button" id="">Create New Customer</button>
+<div class="w-full flex flex-col p-2">
+	<div class="h-[70px] border-b-4 border-gray-500 text-gray-900 shadow-xl rounded-lg" id="otherdiv">
+		<!-- <h1 class="text-xl font-bold text-gray-700 px-4 py-4">Choose Customer</h1> -->
+		<div class="flex justify-between items-center w-[100%]">
+			<div class="flex px-4 w-[30%]">
+				<select data-te-select-init data-te-select-filter="true" class="rounded w-[350px] px-4 select2-js custom-select" id="current_customer" name="current_customer" onchange="handleCustomer(value)">
+					<option value="0">Select a Customer</option>
+					{% for customer in customers %}
+					<option value="{{customer.id}}">{{customer.first_name}} {{customer.last_name}}</option>
+					{%endfor%}
+				</select>
+				<button data-modal-target="defaultModal" data-modal-toggle="defaultModal" class="mx-2 text-white bg-blue-600 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 text-center inline-flex items-center" type="button" id="">+</button>
+			</div>
+			<div class="w-[70%] flex mx-8 pt-4">
+				<div class="ml-16 mr-[140px]">
+					<h5 class="text-[18px] tracking-tight text-gray-700">Bill To:<input class="bg-none px-2" id="bill_to_name" disabled></input></h5>
+					<div id="bill_to" class="hidden"></div>
+				</div>
+
+				<div class="mb-5 mr-5 rounded mx-16">
+					<select class="text-gray-700 w-[300px] font-medium rounded-lg text-sm px-5 text-center sm:h-8 md:h-[40px] mx-4 select2-js custom-select" onchange="showShipTo(this.value)" name="ship_to" title="Select Shipping Address" required>
+						<option value="0">Select Shipping Address..</option>
+						<option value="{{ shipTo.id }}">{{ shipTo.name }}</option>
+					</select>
+
+					<div id="ship_to" class="hidden"></div>
+				</div>
+			</div>
+			<div>
+				<button id="dropdownDefaultButton" data-dropdown-toggle="dropdown" class="text-white bg-blue-600 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-4 text-center inline-flex items-center" type="button">
+					<svg class="w-2.5 h-2.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
+						<path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4" />
+					</svg>
+				</button>
+			</div>
 		</div>
 	</div>
 
@@ -189,7 +213,7 @@
 					</tbody>
 				</table>
 
-				<div class="px-2 h-[160px] flex justify-between">
+				<div class="px-2 h-[165px] flex justify-between">
 					<button class="px-2 w-[50px] h-[40px] rounded-xl bg-yellow-600 text-white" id="insertRow">
 						<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-8 h-8 text-white-900">
 							<path stroke-linecap="round" stroke-linejoin="round" d="M12 9v6m3-3H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -239,16 +263,6 @@
 
 			<div class="flex justify-end mb-5 mr-5">
 				<input type="submit" class="w-32 h-[50px] text-center rounded bg-green-500 text-white" onclick="validateForm(event)" />
-			</div>
-
-			<div class="flex justify-left mb-5 mr-5">
-				<select class="text-gray-700 w-[20%] font-medium rounded-lg text-sm px-5 text-center sm:h-8 md:h-[40px] mx-4" onchange="showShipTo(this.value)" name="ship_to" title="Select Shipping Address" required>
-					<option value="0">Select Shipping Address..</option>
-					<option value="{{ shipTo.id }}">{{ shipTo.name }}</option>
-				</select>
-			</div>
-			<div class="flex justify-left mb-5 mr-5">
-				<div id="ship_to"></div>
 			</div>
 		</form>
 	</div>
@@ -336,49 +350,49 @@
 			itemList.push(counter);
 
 			cols += `<td class="px-6 w-[1%] py-4 whitespace-nowrap">${counter}</td>
-          <td class="px-6 w-64 py-4 whitespace-nowrap">
-            <select id="product_${counter}" class="product-select bg-white border-lg text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 select2-js custom-select" name="product_${counter}" onchange="populateItemDetails(this.value,this.name)">
+	         <td class="px-6 w-64 py-4 whitespace-nowrap">
+	           <select id="product_${counter}" class="product-select bg-white border-lg text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 select2-js custom-select" name="product_${counter}" onchange="populateItemDetails(this.value,this.name)">
 				<option value="0">Select a Product</option>
-              <!-- Products options will be dynamically generated by Flask -->
-			  
-              {% for product in products %}
-              <option value="{{ product.id }}">{{ product.name }}</option>
-			  
-              {% endfor %}
-            </select>
+	             <!-- Products options will be dynamically generated by Flask -->
+
+	             {% for product in products %}
+	             <option value="{{ product.id }}">{{ product.name }}</option>
+
+	             {% endfor %}
+	           </select>
 			<input type="hidden" name="product_code_hidden_${counter}" id="product_code_hidden_${counter}" value="" required/>
-          </td>
+	         </td>
 
-          <td class="px-6 py-4 whitespace-nowrap" id="descriptionCell">
-            <input name="item_desc_${counter}" class="border-none" id="item_desc_${counter}" disabled required/>
-            <input type='hidden' name="item_desc_hidden_${counter}" id="item_desc_hidden_${counter}"/>
-          </td>
+	         <td class="px-6 py-4 whitespace-nowrap" id="descriptionCell">
+	           <input name="item_desc_${counter}" class="border-none" id="item_desc_${counter}" disabled required/>
+	           <input type='hidden' name="item_desc_hidden_${counter}" id="item_desc_hidden_${counter}"/>
+	         </td>
 
-          <td class="px-6 py-4 whitespace-nowrap">
-            <input type="number" class="quantity-input w-20 text-gray-900 bg-white rounded-lg border-none" min="1" value="0" name="item_quantity_${counter}" id="item_quantity_${counter}" onchange="calculateItemTotal(this.name)" required/>
-          </td>
-          <td class="px-6 py-4 whitespace-nowrap">
-            <input type="text" class="quantity-input text-gray-900 bg-white rounded-lg w-20 border-none" name="unit_price_${counter}" id="unit_price_${counter}" disabled required/>
-            <input type="hidden" name="unit_price_hidden_${counter}" id="unit_price_hidden_${counter}"/>
-          </td>
-          <td class="px-6 py-4 whitespace-nowrap">
-            <select class="discount-type-select bg-white border-lg text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-16 p-2.5 border-none" name="discount_type_${counter}" id="discount_type_${counter}" onchange="calculateItemTotal(this.name)" required>
-              <option value="percentage">%</option>
-              <option value="amount">$</option>
-            </select>
-          </td>
-          <td class="px-6 py-4 whitespace-nowrap">
-            <input type="number" class="discount-input w-24 text-gray-900 bg-white rounded-lg border-none" min="0" value="0" name="discount_val_${counter}" id="discount_val_${counter}" oninput="calculateItemTotal(this.name)" required/>
-          </td>
-          <td class="px-6 py-4 whitespace-nowrap">
-            $<input type="number" class="amount-input rounded-lg text-gray-900 bg-white w-28 border-none" min="0" value="" name="sub_total_${counter}" id="sub_total_${counter}" disabled required/>
-            <input type="hidden" min="0" value="" name="sub_total_hidden_${counter}" id="sub_total_hidden_${counter}"/>
-          </td>
-          <td class="px-6 py-4 whitespace-nowrap text-center">
-            <button id="deleteRow_${counter}" class="delete-row-button" onclick="remove_order_item(this.id)">
-              &#10005;
-            </button>
-          </td>`;
+	         <td class="px-6 py-4 whitespace-nowrap">
+	           <input type="number" class="quantity-input w-20 text-gray-900 bg-white rounded-lg border-none" min="1" value="0" name="item_quantity_${counter}" id="item_quantity_${counter}" onchange="calculateItemTotal(this.name)" required/>
+	         </td>
+	         <td class="px-6 py-4 whitespace-nowrap">
+	           <input type="text" class="quantity-input text-gray-900 bg-white rounded-lg w-20 border-none" name="unit_price_${counter}" id="unit_price_${counter}" disabled required/>
+	           <input type="hidden" name="unit_price_hidden_${counter}" id="unit_price_hidden_${counter}"/>
+	         </td>
+	         <td class="px-6 py-4 whitespace-nowrap">
+	           <select class="discount-type-select bg-white border-lg text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-16 p-2.5 border-none" name="discount_type_${counter}" id="discount_type_${counter}" onchange="calculateItemTotal(this.name)" required>
+	             <option value="percentage">%</option>
+	             <option value="amount">$</option>
+	           </select>
+	         </td>
+	         <td class="px-6 py-4 whitespace-nowrap">
+	           <input type="number" class="discount-input w-24 text-gray-900 bg-white rounded-lg border-none" min="0" value="0" name="discount_val_${counter}" id="discount_val_${counter}" oninput="calculateItemTotal(this.name)" required/>
+	         </td>
+	         <td class="px-6 py-4 whitespace-nowrap">
+	           $<input type="number" class="amount-input rounded-lg text-gray-900 bg-white w-28 border-none" min="0" value="" name="sub_total_${counter}" id="sub_total_${counter}" disabled required/>
+	           <input type="hidden" min="0" value="" name="sub_total_hidden_${counter}" id="sub_total_hidden_${counter}"/>
+	         </td>
+	         <td class="px-6 py-4 whitespace-nowrap text-center">
+	           <button id="deleteRow_${counter}" class="delete-row-button" onclick="remove_order_item(this.id)">
+	             &#10005;
+	           </button>
+	         </td>`;
 			// Insert the columns inside a row
 			newRow.append(cols);
 			// Insert the row inside a table
@@ -425,7 +439,21 @@
 			},
 		});
 	}
+
+	function toggleDivVisibility() {
+		const div1 = document.getElementById("bill_to");
+		const div2 = document.getElementById("ship_to");
+		const otherDiv = document.getElementById("otherdiv");
+
+		div1.classList.toggle("hidden");
+		div2.classList.toggle("hidden");
+		otherDiv.classList.toggle("h-[240px]");
+	}
+
+	// Add a click event listener to the button
+	document.getElementById("dropdownDefaultButton").addEventListener("click", toggleDivVisibility);
 </script>
+
 <script>
 	// Populate Each Item/Product Details
 	function populateItemDetails(value, name) {
@@ -579,10 +607,25 @@
 	});
 </script>
 <script>
-	function handleCustomer() {
+	function handleCustomer(value) {
+		$.ajax({
+			type: "GET",
+			url: "/customer_bill_address?id=" + value,
+			success: function (data, status, xhr) {
+				$("#bill_to").html(data);
+
+				var tempElement = document.createElement("bill_to");
+            	tempElement.innerHTML = data;
+				var customerName = $(tempElement).find("#customer_name").text();
+
+				$("#bill_to_name").val(customerName);
+
+            },
+		});
 		var selectCustomer = document.getElementById("current_customer");
 		var selectedValue = selectCustomer.value;
 		$("#current_customer_hidden").val(selectedValue);
+		
 	}
 
 	function validateForm(e) {

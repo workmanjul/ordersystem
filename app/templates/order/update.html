@@ -11,7 +11,7 @@
 {% endblock css_block %} {% block body %}
 
 <div class="w-full flex flex-col p-4">
-	<div class="h-[170px] border-b-4 border-gray-500 text-gray-900 shadow-xl rounded-lg">
+	<!-- <div class="h-[170px] border-b-4 border-gray-500 text-gray-900 shadow-xl rounded-lg">
 		<h1 class="text-xl font-bold text-gray-700 px-4 py-4">Choose Customer</h1>
 		<div class="flex gap-x-8 px-4">
 			<select data-te-select-init data-te-select-filter="true" class="rounded w-[50%] px-4 select1-js custom-select" id="current_customer" name="current_customer" onchange="handleCustomer()" value="{{current_customer.first_name}} {{current_customer.last_name}}">
@@ -26,7 +26,54 @@
 
 			<button data-modal-target="defaultModal" data-modal-toggle="defaultModal" class="block text-white bg-blue-500 font-medium rounded-lg text-sm px-5 text-center sm:h-8 md:h-[40px]" type="button" id="">Create New Customer</button>
 		</div>
+	</div> -->
+
+
+
+	<div class="h-[70px] border-b-4 border-gray-500 text-gray-900 shadow-xl rounded-lg" id="otherdiv">
+		<!-- <h1 class="text-xl font-bold text-gray-700 px-4 py-4">Choose Customer</h1> -->
+		<div class="flex justify-between items-center w-[100%]">
+			<div class="flex px-4 w-[30%]">
+				<select data-te-select-init data-te-select-filter="true" class="rounded w-[350px] px-4 select2-js custom-select" id="current_customer" name="current_customer" onchange="handleCustomer(value)" value="{{current_customer.first_name}} {{current_customer.last_name}}">
+					{% for customer in customers %} 
+					{% if order.customer_id == customer.id %}
+						<option value="{{customer.id}}" selected>{{customer.first_name}} {{customer.last_name}}</option>
+					{% else %}
+						<option value="{{customer.id}}">{{customer.first_name}} {{customer.last_name}}</option>
+					{% endif %} 
+				{% endfor %}
+				</select>
+				<button data-modal-target="defaultModal" data-modal-toggle="defaultModal" class="mx-2 text-white bg-blue-600 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 text-center inline-flex items-center" type="button" id="">+</button>
+			</div>
+			<div class="w-[70%] flex mx-8 pt-4">
+				<div class="ml-16 mr-[140px]">
+					<h5 class="text-xl font-semibold tracking-tight text-gray-900">Bill To:<input class="bg-none px-2" id="bill_to_name" disabled></input></h5>
+					<div id="bill_to" class="hidden"></div>
+				</div>
+
+				<div class="mb-5 mr-5 rounded mx-16">
+					<select class="text-gray-700 w-[300px] font-medium rounded-lg text-sm px-5 text-center sm:h-8 md:h-[40px] mx-4 select2-js custom-select" onchange="showShipTo(this.value)" name="ship_to" title="Select Shipping Address" required>
+						<option value="0">Select Shipping Address..</option>
+						<option value="{{ ship_to.id }}">{{ ship_to.name }}</option>
+					</select>
+
+					<div id="ship_to" class="hidden"></div>
+				</div>
+			</div>
+			<div>
+				<button id="dropdownDefaultButton" data-dropdown-toggle="dropdown" class="text-white bg-blue-600 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-4 text-center inline-flex items-center" type="button">
+					<svg class="w-2.5 h-2.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
+						<path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4" />
+					</svg>
+				</button>
+			</div>
+		</div>
 	</div>
+
+
+
+
+
 
 	<div id="defaultModal" tabindex="-1" aria-hidden="true" class="fixed top-0 left-0 right-0 z-50 hidden w-full p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-[calc(100%-1rem)] max-h-full">
 		<div class="relative w-full max-h-full">
