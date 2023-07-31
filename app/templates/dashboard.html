@@ -41,12 +41,12 @@
 			</div>
 			<div class="w-[70%] flex mx-8 pt-4">
 				<div class="ml-16 mr-[140px]">
-					<h5 class="text-[18px] tracking-tight text-gray-700">Bill To:<input class="bg-none px-2" id="bill_to_name" disabled></input></h5>
+					<h5 class="text-[18px] tracking-tight text-gray-700">Bill To:<input class="bg-none px-2" id="bill_to_name" disabled /></h5>
 					<div id="bill_to" class="hidden"></div>
 				</div>
 
 				<div class="mb-5 mr-5 rounded mx-16">
-					<select class="text-gray-700 w-[300px] font-medium rounded-lg text-sm px-5 text-center sm:h-8 md:h-[40px] mx-4 select2-js custom-select" onchange="showShipTo(this.value)" name="ship_to" title="Select Shipping Address" required>
+					<select class="text-gray-700 w-[300px] font-medium rounded-lg text-sm px-5 text-center sm:h-8 md:h-[40px] mx-4 select2-js custom-select" onchange="showShipTo(this.value)" name="ship_to" title="Select Shipping Address" id="ship_to_" required>
 						<option value="0">Select Shipping Address..</option>
 						<option value="{{ shipTo.id }}">{{ shipTo.name }}</option>
 					</select>
@@ -154,6 +154,8 @@
 	<div class="mt-4 bg-white md:w-auto sm:w-full relative border-b-2 text-gray-900 shadow-xl rounded-lg min-h-[320px]">
 		<form action="{{url_for('createOrder')}}" method="POST">
 			<input type="hidden" id="current_customer_hidden" name="current_customer_hidden" value="" />
+			<input type="hidden" id="ship_to_hidden" name="ship_to_hidden" value="" />
+
 			<div class="text-xl font-bold text-gray-700 px-4 py-4 overflow-x-auto">Create Order</div>
 			<div class="overflow-x-auto">
 				<table class="table-auto border rounded border-gray-200 w-full my-2 mx-auto" id="order_table">
@@ -326,6 +328,24 @@
 </script>
 <script>
 	$(function () {
+		var value = $("#current_customer").val();
+		$.ajax({
+			type: "GET",
+			url: "/customer_bill_address?id=" + value,
+			success: function (data, status, xhr) {
+				$("#bill_to").html(data);
+
+				var tempElement = document.createElement("bill_to");
+				tempElement.innerHTML = data;
+				var customerName = $(tempElement).find("#customer_name").text();
+
+				$("#bill_to_name").val(customerName);
+			},
+		});
+	});
+</script>
+<script>
+	$(function () {
 		$(".select2-js").select2();
 
 		// Start counting from the third row
@@ -438,6 +458,11 @@
 				$("#ship_to").html(data);
 			},
 		});
+		var ship_to_data = $("#ship_to").val();
+
+		var selectShipTo = document.getElementById("ship_to_");
+		var selectedValue = selectShipTo.value;
+		$("#ship_to_hidden").val(selectedValue);
 	}
 
 	function toggleDivVisibility() {
@@ -615,17 +640,15 @@
 				$("#bill_to").html(data);
 
 				var tempElement = document.createElement("bill_to");
-            	tempElement.innerHTML = data;
+				tempElement.innerHTML = data;
 				var customerName = $(tempElement).find("#customer_name").text();
 
 				$("#bill_to_name").val(customerName);
-
-            },
+			},
 		});
 		var selectCustomer = document.getElementById("current_customer");
 		var selectedValue = selectCustomer.value;
 		$("#current_customer_hidden").val(selectedValue);
-		
 	}
 
 	function validateForm(e) {

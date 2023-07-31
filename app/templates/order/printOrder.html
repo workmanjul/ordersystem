@@ -49,25 +49,48 @@
 				<div class="col-1">
 				</div>
 				<div class="col-6">
-				  <h1 class="pull-right">ORDER</h1>
+				  <!-- <h1 class="pull-right">ORDER</h1> -->
 			  	</div>
 			  </div>
 			  <div class="row">
 				<div class="col-8"></div>
 				<div class="col-4">
-					<h3 class="pull-right">{{customer.first_name}} {{customer.last_name}}</h3>
+					<!-- <h3 class="pull-right">{{customer.first_name}} {{customer.last_name}}</h3> -->
 				</div>
 				
 			  </div>
 			  <br/>
 			  <br/>
 			  <div class="row">
+				<div class="col-4 text-left">
+					<h5>Order Date: {{order.created_date}}</h5>
+					<h5 class="card-title m-0">Order ID: {{order.id}}</h5>
+					<p class="card-text m-0">Payment Method: Credit Card</p>
+					<p class="card-text m-0">Shipping Method: Flat Card</p>
+					
+				  </div>  
+
 				<div class="col-4 text-left">   
-				  <p class="card-text m-0"><b>{{ ship_to.name }}</b></p>
-				  <p class="card-text m-0 ">{{ ship_to.address_1 }}</p>
-				  <p class="card-text m-0"> {{ ship_to.city }}, {{ ship_to.state }} {{ ship_to.postal_code }}</p>
-				  <p class="card-text m-0">{{ ship_to.country }}</p>
+				  <p class="card-text m-0"><b>Bill To:</b></p>
+				  <p class="card-text m-0 ">{{customer.first_name}} {{customer.last_name}}</p>
+				  <p class="card-text m-0"> {{ customer.address1 }}</p>
+				  <p class="card-text m-0"> {{ customer.city }}, {{ customer.state }} {{ customer.postal_code }}</p>
+				  <p class="card-text m-0">{{ customer.country }}</p>
 				</div>  
+					 
+			  
+				<div class="col-4 text-left">
+				  <p class="card-text m-0"><b>Ship To:</b></p>
+				  <h5 class="card-title m-0">{{ ship_to.contact }}</h5>
+							  <p class="card-text m-0">{{ ship_to.phone_number }}</p>
+							  <p class="card-text m-0">{{ ship_to.name }}</p>
+							  <p class="card-text m-0">{{ ship_to.address_1 }}</p>
+							  <p class="card-text m-0"> {{ ship_to.city }}, {{ ship_to.state }} {{ ship_to.postal_code }}</p>
+							  <p class="card-text m-0">{{ ship_to.country }}</p>
+				</div>  
+					 
+			  
+				
 					 
 			  </div>
 			</section>
@@ -147,25 +170,7 @@
 				  </div>
 			  </div>
 			  </section>
-			  <section>
-				<div class="row">
-				  <div class="col-sm-3 col-xs-12" style="display: block" id="ship_to">
-					<h5 class="card-title">Delivery Address</h5>
-					  <div class="card" style="width: 19rem;">
-						  <div class="card-body">
-							  <h5 class="card-title m-0">{{ ship_to.contact }}</h5>
-							  <p class="card-text m-0">{{ ship_to.phone_number }}</p>
-							  <p class="card-text m-0">{{ ship_to.name }}</p>
-							  <p class="card-text m-0">{{ ship_to.address_1 }}</p>
-							  <p class="card-text m-0"> {{ ship_to.city }}, {{ ship_to.state }} {{ ship_to.postal_code }}</p>
-							  <p class="card-text m-0">{{ ship_to.country }}</p>
-						  </div>
-					  </div>
-				  </div>
-				</div>
-				  
-			  </section>
-		  </section>
+			</section>
 		</div>
 		<!-- /.container -->
   

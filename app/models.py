@@ -125,3 +125,4 @@ class ShipTo(db.Model):
 
 with app.app_context():
     db.create_all()
+

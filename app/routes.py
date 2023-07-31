@@ -175,7 +175,7 @@ def createOrder():
 	discount_value=data['discount_val_total']
 	discount_amount=data['grand_discount_hidden']
 	gross_cost=data['grand_total_hidden']
-	ship_to = data['ship_to']
+	ship_to = data['ship_to_hidden']
 
 	order=Order(customer_id=customer_id,
 		total_amount=total_amount,
@@ -617,3 +617,46 @@ def deleteSales(id):
 	return redirect(url_for('listSale'))
 
 
+# ====================================================================================
+# Shipping     
+# ====================================================================================
+
+
+@app.route('/create-shipping',methods=['GET','POST'])
+@login_required
+def createShipping():
+	if request.method=='POST':
+		data=request.form
+		name = data['last_name']
+		company = data['company']
+		phone = data['phone']
+		location = data['location']
+		country=data['country']
+		address1=data['address1']
+		address2=data['address2']
+		city=data['city']
+		state_country = data['state']
+		postcode=data['post_code']
+		
+		shipping = Customer(name=name,company=company,phone=phone,location=location,country=country,address1=address1,address2=address2,city=city,state_country=state_country,postcode=postcode)
+		
+		db.session.add(shipping)
+		db.session.commit()
+		flash("Shipping created")
+		
+		return redirect(url_for('listCustomer'))
+	user=User.query.get(session['user_id'])
+	
+	return render_template('shipping/create.html',user=user)
+
+
+
+@app.route('/list-shipping')
+@login_required
+def listShipping():
+	page = request.args.get('page', 1, type=int)
+	per_page = request.args.get('per_page',10,type=int)
+	customers = Customer.query.order_by(Customer.id.desc()).paginate(page=page,per_page=per_page)
+	user=User.query.get(session['user_id'])
+
+	return render_template('shipping/listShipping.html',customers=customers,user=user)

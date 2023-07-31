@@ -10,31 +10,12 @@
 </style>
 {% endblock css_block %} {% block body %}
 
-<div class="w-full flex flex-col p-4">
-	<!-- <div class="h-[170px] border-b-4 border-gray-500 text-gray-900 shadow-xl rounded-lg">
-		<h1 class="text-xl font-bold text-gray-700 px-4 py-4">Choose Customer</h1>
-		<div class="flex gap-x-8 px-4">
-			<select data-te-select-init data-te-select-filter="true" class="rounded w-[50%] px-4 select1-js custom-select" id="current_customer" name="current_customer" onchange="handleCustomer()" value="{{current_customer.first_name}} {{current_customer.last_name}}">
-				{% for customer in customers %} 
-					{% if order.customer_id == customer.id %}
-						<option value="{{customer.id}}" selected>{{customer.first_name}} {{customer.last_name}}</option>
-					{% else %}
-						<option value="{{customer.id}}">{{customer.first_name}} {{customer.last_name}}</option>
-					{% endif %} 
-				{% endfor %}
-			</select>
-
-			<button data-modal-target="defaultModal" data-modal-toggle="defaultModal" class="block text-white bg-blue-500 font-medium rounded-lg text-sm px-5 text-center sm:h-8 md:h-[40px]" type="button" id="">Create New Customer</button>
-		</div>
-	</div> -->
-
-
-
+<div class="w-full flex flex-col p-2">
 	<div class="h-[70px] border-b-4 border-gray-500 text-gray-900 shadow-xl rounded-lg" id="otherdiv">
 		<!-- <h1 class="text-xl font-bold text-gray-700 px-4 py-4">Choose Customer</h1> -->
 		<div class="flex justify-between items-center w-[100%]">
 			<div class="flex px-4 w-[30%]">
-				<select data-te-select-init data-te-select-filter="true" class="rounded w-[350px] px-4 select2-js custom-select" id="current_customer" name="current_customer" onchange="handleCustomer(value)" value="{{current_customer.first_name}} {{current_customer.last_name}}">
+				<select data-te-select-init data-te-select-filter="true" class="rounded w-[350px] px-4 select2-js custom-select" id="current_customer" name="current_customer" onchange="handleCustomer(value)">
 					{% for customer in customers %} 
 					{% if order.customer_id == customer.id %}
 						<option value="{{customer.id}}" selected>{{customer.first_name}} {{customer.last_name}}</option>
@@ -42,17 +23,18 @@
 						<option value="{{customer.id}}">{{customer.first_name}} {{customer.last_name}}</option>
 					{% endif %} 
 				{% endfor %}
+				
 				</select>
 				<button data-modal-target="defaultModal" data-modal-toggle="defaultModal" class="mx-2 text-white bg-blue-600 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 text-center inline-flex items-center" type="button" id="">+</button>
 			</div>
 			<div class="w-[70%] flex mx-8 pt-4">
 				<div class="ml-16 mr-[140px]">
-					<h5 class="text-xl font-semibold tracking-tight text-gray-900">Bill To:<input class="bg-none px-2" id="bill_to_name" disabled></input></h5>
+					<h5 class="text-[18px] tracking-tight text-gray-700">Bill To:<input class="bg-none px-2" id="bill_to_name" disabled /></h5>
 					<div id="bill_to" class="hidden"></div>
 				</div>
 
 				<div class="mb-5 mr-5 rounded mx-16">
-					<select class="text-gray-700 w-[300px] font-medium rounded-lg text-sm px-5 text-center sm:h-8 md:h-[40px] mx-4 select2-js custom-select" onchange="showShipTo(this.value)" name="ship_to" title="Select Shipping Address" required>
+					<select class="text-gray-700 w-[300px] font-medium rounded-lg text-sm px-5 text-center sm:h-8 md:h-[40px] mx-4 select2-js custom-select" onchange="showShipTo(this.value)" name="ship_to" title="Select Shipping Address" id="ship_to_" required>
 						<option value="0">Select Shipping Address..</option>
 						<option value="{{ ship_to.id }}">{{ ship_to.name }}</option>
 					</select>
@@ -69,11 +51,6 @@
 			</div>
 		</div>
 	</div>
-
-
-
-
-
 
 	<div id="defaultModal" tabindex="-1" aria-hidden="true" class="fixed top-0 left-0 right-0 z-50 hidden w-full p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-[calc(100%-1rem)] max-h-full">
 		<div class="relative w-full max-h-full">
@@ -165,6 +142,8 @@
 	<div class="mt-4 bg-white md:w-auto sm:w-full relative border-b-2 text-gray-900 shadow-xl rounded-lg min-h-[320px]">
 		<form action="" method="POST">
 			<input type="hidden" id="current_customer_hidden" name="current_customer_hidden" value="" />
+			<input type="hidden" id="ship_to_hidden" name="ship_to_hidden" value="" />
+
 			<div class="text-xl font-bold text-gray-700 px-4 py-4 overflow-x-auto">Create Order</div>
 			<div class="overflow-x-auto">
 				<table class="table-auto border rounded border-gray-200 w-full my-2 mx-auto" id="order_table">
@@ -296,28 +275,7 @@
 				<input type="submit" class="w-32 h-[50px] text-center rounded bg-green-500 text-white" />
 			</div>
 			
-			<!-- Not implemented yet for ship_to -->
-			
-			<input type="hidden" name="ship_to" value="">
-			<div class="flex justify-left mb-5 mr-5">
-				<div id="ship_to">
-					<div class="card w-64">
-						<h1 class="p-3 text-xl">Delivery Address</h1>
-						<div class="max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
-							
-							<a href="#">
-								<h5 class="mb-2 text-2xl font-semibold tracking-tight text-gray-900 dark:text-white">{{ ship_to.contact }}</h5>
-							</a>
-						  <h5 class="card-title text-xl"></h5>
-						  <p class="card-text">{{ ship_to.phone_number }}</p>
-						  <p class="card-text">{{ ship_to.name }}</p>
-						  <p class="card-text">{{ ship_to.address_1 }}</p>
-						  <p class="card-text">{{ ship_to.city }} {{ ship_to.state }} {{ ship_to.postal_code }}</p>
-						  <p class="card-text">{{ ship_to.country }}</p>
-						</div>
-					  </div>
-				</div>
-				</div>
+
 		</form>
 	</div>
 </div>
@@ -509,6 +467,35 @@
 		calculate_subtotal_discount();
 		calculate_total();
 	}
+
+
+	function showShipTo(value) {
+		$.ajax({
+			type: "GET",
+			url: "/get_ship_to_details?id=" + value,
+			success: function (data, status, xhr) {
+				$("#ship_to").html(data);
+			},
+		});
+		var ship_to_data=$("#ship_to").val()
+		
+		var selectShipTo = document.getElementById("ship_to_");
+		var selectedValue = selectShipTo.value;
+		$("#ship_to_hidden").val(selectedValue)
+	}
+
+	function toggleDivVisibility() {
+		const div1 = document.getElementById("bill_to");
+		const div2 = document.getElementById("ship_to");
+		const otherDiv = document.getElementById("otherdiv");
+
+		div1.classList.toggle("hidden");
+		div2.classList.toggle("hidden");
+		otherDiv.classList.toggle("h-[240px]");
+	}
+
+	// Add a click event listener to the button
+	document.getElementById("dropdownDefaultButton").addEventListener("click", toggleDivVisibility);
 </script>
 <script>
 	// Populate Each Item/Product Details
@@ -660,7 +647,21 @@
 	});
 </script>
 <script>
+	
 	function handleCustomer() {
+		$.ajax({
+			type: "GET",
+			url: "/customer_bill_address?id=" + value,
+			success: function (data, status, xhr) {
+				$("#bill_to").html(data);
+
+				var tempElement = document.createElement("bill_to");
+				tempElement.innerHTML = data;
+				var customerName = $(tempElement).find("#customer_name").text();
+
+				$("#bill_to_name").val(customerName);
+			},
+		});
 		var selectCustomer = document.getElementById("current_customer");
 		var selectedValue = selectCustomer.value;
 		$("#current_customer_hidden").val(selectedValue);
