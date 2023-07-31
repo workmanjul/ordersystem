@@ -82,7 +82,7 @@ def logout():
 def dashboard():
 	products= SalesDetails.query.all()
 	customers= Customer.query.all()
-	shipTo = ShipTo.query.first()
+	shipTo = ShipTo.query.all()
 	user=User.query.get(session['user_id'])
 	
 	return render_template('dashboard.html',products=products,customers=customers,shipTo=shipTo,user=user)
@@ -324,7 +324,10 @@ def updateOrder(id):
 def viewOrder(id):
 	order = db.session.query(Order).filter(Order.id == id).first()
 	order_details = db.session.query(OrderDetails,SalesDetails).join(SalesDetails,SalesDetails.id == OrderDetails.product_id).filter(OrderDetails.order_id == id).all()
-	shipTo = ShipTo.query.first()
+	
+	shipTo = db.session.query(ShipTo,Order).join(Order,ShipTo.id == Order.ship_to).filter(Order.ship_to == id)
+	print(shipTo)
+	# shipTo = ShipTo.query.first()
 	user=User.query.get(session['user_id'])
 	# user = None
 	customer=Customer.query.get(order.customer_id)
@@ -627,24 +630,23 @@ def deleteSales(id):
 def createShipping():
 	if request.method=='POST':
 		data=request.form
-		name = data['last_name']
-		company = data['company']
+		name = data['name']
 		phone = data['phone']
-		location = data['location']
 		country=data['country']
 		address1=data['address1']
 		address2=data['address2']
 		city=data['city']
+		contact=data['contact']
 		state_country = data['state']
 		postcode=data['post_code']
 		
-		shipping = Customer(name=name,company=company,phone=phone,location=location,country=country,address1=address1,address2=address2,city=city,state_country=state_country,postcode=postcode)
+		shipping = ShipTo(name=name,phone_number=phone,country=country,address_1=address1,address_2=address2,city=city,state=state_country,postal_code=postcode,contact=contact)
 		
 		db.session.add(shipping)
 		db.session.commit()
 		flash("Shipping created")
 		
-		return redirect(url_for('listCustomer'))
+		return redirect(url_for('listShipping'))
 	user=User.query.get(session['user_id'])
 	
 	return render_template('shipping/create.html',user=user)
@@ -656,7 +658,43 @@ def createShipping():
 def listShipping():
 	page = request.args.get('page', 1, type=int)
 	per_page = request.args.get('per_page',10,type=int)
-	customers = Customer.query.order_by(Customer.id.desc()).paginate(page=page,per_page=per_page)
+	ship = ShipTo.query.order_by(ShipTo.id.desc()).paginate(page=page,per_page=per_page)
 	user=User.query.get(session['user_id'])
+	print(ship)
+	return render_template('shipping/listShipping.html',ship=ship,user=user)
 
-	return render_template('shipping/listShipping.html',customers=customers,user=user)
+@app.route('/delete-shipping/<int:id>')
+@login_required
+def deleteShipping(id):
+	ship=ShipTo.query.get(id)
+	if ship is None:
+		return "Item not found",404
+	
+	db.session.delete(ship)
+	db.session.commit()
+	flash("Shipping Deleted!")
+	return redirect(url_for('listShipping'))
+
+@app.route('/update-ship/<int:id>',methods=['GET','POST'])
+@login_required
+def updateShipping(id):
+	ship=ShipTo.query.get(id)
+	if ship is None:
+		return "Item not found",404
+	
+	if request.method=='POST':
+		ship.name=request.form['name']
+		ship.phone_number = request.form['phone']
+		ship.country=request.form['country']
+		ship.address_1=request.form['address1']
+		ship.address_2=request.form['address2']
+		ship.city=request.form['city']
+		ship.contact=request.form['contact']
+		ship.state = request.form['state']
+		ship.postal_code=request.form['post_code']
+	
+		db.session.commit()
+		flash("Shipping Updated!")
+		return redirect(url_for('listShipping'))
+	user=User.query.get(session['user_id'])
+	return render_template('shipping/update.html',ship=ship,user=user)

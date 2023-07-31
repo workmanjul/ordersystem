@@ -48,7 +48,10 @@
 				<div class="mb-5 mr-5 rounded mx-16">
 					<select class="text-gray-700 w-[300px] font-medium rounded-lg text-sm px-5 text-center sm:h-8 md:h-[40px] mx-4 select2-js custom-select" onchange="showShipTo(this.value)" name="ship_to" title="Select Shipping Address" id="ship_to_" required>
 						<option value="0">Select Shipping Address..</option>
-						<option value="{{ shipTo.id }}">{{ shipTo.name }}</option>
+						{% for item in shipTo %}
+						<option value="{{ item.id }}">{{ item.name }}</option>
+
+						{%endfor%}
 					</select>
 
 					<div id="ship_to" class="hidden"></div>
