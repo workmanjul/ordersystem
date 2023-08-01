@@ -15,7 +15,7 @@
 		<!-- <h1 class="text-xl font-bold text-gray-700 px-4 py-4">Choose Customer</h1> -->
 		<div class="flex justify-between items-center w-[100%]">
 			<div class="flex px-4 w-[30%]">
-				<select data-te-select-init data-te-select-filter="true" class="rounded w-[350px] px-4 select2-js custom-select" id="current_customer" name="current_customer" onchange="handleCustomer(value)">
+				<select data-te-select-init data-te-select-filter="true" class="rounded w-[350px] px-4 select4-js custom-select" id="current_customer" name="current_customer" onchange="handleCustomer(value)">
 					{% for customer in customers %} 
 					{% if order.customer_id == customer.id %}
 						<option value="{{customer.id}}" selected>{{customer.first_name}} {{customer.last_name}}</option>
@@ -35,7 +35,7 @@
 				</div>
 			
 				<div class="mb-5 mr-1 rounded mx-[40px]">
-					<select class="text-gray-700 w-[240px] font-medium rounded text-sm text-center sm:h-8 md:h-[40px] select2-js custom-select" onchange="showShipTo(this.value)" name="ship_to" title="Select Shipping Address" id="ship_to_" required>
+					<select class="text-gray-700 w-[240px] font-medium rounded text-sm text-center sm:h-8 md:h-[40px] select5-js custom-select" onchange="showShipTo(this.value)" name="ship_to" title="Select Shipping Address" id="ship_to_" required>
 						{% for item in ship_to %}
 						{% if order.ship_to==item.id %}
 							<option value="{{ item.id }}" selected>{{ item.name }}</option>
@@ -347,6 +347,8 @@
 
 	$(function () {
 		$(".select1-js").select2();
+		$(".select4-js").select2();
+		$(".select5-js").select2();
 		var selectCustomer = document.getElementById("current_customer");
 		var selectedValue = selectCustomer.value;
 		$("#current_customer_hidden").val(selectedValue);
