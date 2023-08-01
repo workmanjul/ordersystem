@@ -10,7 +10,7 @@
 </style>
 {% endblock css_block %} {% block body %}
 
-<div class="w-full flex flex-col p-2">
+<div class="w-full flex flex-col p-1">
 	<div class="h-[70px] border-b-4 border-gray-500 text-gray-900 shadow-xl rounded-lg" id="otherdiv">
 		<!-- <h1 class="text-xl font-bold text-gray-700 px-4 py-4">Choose Customer</h1> -->
 		<div class="flex justify-between items-center w-[100%]">
@@ -29,20 +29,26 @@
 			</div>
 			<div class="w-[70%] flex mx-8 pt-4">
 				<div class="ml-16 mr-[140px]">
-					<h5 class="text-[18px] tracking-tight text-gray-700">Bill To:<input class="bg-none px-2" id="bill_to_name" disabled /></h5>
+					<h5 class="text-[18px] tracking-tight text-gray-700">Bill To:
+						<input class="bg-none" id="bill_to_name" disabled value=""/></h5>
 					<div id="bill_to" class="hidden"></div>
 				</div>
-
-				<div class="mb-5 mr-5 rounded mx-16">
-					<select class="text-gray-700 w-[300px] font-medium rounded-lg text-sm px-5 text-center sm:h-8 md:h-[40px] mx-4 select2-js custom-select" onchange="showShipTo(this.value)" name="ship_to" title="Select Shipping Address" id="ship_to_" required>
-						<option value="0">Select Shipping Address..</option>
-						<option value="{{ ship_to.id }}">{{ ship_to.name }}</option>
+			
+				<div class="mb-5 mr-1 rounded mx-[40px]">
+					<select class="text-gray-700 w-[240px] font-medium rounded text-sm text-center sm:h-8 md:h-[40px] select2-js custom-select" onchange="showShipTo(this.value)" name="ship_to" title="Select Shipping Address" id="ship_to_" required>
+						{% for item in ship_to %}
+						{% if order.ship_to==item.id %}
+							<option value="{{ item.id }}" selected>{{ item.name }}</option>
+						{% else %}
+							<option value="{{ item.id }}">{{ item.name }}</option>
+							{%endif%}
+						{%endfor%}
 					</select>
-
+					
 					<div id="ship_to" class="hidden"></div>
 				</div>
 			</div>
-			<div>
+			<div class="mr-2">
 				<button id="dropdownDefaultButton" data-dropdown-toggle="dropdown" class="text-white bg-blue-600 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-4 text-center inline-flex items-center" type="button">
 					<svg class="w-2.5 h-2.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
 						<path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4" />
@@ -341,7 +347,17 @@
 
 	$(function () {
 		$(".select1-js").select2();
-		handleCustomer();
+		var selectCustomer = document.getElementById("current_customer");
+		var selectedValue = selectCustomer.value;
+		$("#current_customer_hidden").val(selectedValue);
+		handleCustomer(selectedValue);
+
+
+
+		var selectShipTo = document.getElementById("ship_to_");
+		var selectedValue = selectShipTo.value;
+		$("#ship_to_hidden").val(selectedValue);
+		showShipTo(selectedValue);
 
 		// Start counting from the third row
 		var table = document.getElementById("order_table");
@@ -470,11 +486,14 @@
 
 
 	function showShipTo(value) {
+		console.log(value)
+		
 		$.ajax({
 			type: "GET",
 			url: "/get_ship_to_details?id=" + value,
 			success: function (data, status, xhr) {
 				$("#ship_to").html(data);
+				console.log(data);
 			},
 		});
 		var ship_to_data=$("#ship_to").val()
@@ -648,18 +667,14 @@
 </script>
 <script>
 	
-	function handleCustomer() {
+	function handleCustomer(value) {
 		$.ajax({
 			type: "GET",
 			url: "/customer_bill_address?id=" + value,
 			success: function (data, status, xhr) {
 				$("#bill_to").html(data);
-
-				var tempElement = document.createElement("bill_to");
-				tempElement.innerHTML = data;
-				var customerName = $(tempElement).find("#customer_name").text();
-
-				$("#bill_to_name").val(customerName);
+				var a = $('#customer_name').text();
+				$('#bill_to_name').val(a);
 			},
 		});
 		var selectCustomer = document.getElementById("current_customer");

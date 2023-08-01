@@ -216,7 +216,8 @@ def createOrder():
 @app.route('/get_ship_to_details', methods=['GET'])
 @login_required
 def get_ship_to_details():
-    ship_to = ShipTo.query.first()
+    #ship_to = ShipTo.query.all()
+    ship_to = db.session.query(ShipTo).filter(ShipTo.id == request.args.get('id')).first()
     return render_template("widgets/ship_to_address.html",ship_to=ship_to)
 
 @app.route('/customer_bill_address', methods=['GET'])
@@ -224,6 +225,13 @@ def get_ship_to_details():
 def customer_bill_address():
 	bill_to = db.session.query(Customer).filter(Customer.id == request.args.get('id')).first()
 	return render_template("widgets/bill_to_address.html",bill_to=bill_to)
+
+# @app.route('/ship_to_details_for_update/<int:id>', methods=['GET'])
+# @login_required
+# def ship_to_details_for_update():
+	
+#     ship_to = ShipTo.query.first()
+#     return render_template("widgets/ship_to_address.html",ship_to=ship_to)
 
 @app.route('/update-order/<int:id>',methods=['GET','POST'])
 @login_required
@@ -234,9 +242,8 @@ def updateOrder(id):
 	customers=Customer.query.all()
 	current_customer=Customer.query.get(order.customer_id)
 	user=User.query.get(session['user_id'])
-	shipTo = ShipTo.query.first()
-	
-	# print(request.form)
+	shipTo = ShipTo.query.all()
+
 	orderUpdate=Order.query.get(id)
 	if request.method=="POST":
 		data=request.form
@@ -248,6 +255,7 @@ def updateOrder(id):
 		orderUpdate.discount_amount=data['grand_discount_hidden']
 		orderUpdate.gross_cost=data['grand_total_hidden']
 		orderUpdate.total_amount=data['net_total_hidden']
+		orderUpdate.ship_to = data['ship_to_hidden']
 		
 		db.session.commit()
 
@@ -325,11 +333,13 @@ def viewOrder(id):
 	order = db.session.query(Order).filter(Order.id == id).first()
 	order_details = db.session.query(OrderDetails,SalesDetails).join(SalesDetails,SalesDetails.id == OrderDetails.product_id).filter(OrderDetails.order_id == id).all()
 	
-	shipTo = db.session.query(ShipTo,Order).join(Order,ShipTo.id == Order.ship_to).filter(Order.ship_to == id)
-	print(shipTo)
-	# shipTo = ShipTo.query.first()
+	shipTo=db.session.query(ShipTo,Order).join(Order,ShipTo.id==Order.ship_to).filter(Order.id==id).first()
+	
+	# shipTo=ShipTo.query.filter(ShipTo.id==id).first()
+	# print(shipTo.ShipTo.name)
+
 	user=User.query.get(session['user_id'])
-	# user = None
+
 	customer=Customer.query.get(order.customer_id)
 	return render_template('order/viewOrder.html',order=order,orderDetails=order_details,user=user,ship_to=shipTo,customer=customer)
 
@@ -394,32 +404,8 @@ def download_order(id):
     pdf = pdfkit.from_string(html, False, options=options)
     response = make_response(pdf)
     response.headers["Content-Type"] = "application/pdf"
-    # response.headers["Content-Disposition"] = f"inline; filename=PO-{id}.pdf"
-    response.headers["Content-Disposition"] = f"attachment; filename=PO-{id}.pdf"
+    response.headers["Content-Disposition"] = f"inline; filename=Order-{id}.pdf"
     return response
-
-
-# @app.route('/delete-order/<int:id>')
-# @login_required
-# def deleteOrder(id):
-#     try:
-#         order = Order.query.get(id)
-#         if order is None:
-#             return "Item not found", 404
-
-#         orderDetails = OrderDetails.query.filter_by(order_id=order.id).all()
-        
-#         # Delete the order and its related order details
-#         db.session.delete(order)
-#         for order_detail in orderDetails:
-#             db.session.delete(order_detail)
-
-#         db.session.commit()
-# 		flash("Sales Created")
-#         return redirect(url_for('listOrder'))
-#     except Exception as e:
-#         # Handle any exceptions that occur during the deletion process
-#         return "Error occurred while deleting the order", 500
 
 @app.route('/delete-order/<int:id>')
 @login_required
@@ -660,7 +646,7 @@ def listShipping():
 	per_page = request.args.get('per_page',10,type=int)
 	ship = ShipTo.query.order_by(ShipTo.id.desc()).paginate(page=page,per_page=per_page)
 	user=User.query.get(session['user_id'])
-	print(ship)
+	# print(ship)
 	return render_template('shipping/listShipping.html',ship=ship,user=user)
 
 @app.route('/delete-shipping/<int:id>')

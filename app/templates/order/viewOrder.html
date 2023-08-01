@@ -8,11 +8,10 @@
 				<div class="card w-[300px]">
 					<!-- <h1 class="p-2 text-xl font-bold">Bill To</h1> -->
 					<div class="max-w-sm p-2 bg-white rounded-lg">
-						<h5>Order Date: {{order.created_date}}</h5>
-
 						<h5 class="card-title">Order ID: {{order.id}}</h5>
-						<p class="card-text">Payment Method: Credit Card</p>
 						<p class="card-text">Shipping Method: Flat Card</p>
+						<p class="card-text">Payment Method: Credit Card</p>
+						<h5>Order Date: {{order.created_date}}</h5>
 					</div>
 				</div>
 			</div>
@@ -27,9 +26,9 @@
 
 							<h5 class="card-title text-xl"></h5>
 							<p class="card-text">{{ customer.phone }}</p>
-							<p class="card-text">{{ ship_to.address_1 }}</p>
-							<p class="card-text">{{ ship_to.city }} {{ ship_to.state }} {{ ship_to.postal_code }}</p>
-							<p class="card-text">{{ ship_to.country }}</p>
+							<p class="card-text">{{ customer.address1 }}</p>
+							<p class="card-text">{{ customer.city }} {{ customer.state }} {{ customer.postal_code }}</p>
+							<!-- <p class="card-text">{{ customer.country }}</p> -->
 						</div>
 					</div>
 				</div>
@@ -40,14 +39,14 @@
 					<div class="card w-64">
 						<div class="max-w-sm p-2 bg-white border-gray-200 rounded-lg">
 							<h1 class="text-xl font-bold">Ship To</h1>
-							<h5 class="font-semibold">{{ ship_to.contact }}</h5>
+							<h5 class="font-semibold">{{ ship_to.ShipTo.contact }}</h5>
 
 							<h5 class="card-title text-xl"></h5>
-							<p class="card-text">{{ ship_to.phone_number }}</p>
-							<p class="card-text">{{ ship_to.name }}</p>
-							<p class="card-text">{{ ship_to.address_1 }}</p>
-							<p class="card-text">{{ ship_to.city }} {{ ship_to.state }} {{ ship_to.postal_code }}</p>
-							<p class="card-text">{{ ship_to.country }}</p>
+							<p class="card-text">{{ ship_to.ShipTo.phone_number }}</p>
+							<p class="card-text">{{ ship_to.ShipTo.name }}</p>
+							<!-- <p class="card-text">{{ ship_to.ShipTo.address_1 }}</p> -->
+							<p class="card-text">{{ ship_to.ShipTo.city }} {{ ship_to.ShipTo.state }} {{ ship_to.ShipTo.postal_code }}</p>
+							<p class="card-text">{{ ship_to.ShipTo.country }}</p>
 						</div>
 					</div>
 				</div>

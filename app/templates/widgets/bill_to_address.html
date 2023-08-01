@@ -1,10 +1,11 @@
 <div class="w-[300px] h-[30px] bg-white text-black">
-	<div class="p-3 bg-white border border-gray-200 rounded-lg shadow">
+	<div class="p-3 bg-white rounded-lg">
 		<!-- <h5 class="mb-2 text-xl font-semibold tracking-tight text-gray-900">Bill To: {{bill_to.first_name}}</h5> -->
 
-		<h5 class="card-title text-sm" id="customer_name">{{bill_to.first_name}} {{bill_to.last_name}}</h5>
+		<h5 class="card-title text-sm font-semibold" id="customer_name">{{bill_to.first_name}} {{bill_to.last_name}}</h5>
+		<p class="card-text">{{ bill_to.company }}</p>
 		<p class="card-text">{{ bill_to.phone }}</p>
-		<p class="card-text">{{ bill_to.address1 }}</p>
+		<p class="card-text">{{ bill_to.city }}</p>
 		<p class="card-text">{{ bill_to.state_country }} {{ bill_to.postcode }}</p>
 		<p class="card-text">{{ bill_to.country }}</p>
 	</div>
