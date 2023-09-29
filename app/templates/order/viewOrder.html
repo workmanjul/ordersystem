@@ -39,11 +39,11 @@
 					<div class="card w-64">
 						<div class="max-w-sm p-2 bg-white border-gray-200 rounded-lg">
 							<h1 class="text-xl font-bold">Ship To</h1>
-							<h5 class="font-semibold">{{ ship_to.ShipTo.contact }}</h5>
+							<!-- <h5 class="font-semibold">{{ ship_to.ShipTo.contact }}</h5> -->
 
 							<h5 class="card-title text-xl"></h5>
-							<p class="card-text">{{ ship_to.ShipTo.phone_number }}</p>
 							<p class="card-text">{{ ship_to.ShipTo.name }}</p>
+							<p class="card-text">{{ ship_to.ShipTo.phone_number }}</p>
 							<!-- <p class="card-text">{{ ship_to.ShipTo.address_1 }}</p> -->
 							<p class="card-text">{{ ship_to.ShipTo.city }} {{ ship_to.ShipTo.state }} {{ ship_to.ShipTo.postal_code }}</p>
 							<p class="card-text">{{ ship_to.ShipTo.country }}</p>
@@ -66,30 +66,30 @@
 							<th class="w-80 px-6 py-3 bg-gray-300 text-left text-xs font-medium text-gray-900 uppercase tracking-wider">Description</th>
 							<th class="w-22 px-6 py-3 bg-gray-300 text-left text-xs font-medium text-gray-900 uppercase tracking-wider">Quantity</th>
 							<th class="px-6 py-3 bg-gray-300 text-left text-xs font-medium text-gray-900 uppercase tracking-wider">Unit Price</th>
-							<th class="px-6 py-3 bg-gray-300 text-left text-xs font-medium text-gray-900 uppercase tracking-wider">Discount</th>
+							<!-- <th class="px-6 py-3 bg-gray-300 text-left text-xs font-medium text-gray-900 uppercase tracking-wider">Discount</th> -->
 							<th class="px-6 py-3 bg-gray-300 text-left text-xs font-medium text-gray-900 uppercase tracking-wider">Amount</th>
 						</tr>
 					</thead>
 					<tbody class="bg-white divide-y divide-gray-200" id="orderTable">
 						{% for orderDetail in orderDetails %}
 						<tr class="h-2" id="defaultRow">
-							<td class="px-6 w-1 py-4 whitespace-nowrap">{{ loop.index }}</td>
-							<td class="px-6 w-64 py-4 whitespace-wrap sm:w-32">
+							<td class="px-4 w-1 py-4 whitespace-nowrap">{{ loop.index }}</td>
+							<td class="px-4 w-64 py-4 whitespace-wrap sm:w-32">
 								<input type="text" class="border-0" value="{{ orderDetail.SalesDetails.sku }}" />
 							</td>
 
-							<td class="px-6 py-4 whitespace-nowrap" id="descriptionCell">
+							<td class="px-4 py-4 whitespace-nowrap" id="descriptionCell">
 								<input name="item_desc_1" id="item_desc_1" disabled value="{{orderDetail.OrderDetails.product_description}}" />
 							</td>
 
-							<td class="px-6 py-4 whitespace-nowrap">
+							<td class="px-4 py-4 whitespace-nowrap">
 								<input type="number" class="quantity-input w-20 text-gray-900 bg-white rounded-lg border-none" name="item_quantity_1" id="item_quantity_1" onchange="calculateItemTotal(this.name)" value="{{orderDetail.OrderDetails.item_quantity}}" disabled />
 							</td>
-							<td class="px-6 py-4 whitespace-nowrap">
+							<td class="px-4 py-4 whitespace-nowrap">
 								<input type="text" class="quantity-input text-gray-900 bg-white rounded-lg w-20 border-none" name="unit_price_1" id="unit_price_1" disabled value="{{orderDetail.OrderDetails.unit_price}}" />
 							</td>
-							<td class="px-6 py-4 whitespace-nowrap">{% if orderDetail.OrderDetails.discount_type =='percentage' %} {{orderDetail.OrderDetails.discount_value}} % {% else %} $ {{orderDetail.OrderDetails.discount_value}} {% endif %}</td>
-							<td class="px-6 py-4 whitespace-nowrap">
+							<!-- <td class="px-4 py-4 whitespace-nowrap">{% if orderDetail.OrderDetails.discount_type =='percentage' %} {{orderDetail.OrderDetails.discount_value}} % {% else %} $ {{orderDetail.OrderDetails.discount_value}} {% endif %}</td> -->
+							<td class="px-4 py-4 whitespace-nowrap">
 								<span class="ml-2">$</span>
 								<input type="number" class="amount-input rounded-lg text-gray-900 bg-white w-28 border-none" min="0" name="sub_total_1" id="sub_total_1" disabled value="{{orderDetail.OrderDetails.subtotal_amount}}" />
 							</td>
@@ -100,7 +100,7 @@
 
 				<div class="float-right">
 					<div>
-						<table class="mr-28">
+						<table class="mr-[185px]">
 							<tr>
 								<td>
 									<span class="font-semibold">Subtotal </span>

@@ -26,7 +26,6 @@ class Customer(db.Model):
     email = db.Column(db.String(255),nullable=False)
     company = db.Column(db.String(255),nullable=False)
     phone = db.Column(db.String(255),nullable=False)
-    location = db.Column(db.String(255),nullable=False)
     country = db.Column(db.String(255),nullable=False)
     address1 = db.Column(db.String(255),nullable=False)
     address2 = db.Column(db.String(255),nullable=False)
@@ -111,13 +110,13 @@ class ShipTo(db.Model):
     __tablename__ = 'ship_to'
     id = db.Column(db.Integer, primary_key=True)
     name=db.Column(db.String(40),nullable=False)
-    address_1=db.Column(db.String(300),nullable=False)
-    address_2=db.Column(db.String(300),nullable=False)
+    address_1=db.Column(db.String(400),nullable=False)
+    address_2=db.Column(db.String(400),nullable=False)
     city=db.Column(db.String(255),nullable=False)
     state=db.Column(db.String(255),nullable=False)
     postal_code=db.Column(db.String(255),nullable=False)
     country=db.Column(db.String(255),nullable=False)
-    contact=db.Column(db.String(255),nullable=False)
+    contact=db.Column(db.String(255),nullable=True)
     phone_number=db.Column(db.String(255),nullable=False)
 
     def as_dict(self):

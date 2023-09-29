@@ -27,42 +27,97 @@
 {% endfor %} {% endif %} {% endwith %}
 
 <div class="w-full flex flex-col p-2">
-	<div class="h-[70px] border-b-4 border-gray-500 text-gray-900 shadow-xl rounded-lg" id="otherdiv">
+	<div class="h-[250px] border-b-4 border-gray-500 text-gray-900 shadow-xl rounded" id="otherdiv">
 		<!-- <h1 class="text-xl font-bold text-gray-700 px-4 py-4">Choose Customer</h1> -->
 		<div class="flex justify-between items-center w-[100%]">
-			<div class="flex px-4 w-[30%]">
+			<div class="flex -mt-6 w-[30%]">
 				<select data-te-select-init data-te-select-filter="true" class="rounded w-[350px] px-4 select2-js custom-select" id="current_customer" name="current_customer" onchange="handleCustomer(value)">
 					<option value="0">Select a Customer</option>
 					{% for customer in customers %}
 					<option value="{{customer.id}}">{{customer.first_name}} {{customer.last_name}}</option>
 					{%endfor%}
 				</select>
-				<button data-modal-target="defaultModal" data-modal-toggle="defaultModal" class="mx-2 text-white bg-blue-600 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 text-center inline-flex items-center" type="button" id="">+</button>
+				<button data-modal-target="defaultModal" data-modal-toggle="defaultModal" class="mx-2 text-white bg-blue-600 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 inline-flex items-center" type="button" id="">+</button>
 			</div>
-			<div class="w-[70%] flex mx-8 pt-4">
+			<div class="w-[70%] flex mx-8 pt-6">
 				<div class="ml-16 mr-[140px]">
-					<h5 class="text-[18px] tracking-tight text-gray-700">Bill To:<input class="bg-none px-2" id="bill_to_name" disabled /></h5>
-					<div id="bill_to" class="hidden"></div>
+					<h5 class="text-[18px] tracking-tight text-gray-700 font-bold">Bill To:<input class="bg-none px-2" id="bill_to_name" disabled /></h5>
+					<div id="bill_to" class=""></div>
 				</div>
 
 				<div class="mb-5 mr-5 rounded mx-16">
-					<select class="text-gray-700 w-[300px] font-medium rounded-lg text-sm px-5 text-center sm:h-8 md:h-[40px] mx-4 select2-js custom-select" onchange="showShipTo(this.value)" name="ship_to" title="Select Shipping Address" id="ship_to_" required>
-						<option value="0">Select Shipping Address..</option>
-						{% for item in shipTo %}
-						<option value="{{ item.id }}">{{ item.name }}</option>
-
-						{%endfor%}
-					</select>
-
-					<div id="ship_to" class="hidden"></div>
+					<span class="font-bold">Ship To:</span>
+					<input type="checkbox" class="rounded" id="sameAsBillTo" onclick="handleShipToAjax()" /><span> Same as bill to</span> <button data-modal-target="defaultModal2" data-modal-toggle="defaultModal2" class="mx-2 text-white bg-blue-600 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 inline-flex items-center" type="button" id="">+</button><br />
+					<div id="ship_to"></div>
 				</div>
 			</div>
-			<div>
-				<button id="dropdownDefaultButton" data-dropdown-toggle="dropdown" class="text-white bg-blue-600 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-4 text-center inline-flex items-center" type="button">
-					<svg class="w-2.5 h-2.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
-						<path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4" />
-					</svg>
-				</button>
+			<div id="defaultModal2" tabindex="-1" aria-hidden="true" class="fixed top-0 left-0 right-0 z-50 hidden w-full p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-[calc(100%-1rem)] max-h-full">
+				<div class="relative w-full max-h-full">
+					<div class="relative bg-white rounded-lg shadow">
+						<div class="flex items-start justify-between p-4 border-b rounded-t">
+							<h3 class="text-xl font-semibold text-gray-900">Create Customer</h3>
+							<button type="button" class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center" data-modal-hide="defaultModal2" id="modal-backdrop2">
+								<svg aria-hidden="true" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+									<path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+								</svg>
+								<span class="sr-only">Close modal</span>
+							</button>
+						</div>
+						<div class="px-64 py-16">
+							<div class="grid md:grid-cols-2 md:gap-6">
+								<div class="relative z-0 w-full mb-6 group">
+									<input type="text" name="name" id="names" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " required />
+									<label for="name" class="peer-focus:font-medium absolute text-sm text-gray-800 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Name</label>
+								</div>
+								<div class="relative z-0 w-full mb-6 group">
+									<input type="text" name="contact" id="contact_x" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " required />
+
+									<label for="contact_x" class="peer-focus:font-medium absolute text-sm text-gray-800 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Contact</label>
+								</div>
+							</div>
+							<div class="grid md:grid-cols-2 md:gap-6">
+								<div class="relative z-0 w-full mb-6 group">
+									<input type="text" name="address1" id="locationInput" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " required />
+									<label for="locationInput" class="peer-focus:font-medium absolute text-sm text-gray-800 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Address1</label>
+								</div>
+								<div class="relative z-0 w-full mb-6 group">
+									<input type="text" name="address2" id="address" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " required />
+									<label for="address" class="peer-focus:font-medium absolute text-sm text-gray-800 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Address2</label>
+								</div>
+							</div>
+							<div class="grid md:grid-cols-2 md:gap-6">
+								<div class="relative z-0 w-full mb-6 group">
+									<input type="text" name="city" id="cityToShip" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " required />
+									<label for="floating_company" class="peer-focus:font-medium absolute text-sm text-gray-800 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">City</label>
+								</div>
+								<div class="relative z-0 w-full mb-6 group">
+									<input type="text" name="country" id="country2" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " required />
+									<label for="floating_company" class="peer-focus:font-medium absolute text-sm text-gray-800 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Country</label>
+								</div>
+							</div>
+
+							<div class="grid md:grid-cols-2 md:gap-6">
+								<div class="relative z-0 w-full mb-6 group">
+									<input type="text" name="state" id="state" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " required />
+									<label for="floating_company" class="peer-focus:font-medium absolute text-sm text-gray-800 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">State</label>
+								</div>
+								<div class="relative z-0 w-full mb-6 group">
+									<input type="text" name="post_code" id="postalCode" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " required />
+									<label for="floating_phone" class="peer-focus:font-medium absolute text-sm text-gray-800 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Postal Code</label>
+								</div>
+							</div>
+							<div class="grid md:grid-cols-2 md:gap-6">
+								<div class="relative z-0 w-full mb-6 group">
+									<input type="text" name="phone" id="floating_phone" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " required />
+									<label for="floating_phone" class="peer-focus:font-medium absolute text-sm text-gray-800 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Phone number (123-456-7890)</label>
+								</div>
+							</div>
+
+							<div class="flex justify-center my-6"><button type="submit" class="w-64 h-[60px] py-2.5 px-5 mr-2 mb-2 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-200" id="submit_ship_to">Submit</button></div>
+							<!-- </form> -->
+						</div>
+					</div>
+				</div>
 			</div>
 		</div>
 	</div>
@@ -169,16 +224,16 @@
 							<th class="w-80 px-6 py-3 bg-gray-300 text-left text-xs font-medium text-gray-900 uppercase tracking-wider">Description</th>
 							<th class="w-22 px-6 py-3 bg-gray-300 text-left text-xs font-medium text-gray-900 uppercase tracking-wider">Quantity</th>
 							<th class="px-6 py-3 bg-gray-300 text-left text-xs font-medium text-gray-900 uppercase tracking-wider">Unit Price</th>
-							<th class="px-6 py-3 bg-gray-300 text-left text-xs font-medium text-gray-900 uppercase tracking-wider"></th>
-							<th class="px-6 py-3 bg-gray-300 text-left text-xs font-medium text-gray-900 uppercase tracking-wider"></th>
-							<th class="px-6 py-3 bg-gray-300 text-left text-xs font-medium text-gray-900 uppercase tracking-wider">Amount</th>
-							<th class="px-6 py-3 bg-gray-300 text-center text-xs font-medium text-gray-900 uppercase tracking-wider">Actions</th>
+							<!-- <th class="px-6 py-3 bg-gray-300 text-left text-xs font-medium text-gray-900 uppercase tracking-wider"></th> -->
+							<!-- <th class="px-3 py-3 bg-gray-300 text-left text-xs font-medium text-gray-900 uppercase tracking-wider"></th> -->
+							<th class="px-8 py-3 bg-gray-300 text-left text-xs font-medium text-gray-900 uppercase tracking-wider">Amount</th>
+							<th class="py-3 bg-gray-300 text-xs font-medium text-gray-900 uppercase tracking-wider">Actions</th>
 						</tr>
 					</thead>
 					<tbody class="bg-white divide-y divide-gray-200" id="orderTable">
-						<tr class="h-2" id="defaultRow">
-							<td class="px-6 w-1 py-4 whitespace-nowrap">1</td>
-							<td class="px-6 w-64 py-4 whitespace-nowrap sm:w-32">
+						<tr class="h-1" id="defaultRow">
+							<td class="px-4 w-1 py-4 whitespace-nowrap">1</td>
+							<td class="px-4 w-64 py-4 whitespace-nowrap sm:w-32">
 								<select id="product_1" class="product-select bg-white border-lg text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 select2-js custom-select" data-live-search="true" name="product_1" onchange="populateItemDetails(this.value,this.name)" title="Select Product" required>
 									<option value="0">Select a Product</option>
 									{% for product in products %}
@@ -188,30 +243,21 @@
 								<input type="hidden" name="product_code_hidden_1" id="product_code_hidden_1" value="" />
 							</td>
 
-							<td class="px-6 py-4 whitespace-nowrap" id="descriptionCell">
+							<td class="px-4 py-4 whitespace-nowrap" id="descriptionCell">
 								<input name="item_desc_1" id="item_desc_1" disabled />
 								<input type="hidden" name="item_desc_hidden_1" id="item_desc_hidden_1" />
 							</td>
 
-							<td class="px-6 py-4 whitespace-nowrap">
-								<input type="number" class="quantity-input w-20 text-gray-900 bg-white rounded-lg border-none" min="1" value="0" name="item_quantity_1" id="item_quantity_1" onchange="calculateItemTotal(this.name)" />
+							<td class="px-4 py-4 whitespace-nowrap">
+								<input type="number" class="quantity-input w-20 text-gray-900 bg-white rounded border-none" min="1" value="0" name="item_quantity_1" id="item_quantity_1" onchange="calculateItemTotal(this.name)" />
 							</td>
-							<td class="px-6 py-4 whitespace-nowrap">
-								<input type="text" class="quantity-input text-gray-900 bg-white rounded-lg w-20 border-none" name="unit_price_1" id="unit_price_1" disabled />
+							<td class="px-4 py-4 whitespace-nowrap">
+								<input type="text" class="quantity-input text-gray-900 bg-white rounded w-20 border-none" name="unit_price_1" id="unit_price_1" disabled />
 								<input type="hidden" name="unit_price_hidden_1" id="unit_price_hidden_1" />
 							</td>
-							<td class="px-6 py-4 whitespace-nowrap">
-								<select class="discount-type-select bg-white border-lg text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-16 p-2.5 border-none" name="discount_type_1" id="discount_type_1" onchange="calculateItemTotal(this.name)">
-									<option value="percentage">%</option>
-									<option value="amount">$</option>
-								</select>
-							</td>
-							<td class="px-6 py-4 whitespace-nowrap">
-								<input type="number" class="discount-input w-20 text-gray-900 bg-white rounded-lg border-none" min="0" value="0" name="discount_val_1" id="discount_val_1" oninput="calculateItemTotal(this.name)" />
-							</td>
-							<td class="px-6 py-4 whitespace-nowrap">
+							<td class="px-4 py-4 whitespace-nowrap">
 								<span class="ml-2">$</span>
-								<input type="number" class="amount-input rounded-lg text-gray-900 bg-white w-28 border-none" min="0" value="" name="sub_total_1" id="sub_total_1" disabled />
+								<input type="text" class="amount-input rounded text-gray-900 bg-white w-28 border-none" min="0" value="" name="sub_total_1" id="sub_total_1" onchange="calculate_subtotal()" />
 								<input type="hidden" value="" name="sub_total_hidden_1" id="sub_total_hidden_1" />
 							</td>
 						</tr>
@@ -225,38 +271,40 @@
 						</svg>
 					</button>
 
-					<div class="flex flex-col justify-between mr-[130px]">
-						<div class="ml-[106px]">
+					<div class="flex flex-col justify-between mr-[90px]">
+						<div class="ml-[158px]">
 							<span class="font-semibold">Subtotal</span><span class="ml-3">$</span>
-							<span class="ml-[6px]">
-								<input disabled type="text" class="w-24 text-gray-900 bg-white rounded-lg border-none" id="grand_total" name="grand_total" />
+							<span class="">
+								<input disabled type="text" class="w-24 text-gray-900 bg-white rounded border-none" id="grand_total" name="grand_total" />
 								<input type="hidden" id="grand_total_hidden" name="grand_total_hidden" />
 							</span>
 						</div>
 						<div class="flex">
-							<div class="flex gap-x-6">
-								<select class="discount-type-select bg-white border-lg text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-16 border-none px-2" name="discount_type_total" id="discount_type_total" onchange="calculate_subtotal_discount()">
+							<span class="py-2 font-bold">Discount:</span>
+							<div class="flex gap-x-4">
+								<select class="discount-type-select bg-white border-lg text-gray-900 text-sm rounded focus:ring-blue-500 focus:border-blue-500 block w-16 border-none px-2" name="discount_type_total" id="discount_type_total" onchange="calculate_subtotal_discount()">
 									<option value="percentage">%</option>
 									<option value="amount">$</option>
 								</select>
+
 								<input type="number" name="discount_val_total" class="rounded w-16 border-none" value="0" onchange="calculate_subtotal_discount()" id="discount_val_total" />
-								<span class="my-2 ml-1">$</span>
-								<input type="text" id="grand_discount" class="w-24 text-gray-900 bg-white rounded-lg border-none -ml-3" disabled />
+								<span class="my-2">$</span>
+								<input type="text" id="grand_discount" class="w-24 text-gray-900 bg-white rounded border-none -ml-3" disabled />
 								<input type="hidden" id="grand_discount_hidden" name="grand_discount_hidden" />
 							</div>
 						</div>
-						<div class="flex ml-[100px]">
+						<div class="flex ml-[153px]">
 							<span class="font-semibold mt-2">Shipping</span>
 							<span class="ml-[15px] mr-[11px] mt-2">$</span>
 							<span class="mr-[5px]">
 								<input type="text" name="ship_total" class="w-24 text-gray-900 bg-white border-b-2 border-t-0 border-l-0 border-r-0 rounded-sm mb-2 h-[35px]" id="ship_total" onchange="calculate_subtotal_discount()" />
 							</span>
 						</div>
-						<div class="border-t ml">
-							<span class="font-semibold ml-[102px]">Net Total</span>
+						<div class="border-t">
+							<span class="font-semibold ml-[156px]">Net Total</span>
 							<span class="ml-[7px]">$</span>
 							<span class="ml-[6px]">
-								<input type="text" disabled name="net_total" class="w-24 text-gray-900 bg-white rounded-lg border-none" id="net_total" />
+								<input type="text" disabled name="net_total" class="w-24 text-gray-900 bg-white rounded border-none" id="net_total" />
 								<input type="hidden" name="net_total_hidden" id="net_total_hidden" />
 							</span>
 						</div>
@@ -267,7 +315,7 @@
 			<input type="hidden" style="display: none" name="item_counter_list" id="item_counter_list" value="1" />
 
 			<div class="flex justify-end mb-5 mr-5">
-				<input type="submit" class="w-32 h-[50px] text-center rounded bg-green-500 text-white" onclick="validateForm(event)" />
+				<input type="submit" class="w-32 h-[50px] rounded bg-green-500 text-white" onclick="validateForm(event)" />
 			</div>
 		</form>
 	</div>
@@ -372,8 +420,8 @@
 			$("#item_counter").val(counter);
 			itemList.push(counter);
 
-			cols += `<td class="px-6 w-[1%] py-4 whitespace-nowrap">${counter}</td>
-	         <td class="px-6 w-64 py-4 whitespace-nowrap">
+			cols += `<td class="px-3 w-[1%] py-4 whitespace-nowrap">${counter}</td>
+	         <td class="px-4 w-64 py-4 whitespace-nowrap">
 	           <select id="product_${counter}" class="product-select bg-white border-lg text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 select2-js custom-select" name="product_${counter}" onchange="populateItemDetails(this.value,this.name)">
 				<option value="0">Select a Product</option>
 	             <!-- Products options will be dynamically generated by Flask -->
@@ -386,32 +434,24 @@
 			<input type="hidden" name="product_code_hidden_${counter}" id="product_code_hidden_${counter}" value="" required/>
 	         </td>
 
-	         <td class="px-6 py-4 whitespace-nowrap" id="descriptionCell">
+	         <td class="px-4 py-4 whitespace-nowrap" id="descriptionCell">
 	           <input name="item_desc_${counter}" class="border-none" id="item_desc_${counter}" disabled required/>
 	           <input type='hidden' name="item_desc_hidden_${counter}" id="item_desc_hidden_${counter}"/>
 	         </td>
 
-	         <td class="px-6 py-4 whitespace-nowrap">
+	         <td class="px-4 py-4 whitespace-nowrap">
 	           <input type="number" class="quantity-input w-20 text-gray-900 bg-white rounded-lg border-none" min="1" value="0" name="item_quantity_${counter}" id="item_quantity_${counter}" onchange="calculateItemTotal(this.name)" required/>
 	         </td>
-	         <td class="px-6 py-4 whitespace-nowrap">
+	         <td class="px-4 py-4 whitespace-nowrap">
 	           <input type="text" class="quantity-input text-gray-900 bg-white rounded-lg w-20 border-none" name="unit_price_${counter}" id="unit_price_${counter}" disabled required/>
 	           <input type="hidden" name="unit_price_hidden_${counter}" id="unit_price_hidden_${counter}"/>
 	         </td>
+
 	         <td class="px-6 py-4 whitespace-nowrap">
-	           <select class="discount-type-select bg-white border-lg text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-16 p-2.5 border-none" name="discount_type_${counter}" id="discount_type_${counter}" onchange="calculateItemTotal(this.name)" required>
-	             <option value="percentage">%</option>
-	             <option value="amount">$</option>
-	           </select>
-	         </td>
-	         <td class="px-6 py-4 whitespace-nowrap">
-	           <input type="number" class="discount-input w-24 text-gray-900 bg-white rounded-lg border-none" min="0" value="0" name="discount_val_${counter}" id="discount_val_${counter}" oninput="calculateItemTotal(this.name)" required/>
-	         </td>
-	         <td class="px-6 py-4 whitespace-nowrap">
-	           $<input type="number" class="amount-input rounded-lg text-gray-900 bg-white w-28 border-none" min="0" value="" name="sub_total_${counter}" id="sub_total_${counter}" disabled required/>
+	           $<input type="text" class="amount-input rounded-lg text-gray-900 bg-white w-28 border-none" min="0" value="" name="sub_total_${counter}" id="sub_total_${counter}" required onchange="calculate_subtotal()" />
 	           <input type="hidden" min="0" value="" name="sub_total_hidden_${counter}" id="sub_total_hidden_${counter}"/>
 	         </td>
-	         <td class="px-6 py-4 whitespace-nowrap text-center">
+	         <td class="px-4 py-4 whitespace-nowrap">
 	           <button id="deleteRow_${counter}" class="delete-row-button" onclick="remove_order_item(this.id)">
 	             &#10005;
 	           </button>
@@ -453,33 +493,58 @@
 		//calculate_total();
 	}
 
-	function showShipTo(value) {
+	function handleShipToAjax() {
+		var value = $("#current_customer").val();
 		$.ajax({
 			type: "GET",
-			url: "/get_ship_to_details?id=" + value,
+			url: "/customer_bill_address?id=" + value,
 			success: function (data, status, xhr) {
 				$("#ship_to").html(data);
+
+				var tempElement = document.createElement("ship_to");
+				tempElement.innerHTML = data;
+
+				var name = $(tempElement).find("#customer_name").text();
+				var country = $(tempElement).find("#country").text();
+				var address1 = $(tempElement).find("#address1").text();
+				var phone = $(tempElement).find("#phone").text();
+				var address2 = $(tempElement).find("#address2").text();
+				var city = $(tempElement).find("#city").text();
+				var state = $(tempElement).find("#state_country").text();
+				var postcode = $(tempElement).find("#postcode").text();
+				var contact_x = 0;
+
+				var requestData = {
+					name: name,
+
+					contact_x: contact_x,
+					phone: phone,
+					country: country,
+					address1: address1,
+					address2: address2,
+					city: city,
+					state: state,
+					postcode: postcode,
+				};
+				$.ajax({
+					url: "/save-shipping-ajax",
+					data: JSON.stringify(requestData),
+					contentType: "application/json",
+					method: "POST",
+					success: function (data) {
+						var close_button = document.getElementById("modal-backdrop2");
+						close_button.click();
+						console.log(data);
+						$("#ship_to_hidden").val(data.id);
+					},
+					error: function (xhr, textStatus, error) {
+						// console.log(xhr.responseText);
+						console.log("error");
+					},
+				});
 			},
 		});
-		var ship_to_data = $("#ship_to").val();
-
-		var selectShipTo = document.getElementById("ship_to_");
-		var selectedValue = selectShipTo.value;
-		$("#ship_to_hidden").val(selectedValue);
 	}
-
-	function toggleDivVisibility() {
-		const div1 = document.getElementById("bill_to");
-		const div2 = document.getElementById("ship_to");
-		const otherDiv = document.getElementById("otherdiv");
-
-		div1.classList.toggle("hidden");
-		div2.classList.toggle("hidden");
-		otherDiv.classList.toggle("h-[240px]");
-	}
-
-	// Add a click event listener to the button
-	document.getElementById("dropdownDefaultButton").addEventListener("click", toggleDivVisibility);
 </script>
 
 <script>
@@ -498,6 +563,7 @@
 				$("#product_code_hidden_" + row_num).val(data.name);
 
 				calculateItemTotal(name);
+				calculate_subtotal();
 			},
 		});
 	}
@@ -524,7 +590,6 @@
 		$("#sub_total_hidden_" + row_num).val(sub_total);
 		calculate_subtotal();
 		calculate_subtotal_discount();
-		handleCustomer();
 	}
 
 	function calculate_subtotal() {
@@ -628,12 +693,85 @@
 				$("#current_customer_hidden").val(data.id);
 			},
 			error: function (xhr, textStatus, error) {
-				console.log(xhr.responseText);
+				// console.log(xhr.responseText);
+				console.log("error");
 				// Handle the error here
 			},
 		});
 	});
 </script>
+<!-- for ship_to -->
+<script>
+	$("#submit_ship_to").on("click", function (e) {
+		e.preventDefault();
+		var name = $("#names").val();
+		var contact_x = $("#contact_x").val();
+		var address1 = $("#locationInput").val();
+		var phone = $("#floating_phone").val();
+		var country = $("#country2").val();
+		var address2 = $("#address").val();
+		var city = $("#cityToShip").val();
+		var state = $("#state").val();
+		var postcode = $("#postalCode").val();
+		if (name === "" || phone === "" || contact_x === "" || country === "" || address1 === "" || city === "" || state === "" || postcode === "") {
+			alert("Please fill in all the required fields.");
+			console.log(name, contact_x, address1, address2, city, country, state, postcode, phone);
+			return;
+		}
+		var requestData = {
+			name: name,
+			contact_x: contact_x,
+			address1: address1,
+			phone: phone,
+			country: country,
+			address1: address1,
+			address2: address2,
+			city: city,
+			state: state,
+			postcode: postcode,
+		};
+		// console.log(requestData);
+
+		$.ajax({
+			url: "/save-shipping-ajax",
+			data: JSON.stringify(requestData),
+			contentType: "application/json",
+			method: "POST",
+			success: function (data) {
+				var close_button = document.getElementById("modal-backdrop2");
+				close_button.click();
+				$("#ship_to_hidden").val(data.id);
+
+				showShipTo(data.id);
+				console.log(`submit_ship_to ${data.id}`);
+			},
+			error: function (xhr, textStatus, error) {
+				// console.log(xhr.responseText);
+				console.log("error");
+			},
+		});
+	});
+</script>
+<script>
+	function showShipTo(id) {
+		$.ajax({
+			type: "GET",
+			url: "/get_ship_to_details?id=" + id,
+			success: function (data, status, xhr) {
+				$("#ship_to").html(data);
+				alert(data);
+				console.log(data);
+
+				var tempElement = document.createElement("ship_to");
+				tempElement.innerHTML = data;
+				var datas = $(tempElement).find("#id").text();
+
+				$("#ship_to_hidden").val(datas);
+			},
+		});
+	}
+</script>
+
 <script>
 	function handleCustomer(value) {
 		$.ajax({
