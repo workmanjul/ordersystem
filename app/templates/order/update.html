@@ -11,7 +11,7 @@
 {% endblock css_block %} {% block body %}
 
 <div class="w-full flex flex-col p-1">
-	<div class="h-[240px] border-b-4 border-gray-500 text-gray-900 shadow-xl rounded" id="otherdiv">
+	<div class="h-[260px] border-b-4 border-gray-500 text-gray-900 shadow-xl rounded" id="otherdiv">
 		<!-- <h1 class="text-xl font-bold text-gray-700 px-4 py-4">Choose Customer</h1> -->
 		<div class="flex justify-between items-center w-[100%]">
 			<div class="flex px-4 w-[30%]">
@@ -540,10 +540,7 @@
 			type: "GET",
 			url: "/get_ship_to_details?id=" + orderId,
 			success: function (data, status, xhr) {
-				$("#ship_to").html(data);
-				console.log(data);
-				
-
+				$("#ship_to").html(data);				
 				var tempElement = document.createElement("ship_to");
 				tempElement.innerHTML = data;
 				var datas = $(tempElement).find("#id").text();
@@ -749,7 +746,6 @@
 		var postcode = $("#postalCode").val();
 		if (name === "" || phone === "" || contact_x === "" || country === "" || address1 === "" || city === "" || state === "" || postcode === "") {
 			alert("Please fill in all the required fields.");
-			console.log(name, contact_x, address1, address2, city, country, state, postcode, phone);
 			return;
 		}
 		var requestData = {
@@ -764,7 +760,6 @@
 			state: state,
 			postcode: postcode,
 		};
-		// console.log(requestData);
 
 		$.ajax({
 			url: "/save-shipping-ajax",
@@ -774,12 +769,12 @@
 			success: function (data) {
 				var close_button = document.getElementById("modal-backdrop2");
 				close_button.click();
-				console.log(data);
-				$("#ship_to_hidden").val(data.id);
+				showShipTo(data.id)
+				// $("#ship_to_hidden").val(data.id);
 			},
 			error: function (xhr, textStatus, error) {
-				// console.log(xhr.responseText);
-				console.log("error");
+				console.log("error:", xhr.responseText);
+				
 			},
 		});
 		showShipTo();
@@ -791,12 +786,19 @@
 			success: function (data, status, xhr) {
 				$("#ship_to").html(data);
 			},
+			error: function (xhr, textStatus, error) {
+				console.log("error:", xhr.responseText);
+				
+			},
 		});
 		var ship_to_data = $("#ship_to").val();
 
 		var selectShipTo = document.getElementById("ship_to");
-		var selectedValue = selectShipTo.value;
-		$("#ship_to_hidden").val(selectedValue);
+		
+		tempElement.innerHTML = data;
+		var datas = $(tempElement).find("#id").text();
+
+		$("#ship_to_hidden").val(datas);
 	}
 	});
 </script>

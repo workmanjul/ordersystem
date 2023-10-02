@@ -109,17 +109,17 @@ def saveCustomer():
     company = ajax_data['company']
     phone = ajax_data['phone']
     country = ajax_data['country']
-    location = ajax_data['location']
-    address1 = ajax_data['address1']
-    address2 = ajax_data['address2']
+    # location = ajax_data['location']
+    address1 = ajax_data['location']
+    address2 = ajax_data['address1']
 
     state_country = ajax_data['state']
     postcode = ajax_data['postcode']
     city = ajax_data['city']
     is_wholesale = ajax_data.get('isWholesale_checkbox')
 
-    customer = Customer(first_name=first_name, last_name=last_name, email=email, company=company, phone=phone, country=country, location=location,
-                        address1=address1, address2=address2, state_country=state_country, postcode=postcode, city=city, is_wholesale=is_wholesale)
+    customer = Customer(first_name=first_name, last_name=last_name, email=email, company=company, phone=phone, address2=address2,
+                        country=country, address1=address1, city=city, state_country=state_country, postcode=postcode, is_wholesale=is_wholesale)
 
     db.session.add(customer)
     db.session.commit()
@@ -174,7 +174,6 @@ def get_order_items(data):
 def createOrder():
 
     data = request.form
-    print(f'\ndata: {data}\n')
     item_counter = data['item_counter']
     customer_id = data['current_customer_hidden']
     shipping_cost = data['ship_total'] if data['ship_total'] else 0
@@ -228,20 +227,6 @@ def get_ship_to_details():
     # ship_to=db.session.query(Order).filter(Order.id==request.args.get('id')).first()
     ship_to = db.session.query(ShipTo).filter(
         ShipTo.id == request.args.get('id')).first()
-    # order = db.session.query(Order).filter(
-    #     Order.id == request.args.get('id')).first()
-    # ship_to = db.session.query(ShipTo, Order).join(
-    #     Order, ShipTo.id == order.ship_to)
-
-    # order_id = int(request.args.get('id'))
-
-    # ship_to = (db.session.query(ShipTo)
-    #                .join(Order, Order.ship_to == ShipTo.id)
-    #                .filter(Order.id == order_id)
-    #                .first()
-    #                )
-
-    print(ship_to)
     return render_template("widgets/ship_to_address.html", ship_to=ship_to)
 
 
@@ -276,7 +261,6 @@ def updateOrder(id):
     orderUpdate = Order.query.get(id)
     if request.method == "POST":
         data = request.form
-        print(data)
         item_counter = data['item_counter']
         item_counter_list = data['item_counter_list'].split(",")
         orderUpdate.customer_id = data['current_customer_hidden']
@@ -330,8 +314,8 @@ def updateOrder(id):
                                              product_description=order_item_list[index]['product_description'],
                                              item_quantity=order_item_list[index]['item_quantity'],
                                              unit_price=order_item_list[index]['unit_price'],
-                                            #  discount_type=order_item_list[index]['discount_type'],
-                                            #  discount_value=order_item_list[index]['discount_val'],
+                                             #  discount_type=order_item_list[index]['discount_type'],
+                                             #  discount_value=order_item_list[index]['discount_val'],
                                              subtotal_amount=order_item_list[index]['subtotal_amount'])
 
                 db.session.add(add_new_order)
@@ -366,8 +350,6 @@ def viewOrder(id):
 
     shipTo = db.session.query(ShipTo, Order).join(
         Order, ShipTo.id == Order.ship_to).filter(Order.id == id).first()
-
-    # print(shipTo)
 
     user = User.query.get(session['user_id'])
 
@@ -477,7 +459,6 @@ def deleteOrder(id):
 def createCustomer():
     if request.method == 'POST':
         data = request.form
-        # print(data)
         first_name = data['first_name']
         last_name = data['last_name']
         email = data['email']
@@ -496,7 +477,6 @@ def createCustomer():
                             country=country, address1=address1, city=city, state_country=state_country, postcode=postcode, is_wholesale=is_wholesale)
 
         db.session.add(customer)
-        # print(request.form)
         db.session.commit()
         flash("Customer created")
 
@@ -603,7 +583,6 @@ def createSale():
                              description=description, sku=sku, price=price, brand=brand)
 
         db.session.add(sales)
-        # print(request.form)
         db.session.commit()
         flash("Sales Created")
         return redirect(url_for('listSale'))
@@ -665,7 +644,7 @@ def createShipping():
         address1 = data['address1']
         address2 = data['address2']
         city = data['city']
-        contact = data['contact_x']
+        contact = data['contact']
         state_country = data['state']
         postcode = data['post_code']
 
@@ -690,7 +669,6 @@ def listShipping():
     ship = ShipTo.query.order_by(ShipTo.id.desc()).paginate(
         page=page, per_page=per_page)
     user = User.query.get(session['user_id'])
-    # print(ship)
     return render_template('shipping/listShipping.html', ship=ship, user=user)
 
 
@@ -721,7 +699,7 @@ def updateShipping(id):
         ship.address_1 = request.form['address1']
         ship.address_2 = request.form['address2']
         ship.city = request.form['city']
-        ship.contact = request.form['contact_x']
+        ship.contact = request.form['contact']
         ship.state = request.form['state']
         ship.postal_code = request.form['post_code']
 
@@ -736,7 +714,6 @@ def updateShipping(id):
 @login_required
 def saveShipTo():
     ajax_data = request.get_json()
-    print(ajax_data)
     name = ajax_data['name']
     contact = ajax_data['contact_x'] if ajax_data['contact_x'] else 0
     address1 = ajax_data['address1']

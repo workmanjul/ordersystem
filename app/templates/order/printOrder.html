@@ -109,7 +109,7 @@
 							<th>Description</th>
 							<th>Quantity</th>
 							<th>Unit Price</th>
-							<th>Discount</th>
+							<!-- <th>Discount</th> -->
 							<th>Amount</th>
 						  </tr>
 						</thead>
@@ -120,7 +120,7 @@
 							<td style="width: 30%;">{{ orderDetail.OrderDetails.product_description }}</td>
 							<td>{{ orderDetail.OrderDetails.item_quantity }}</td>
 							<td>$ {{ "%.2f"|format(orderDetail.OrderDetails.unit_price) }}</td>
-							<td>{% if orderDetail.OrderDetails.discount_type =='percentage' %} {{orderDetail.OrderDetails.discount_value}} % {% else %} $ {{orderDetail.OrderDetails.discount_value}} {% endif %}</td>
+							<!-- <td>{% if orderDetail.OrderDetails.discount_type =='percentage' %} {{orderDetail.OrderDetails.discount_value}} % {% else %} $ {{orderDetail.OrderDetails.discount_value}} {% endif %}</td> -->
 							<td>$ {{orderDetail.OrderDetails.subtotal_amount}}</td>
 						  </tr>
 						  {% endfor %}
@@ -134,7 +134,7 @@
 					  <div class="col-6">
   
 					  </div>
-					  <div class="col-6">
+					  <div class="col-6 mx-6">
 							  <div class="table-responsive">
 								  <table class="table">
 									<tbody>
