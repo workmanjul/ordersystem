@@ -35,10 +35,8 @@
 
 				<div class="mb-5 mr-5 rounded mx-16">
 					<span class="font-bold">Ship To:</span>
-					<!-- <input type="checkbox" class="rounded" id="sameAsBillTo" onclick="handleShipToAjax()" /> -->
-					<!-- <span> Same as bill to</span>  -->
 					<button data-modal-target="defaultModal2" data-modal-toggle="defaultModal2" class="mx-2 text-white bg-blue-600 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 inline-flex items-center" type="button" id="">+</button><br />
-					<div id="ship_to" class=""></div>
+					<div id="ship_to"></div>
 				</div>
 			</div>
 			<div id="defaultModal2" tabindex="-1" aria-hidden="true" class="fixed top-0 left-0 right-0 z-50 hidden w-full p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-[calc(100%-1rem)] max-h-full">
@@ -67,11 +65,11 @@
 							</div>
 							<div class="grid md:grid-cols-2 md:gap-6">
 								<div class="relative z-0 w-full mb-6 group">
-									<input type="text" name="address1" id="locationInput" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " required />
+									<input type="text" name="address1" id="locationInput2" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " required />
 									<label for="locationInput" class="peer-focus:font-medium absolute text-sm text-gray-800 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Address1</label>
 								</div>
 								<div class="relative z-0 w-full mb-6 group">
-									<input type="text" name="address2" id="address" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " required />
+									<input type="text" name="address2" id="addressShip" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " />
 									<label for="address" class="peer-focus:font-medium absolute text-sm text-gray-800 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Address2</label>
 								</div>
 							</div>
@@ -81,7 +79,7 @@
 									<label for="floating_company" class="peer-focus:font-medium absolute text-sm text-gray-800 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">City</label>
 								</div>
 								<div class="relative z-0 w-full mb-6 group">
-									<input type="text" name="country" id="country_1" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " required />
+									<input type="text" name="country" id="countryShip" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " required />
 									<label for="floating_company" class="peer-focus:font-medium absolute text-sm text-gray-800 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Country</label>
 								</div>
 							</div>
@@ -126,6 +124,9 @@
 				</div>
 
 				<div class="px-64 py-16">
+				
+
+					<!-- ---------------------------------------- -->
 					<div class="grid md:grid-cols-2 md:gap-6">
 						<div class="relative z-0 w-full mb-6 group">
 							<input type="text" name="first_name" id="floating_first_name" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " required />
@@ -138,53 +139,56 @@
 					</div>
 					<div class="grid md:grid-cols-2 md:gap-6">
 						<div class="relative z-0 w-full mb-6 group">
-							<input type="email" name="email" id="email" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " required />
-							<label for="floating_first_name" class="peer-focus:font-medium absolute text-sm text-gray-800 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Email</label>
+							<input type="text" name="location" id="locationInput" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer locationInput" placeholder="" required />
+							<label for="locationInput" class="peer-focus:font-medium absolute text-sm text-gray-800 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Address1</label>
 						</div>
 						<div class="relative z-0 w-full mb-6 group">
-							<input type="text" name="company" id="company" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " required />
-							<label for="floating_last_name" class="peer-focus:font-medium absolute text-sm text-gray-800 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Company</label>
-						</div>
-					</div>
-					<div class="grid md:grid-cols-2 md:gap-6">
-						<div class="relative z-0 w-full mb-6 group">
-							<input type="text" name="phone" id="floating_phone" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " required />
-							<label for="floating_phone" class="peer-focus:font-medium absolute text-sm text-gray-800 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Phone number</label>
-						</div>
-						<div class="relative z-0 w-full mb-6 group">
-							<input type="text" name="country" id="country" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " required />
-							<label for="floating_company" class="peer-focus:font-medium absolute text-sm text-gray-800 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Country</label>
-						</div>
-					</div>
-					<div class="relative z-0 w-full mb-6 group">
-						<input type="text" name="location" id="locationInput" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " required />
-						<label for="floating_email" class="peer-focus:font-medium absolute text-sm text-gray-800 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Input Location</label>
-					</div>
-					<div class="relative z-0 w-full mb-6 group">
-						<input type="text" name="address1" id="address" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " required />
-						<label for="floating_email" class="peer-focus:font-medium absolute text-sm text-gray-800 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Address1</label>
-					</div>
-					<div class="grid md:grid-cols-2 md:gap-6">
-						<div class="relative z-0 w-full mb-6 group">
-							<input type="text" name="address2" id="address" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " />
-							<label for="floating_phone" class="peer-focus:font-medium absolute text-sm text-gray-800 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Address2</label>
-						</div>
-						<div class="relative z-0 w-full mb-6 group">
-							<input type="text" name="state" id="state" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " required />
-							<label for="floating_company" class="peer-focus:font-medium absolute text-sm text-gray-800 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">State</label>
+							<input type="text" name="address1" id="address" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " required />
+							<label for="address1" class="peer-focus:font-medium absolute text-sm text-gray-800 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Address2</label>
 						</div>
 					</div>
 					<div class="grid md:grid-cols-2 md:gap-6">
 						<div class="relative z-0 w-full mb-6 group">
-							<input type="text" name="postcode" id="postalCode" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " required />
+							<input type="text" name="post_code" id="postCode" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " required />
 							<label for="floating_phone" class="peer-focus:font-medium absolute text-sm text-gray-800 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Postal Code</label>
 						</div>
 						<div class="relative z-0 w-full mb-6 group">
-							<input type="text" name="city" id="city" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " required />
+							<input type="text" name="city" id="my_city" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " required />
 							<label for="floating_company" class="peer-focus:font-medium absolute text-sm text-gray-800 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">City</label>
 						</div>
 					</div>
 
+					<div class="grid md:grid-cols-2 md:gap-6">
+						<div class="relative z-0 w-full mb-6 group">
+							<input type="text" name="state" id="stateCustomer" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " required />
+							<label for="floating_company" class="peer-focus:font-medium absolute text-sm text-gray-800 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">State</label>
+						</div>
+						<div class="relative z-0 w-full mb-6 group">
+							<select data-te-select-init data-te-select-filter="true" class="rounded w-[350px] px-4 select6-js custom-select" id="countryCustomer" name="country">
+								<option>Select a Country</option>
+
+								<option value="" id="countryName"></option>
+							</select>
+						</div>
+					</div>
+					<div class="grid md:grid-cols-2 md:gap-6">
+						<div class="relative z-0 w-full mb-6 group">
+							<input type="text" name="phone" id="floating_phone1" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " required />
+							<label for="phone" class="peer-focus:font-medium absolute text-sm text-gray-800 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Phone number (123-456-7890)</label>
+						</div>
+
+						<div class="relative z-0 w-full mb-6 group">
+							<input type="text" name="company" id="company" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " required />
+							<label for="company" class="peer-focus:font-medium absolute text-sm text-gray-800 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Company</label>
+						</div>
+					</div>
+
+					<div class="grid md:grid-cols-2 md:gap-6">
+						<div class="relative z-0 w-full mb-6 group">
+							<input type="email" name="email" id="email" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " required />
+							<label for="email" class="peer-focus:font-medium absolute text-sm text-gray-800 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Email</label>
+						</div>
+					</div>
 					<div class="flex items-center mb-4">
 						<input id="default-checkbox" type="checkbox" value="" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500" />
 						<label for="default-checkbox" class="ml-2 text-sm font-medium text-gray-900">Is Wholesale</label>
@@ -214,8 +218,6 @@
 							<th class="w-80 px-6 py-3 bg-gray-300 text-left text-xs font-medium text-gray-900 uppercase tracking-wider">Description</th>
 							<th class="w-22 px-6 py-3 bg-gray-300 text-left text-xs font-medium text-gray-900 uppercase tracking-wider">Quantity</th>
 							<th class="px-6 py-3 bg-gray-300 text-left text-xs font-medium text-gray-900 uppercase tracking-wider">Unit Price</th>
-							<!-- <th class="px-6 py-3 bg-gray-300 text-left text-xs font-medium text-gray-900 uppercase tracking-wider"></th> -->
-							<!-- <th class="px-3 py-3 bg-gray-300 text-left text-xs font-medium text-gray-900 uppercase tracking-wider"></th> -->
 							<th class="px-8 py-3 bg-gray-300 text-left text-xs font-medium text-gray-900 uppercase tracking-wider">Amount</th>
 							<th class="py-3 bg-gray-300 text-xs font-medium text-gray-900 uppercase tracking-wider">Actions</th>
 						</tr>
@@ -250,13 +252,11 @@
 								<input type="number" class="quantity-input w-20 text-gray-900 bg-white rounded-lg border-none" min="1" name="item_quantity_{{loop.index}}" id="item_quantity_{{loop.index}}" onchange="calculateItemTotal(this.name)" value="{{orderDetail.item_quantity}}" />
 							</td>
 							<td class="px-4 py-4 whitespace-nowrap">
-								<input type="text" class="quantity-input text-gray-900 bg-white rounded-lg w-20 border-none" name="unit_price_{{loop.index}}" id="unit_price_{{loop.index}}" disabled value="{{orderDetail.unit_price}}" />
+								<span class="ml-2">$</span>
+								<input type="text" class="quantity-input text-gray-900 bg-white rounded-lg w-20 border-none" name="unit_price_{{loop.index}}" id="unit_price_{{loop.index}}" value="{{orderDetail.unit_price}}" onchange="calculateItemTotal(this.name)"/>
 
 								<input type="hidden" name="unit_price_hidden_{{loop.index}}" id="unit_price_hidden_{{loop.index}}" value="{{orderDetail.unit_price}}" />
 							</td>
-							<!-- <td class="px-4 py-4 whitespace-nowrap">
-								<input type="number" class="discount-input w-20 text-gray-900 bg-white rounded-lg border-none" min="0" value="{{orderDetail.discount_value}}" name="discount_val_{{loop.index}}" id="discount_val_{{loop.index}}" oninput="calculateItemTotal(this.name)" />
-							</td> -->
 							<td class="px-4 py-4 whitespace-nowrap">
 								<span class="ml-2">$</span>
 								<input type="text" class="amount-input rounded-lg text-gray-900 bg-white w-28 border-none" min="0" value="{{orderDetail.subtotal_amount}}" name="sub_total_{{loop.index}}" id="sub_total_{{loop.index}}" disabled />
@@ -298,7 +298,7 @@
 										{%endif%}
 									</select>
 	
-									<input type="number" name="discount_val_total" class="rounded w-16 border-none" value="0" onchange="calculate_subtotal_discount()" id="discount_val_total" value="{{ order.discount_value | int}}" />
+									<input type="number" name="discount_val_total" class="rounded w-16 border-none" onchange="calculate_subtotal_discount()" id="discount_val_total" value="{{ order.discount_value | int}}" />
 									<span class="my-2">$</span>
 									<input type="text" id="grand_discount" class="w-24 text-gray-900 bg-white rounded border-none -ml-1" disabled value="{{ order.discount_amount}}" />
 									<input type="hidden" id="grand_discount_hidden" name="grand_discount_hidden" value="{{ order.discount_amount}}"/>
@@ -344,11 +344,11 @@
 <script>
 	function initAutocomplete() {
 		const locationInput = document.getElementById("locationInput");
-		const countryInput = document.getElementById("country");
-		const cityInput = document.getElementById("city");
-		const stateInput = document.getElementById("state");
-		const postalCodeInput = document.getElementById("postalCode");
-		const addressInput = document.getElementById("address");
+		const countryInput = document.getElementById("countryCustomer");
+		const cityInput = document.getElementById("my_city");
+		const stateInput = document.getElementById("stateCustomer");
+		const postalCodeInput = document.getElementById("postCode");
+		// const addressInput = document.getElementById("address");
 
 		// Create the autocomplete object
 		const autocomplete = new google.maps.places.Autocomplete(locationInput);
@@ -362,7 +362,7 @@
 			cityInput.value = "";
 			stateInput.value = "";
 			postalCodeInput.value = "";
-			addressInput.value = "";
+			// addressInput.value = "";
 
 			// Set the new values
 			for (const component of place.address_components) {
@@ -379,7 +379,7 @@
 				}
 			}
 
-			addressInput.value = place.formatted_address;
+			// addressInput.value = place.formatted_address;
 		});
 	}
 
@@ -401,13 +401,20 @@
 	$(function () {
 		$(".select1-js").select2();
 		$(".select4-js").select2();
+		$(".select6-js").select2();
 		$(".select5-js").select2();
 		var selectCustomer = document.getElementById("current_customer");
 		var selectedValue = selectCustomer.value;
 		$("#current_customer_hidden").val(selectedValue);
 		handleCustomer(selectedValue);
 
-		showShipTo();
+		// Get the current URL
+		var currentUrl = window.location.href;
+		// Split the URL by "/"
+		var urlParts = currentUrl.split("/");
+		// Get the last part of the URL, which should be the ID
+		var id = urlParts[urlParts.length - 1];
+		ship_to_details(id);
 
 		// Start counting from the third row
 		var table = document.getElementById("order_table");
@@ -462,7 +469,8 @@
             <input type="number" class="quantity-input w-20 text-gray-900 bg-white rounded-lg border-none" min="1" value="0" name="item_quantity_${counter}" id="item_quantity_${counter}" onchange="calculateItemTotal(this.name)" required/>
           </td>
           <td class="px-4 py-4 whitespace-nowrap">
-            <input type="text" class="quantity-input text-gray-900 bg-white rounded-lg w-20 border-none" name="unit_price_${counter}" id="unit_price_${counter}" disabled required/>
+			<span class="ml-2">$</span>
+            <input type="text" class="quantity-input text-gray-900 bg-white rounded-lg w-20 border-none" name="unit_price_${counter}" id="unit_price_${counter}" required onchange="calculateItemTotal(this.name)"/>
             <input type="hidden" name="unit_price_hidden_${counter}" id="unit_price_hidden_${counter}"/>
           </td>
         
@@ -527,28 +535,6 @@
 		calculate_total();
 	}
 
-	
-	function showShipTo() {
-        const currentUrl = window.location.href;
-		
-        // Split the URL by '/'
-        const urlParts = currentUrl.split('/');
-        // Extract the last part of the URL, which is the 'id'
-        const orderId = urlParts[urlParts.length - 1];
-		
-		$.ajax({
-			type: "GET",
-			url: "/get_ship_to_details?id=" + orderId,
-			success: function (data, status, xhr) {
-				$("#ship_to").html(data);				
-				var tempElement = document.createElement("ship_to");
-				tempElement.innerHTML = data;
-				var datas = $(tempElement).find("#id").text();
-
-				$("#ship_to_hidden").val(datas);
-			},
-		});
-	}
 
 </script>
 <script>
@@ -593,7 +579,7 @@
 
 		calculate_subtotal();
 		calculate_subtotal_discount();
-		handleCustomer();
+		// handleCustomer();
 	}
 
 	function calculate_subtotal() {
@@ -653,16 +639,16 @@
 		var last_name = $("#floating_last_name").val();
 		var email = $("#email").val();
 		var company = $("#company").val();
-		var phone = $("#floating_phone").val();
-		var location = $("#locationInput").val();
-		var country = $("#country").val();
-		var address1 = $("#address").val();
+		var phone = $("#floating_phone1").val();
+		var country = $("#countryCustomer").val();
+		var address1 = $("#locationInput").val();
 		var address2 = $("#address").val();
-		var city = $("#city").val();
-		var state = $("#state").val();
-		var postcode = $("#postalCode").val();
+		var city = $("#my_city").val();
+		var state = $("#stateCustomer").val();
+		var postcode = $("#postCode").val();
 		var is_wholesale = $("#default-checkbox").is(":checked") ? 1 : 0;
 		if (first_name === "" || last_name === "" || email === "" || company === "" || phone === "" || location === "" || country === "" || address1 === "" || city === "" || state === "" || postcode === "") {
+			console.log(first_name, last_name, email, company, phone, country, address1, address2, city, state, postcode);
 			alert("Please fill in all the required fields.");
 			return;
 		}
@@ -672,7 +658,6 @@
 			email: email,
 			company: company,
 			phone: phone,
-			location: location,
 			country: country,
 			address1: address1,
 			address2: address2,
@@ -693,6 +678,13 @@
 
 				$("#current_customer").append('<option value="' + data.id + '" selected>' + data.first_name + " " + data.last_name + "</option>");
 				$("#current_customer_hidden").val(data.id);
+				
+				
+				// var selectCustomer = document.getElementById("current_customer");
+				// var selectedValue = selectCustomer.value;
+				// $("#current_customer_hidden").val(selectedValue);
+				handleCustomer(data.id);
+				
 			},
 			error: function (xhr, textStatus, error) {
 				// Handle the error here
@@ -736,15 +728,17 @@
 	$("#submit_ship_to").on("click", function (e) {
 		e.preventDefault();
 		var name = $("#names").val();
+		// var email = $("#email").val();
 		var contact_x = $("#contact_x").val();
-		var address1 = $("#locationInput").val();
+		var address1 = $("#locationInput2").val();
 		var phone = $("#floating_phone").val();
-		var country = $("#country_1").val();
-		var address2 = $("#address").val();
+		var country = $("#countryShip").val();
+		var address2 = $("#addressShip").val();
 		var city = $("#cityToShip").val();
 		var state = $("#state").val();
 		var postcode = $("#postalCode").val();
 		if (name === "" || phone === "" || contact_x === "" || country === "" || address1 === "" || city === "" || state === "" || postcode === "") {
+			console.log(name,contact_x,address1,phone,contry,address2,city,state,postcode);
 			alert("Please fill in all the required fields.");
 			return;
 		}
@@ -757,6 +751,7 @@
 			address1: address1,
 			address2: address2,
 			city: city,
+			// email:email,
 			state: state,
 			postcode: postcode,
 		};
@@ -770,14 +765,12 @@
 				var close_button = document.getElementById("modal-backdrop2");
 				close_button.click();
 				showShipTo(data.id)
-				// $("#ship_to_hidden").val(data.id);
 			},
 			error: function (xhr, textStatus, error) {
 				console.log("error:", xhr.responseText);
 				
 			},
 		});
-		showShipTo();
 		
 		function showShipTo(value) {
 		$.ajax({
@@ -785,21 +778,60 @@
 			url: "/get_ship_to_details?id=" + value,
 			success: function (data, status, xhr) {
 				$("#ship_to").html(data);
+				var tempElement = document.createElement("ship_to");
+				tempElement.innerHTML = data;
+				var datas = $(tempElement).find("#id").text();
+
+				$("#ship_to_hidden").val(datas);
+				
 			},
 			error: function (xhr, textStatus, error) {
 				console.log("error:", xhr.responseText);
 				
 			},
 		});
-		var ship_to_data = $("#ship_to").val();
-
-		var selectShipTo = document.getElementById("ship_to");
 		
-		tempElement.innerHTML = data;
-		var datas = $(tempElement).find("#id").text();
-
-		$("#ship_to_hidden").val(datas);
+		
 	}
 	});
+</script>
+<script>
+	function ship_to_details(value){
+		$.ajax({
+			type: "GET",
+			url: "/ship_to_details_for_update?id=" + value,
+
+			success: function (data, status, xhr) {
+				$("#ship_to").html(data);
+				var tempElement = document.createElement("ship_to");
+				tempElement.innerHTML = data;
+				var datas = $(tempElement).find("#id").text();
+
+				$("#ship_to_hidden").val(datas);
+			},
+			error: function (xhr, textStatus, error) {
+				console.log("error:", xhr.responseText);
+				
+			},
+		});
+	}
+</script>
+<script>
+	// Get a reference to the select element
+	const selectElement = document.getElementById("countryCustomer");
+
+	// Fetch the list of countries from the REST Countries API
+	fetch("https://restcountries.com/v3.1/all")
+		.then((response) => response.json())
+		.then((data) => {
+			// Loop through the data and add countries to the select element
+			data.forEach((country) => {
+				const option = document.createElement("option");
+				option.value = country.name.common; // Set the value to the country name
+				option.textContent = country.name.common; // Set the text displayed in the dropdown
+				selectElement.appendChild(option); // Add the option to the select element
+			});
+		})
+		.catch((error) => console.error("Error fetching data:", error));
 </script>
 {% endblock %}

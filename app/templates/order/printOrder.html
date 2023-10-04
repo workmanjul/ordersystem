@@ -63,35 +63,31 @@
 			  <br/>
 			  <div class="row">
 				<div class="col-4 text-left">
-					<h5>Order Date: {{order.created_date}}</h5>
-					<h5 class="card-title m-0">Order ID: {{order.id}}</h5>
+					<p class="card-text m-0 "><b>Order ID: {{order.id}}</b></p>
 					<p class="card-text m-0">Payment Method: Credit Card</p>
 					<p class="card-text m-0">Shipping Method: Flat Card</p>
+					<p>Order Date: {{order.created_date}}</p>
 					
 				  </div>  
 
 				<div class="col-4 text-left">   
 				  <p class="card-text m-0"><b>Bill To:</b></p>
 				  <p class="card-text m-0 ">{{customer.first_name}} {{customer.last_name}}</p>
-				  <p class="card-text m-0"> {{ customer.address1 }}</p>
-				  <p class="card-text m-0"> {{ customer.city }}, {{ customer.state }} {{ customer.postal_code }}</p>
+				  <p class="card-text m-0"> {{ customer.company }}</p>
+				  <p class="card-text m-0"> {{ customer.city }}, {{ customer.state_country }} {{ customer.postcode }}</p>
 				  <p class="card-text m-0">{{ customer.country }}</p>
 				</div>  
 					 
 			  
 				<div class="col-4 text-left">
-				  <p class="card-text m-0"><b>Ship To:</b></p>
-				  <p class="card-text m-0">{{ ship_to.contact }}</p>
-							  <p class="card-text m-0">{{ ship_to.phone_number }}</p>
-							  <p class="card-text m-0">{{ ship_to.name }}</p>
-							  <p class="card-text m-0">{{ ship_to.address_1 }}</p>
-							  <p class="card-text m-0"> {{ ship_to.city }}, {{ ship_to.state }} {{ ship_to.postal_code }}</p>
-							  <p class="card-text m-0">{{ ship_to.country }}</p>
+					<p class="card-text m-0"><b>Ship To:</b></p>
+					<p class="card-text m-0">{{ ship_to.name }}</p>
+					<p class="card-text m-0">{{ ship_to.contact }}</p>
+					<p class="card-text m-0">{{ ship_to.phone_number }}</p>
+					<p class="card-text m-0"> {{ ship_to.city }}, {{ ship_to.state }} {{ ship_to.postal_code }}</p>
+					<!-- <p class="card-text m-0">{{ ship_to.address_1 }}</p> -->
+					<p class="card-text m-0">{{ ship_to.country }}</p>
 				</div>  
-					 
-			  
-				
-					 
 			  </div>
 			</section>
 			<section class="invoice">

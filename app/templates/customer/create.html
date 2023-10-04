@@ -20,18 +20,13 @@
 				<label for="floating_last_name" class="peer-focus:font-medium absolute text-sm text-gray-800 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Last name</label>
 			</div>
 		</div>
-		<!-- <div class="relative z-0 w-full mb-6 group">
-			<input type="text" name="location" id="locationInput" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " required />
-			<label for="floating_email" class="peer-focus:font-medium absolute text-sm text-gray-800 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Input Location</label>
-		</div> -->
-
 		<div class="grid md:grid-cols-2 md:gap-6">
 			<div class="relative z-0 w-full mb-6 group">
-				<input type="text" name="location" id="locationInput" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder="" required />
+				<input type="text" name="address1" id="address1" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder="" required />
 				<label for="locationInput" class="peer-focus:font-medium absolute text-sm text-gray-800 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Address1</label>
 			</div>
 			<div class="relative z-0 w-full mb-6 group">
-				<input type="text" name="address1" id="address" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " required />
+				<input type="text" name="address2" id="address2" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " />
 				<label for="address1" class="peer-focus:font-medium absolute text-sm text-gray-800 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Address2</label>
 			</div>
 		</div>
@@ -56,9 +51,7 @@
 					<option>Select a Country</option>
 
 					<option value="" id="countryName"></option>
-				</select>
-				<!-- <input type="text" name="country" id="country" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " required />
-				<label for="floating_company" class="peer-focus:font-medium absolute text-sm text-gray-800 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Country</label> -->
+				</select>	
 			</div>
 		</div>
 		<div class="grid md:grid-cols-2 md:gap-6">
@@ -91,12 +84,12 @@
 <script>
 	function initAutocomplete() {
 		$(".select2-js").select2();
-		const locationInput = document.getElementById("locationInput");
-		const countryInput = document.getElementById("countryName");
+		const locationInput = document.getElementById("address1");
+		const countryInput = document.getElementById("country");
 		const cityInput = document.getElementById("city");
 		const stateInput = document.getElementById("state");
 		const postalCodeInput = document.getElementById("postalCode");
-		const addressInput = document.getElementById("address");
+		const addressInput = document.getElementById("address2");
 
 		// Create the autocomplete object
 		const autocomplete = new google.maps.places.Autocomplete(locationInput);
@@ -110,7 +103,7 @@
 			cityInput.value = "";
 			stateInput.value = "";
 			postalCodeInput.value = "";
-			addressInput.value = "";
+			// addressInput.value = "";
 
 			// Set the new values
 			for (const component of place.address_components) {
@@ -127,7 +120,7 @@
 				}
 			}
 
-			addressInput.value = place.formatted_address;
+			// addressInput.value = place.formatted_address;
 		});
 	}
 

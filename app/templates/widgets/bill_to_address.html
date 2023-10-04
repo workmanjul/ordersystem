@@ -4,12 +4,13 @@
 
 		<h5 class="card-title text-sm font-semibold" id="customer_name">{{bill_to.first_name}} {{bill_to.last_name}}</h5>
 		<p class="card-text">{{ bill_to.company }}</p>
-		
+
 		<p class="card-text" id="city">{{ bill_to.city }}</p>
 		<p class="card-text">{{ bill_to.state_country }} {{ bill_to.postcode }}</p>
-		{% if bill_to.country %}
+
+		 <!-- {% if bill_to.country %} -->
 		<p class="card-text" id="country">{{ bill_to.country }}</p>
-		{% endif %}
+		<!-- {% endif %}  -->
 
 		<p class="card-text" hidden id="postcode">{{ bill_to.postcode }}</p>
 		<p class="card-text" hidden id="customer_id">{{ bill_to.id }}</p>
