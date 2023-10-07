@@ -20,15 +20,18 @@
 			<div class="flex ml-64">
 				<div id="ship_to">
 					<div class="card w-64">
-						<div class="max-w-sm p-2 bg-white border-gray-200 rounded-lg">
+						<div class="w-[350px] p-2 bg-white border-gray-200 rounded-lg">
 							<h1 class="text-xl font-bold">Bill To</h1>
 							<h5 class="font-semibold">{{ customer.first_name }} {{customer.last_name}}</h5>
 
 							<h5 class="card-title text-xl"></h5>
 							<p class="card-text">{{ customer.phone }}</p>
-							<!-- <p class="card-text">{{ customer.address1 }}</p> -->
-							<p class="card-text">{{ customer.city }} {{ customer.state_country }} {{customer.postcode }}</p>
-							<p class="card-text">{{ customer.country }}</p>
+							<p class="card-text">{{ bill_to_address}}</p>
+							<p class="card-text">{{ customer.city }}, {{ customer.state_country }} {{customer.postcode }}</p>
+
+							{% if customer.country !="United States" %}
+							<p class="card-text" id="country">{{ customer.country }}</p>
+							{% endif %}
 						</div>
 					</div>
 				</div>
@@ -36,7 +39,7 @@
 
 			<div class="flex justify-right">
 				<div id="ship_to">
-					<div class="card w-64">
+					<div class="card w-[350px]">
 						<div class="max-w-sm p-2 bg-white border-gray-200 rounded-lg">
 							<h1 class="text-xl font-bold">Ship To</h1>
 							<!-- <h5 class="font-semibold">{{ ship_to.ShipTo.contact }}</h5> -->
@@ -44,9 +47,12 @@
 							<h5 class="card-title text-xl"></h5>
 							<p class="card-text">{{ ship_to.ShipTo.name }}</p>
 							<p class="card-text">{{ ship_to.ShipTo.phone_number }}</p>
-							<!-- <p class="card-text">{{ ship_to.ShipTo.address_1 }}</p> -->
-							<p class="card-text">{{ ship_to.ShipTo.city }} {{ ship_to.ShipTo.state }} {{ ship_to.ShipTo.postal_code }}</p>
+							<p class="card-text">{{ ship_to_address }}</p>
+							<p class="card-text">{{ ship_to.ShipTo.city }}, {{ ship_to.ShipTo.state }} {{ ship_to.ShipTo.postal_code }}</p>
+							{% if ship_to.ShipTo.country !="United States" %}
 							<p class="card-text">{{ ship_to.ShipTo.country }}</p>
+							{% endif %}
+							
 						</div>
 					</div>
 				</div>

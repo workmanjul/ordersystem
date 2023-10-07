@@ -228,7 +228,9 @@ def get_ship_to_details():
     # ship_to=db.session.query(Order).filter(Order.id==request.args.get('id')).first()
     ship_to = db.session.query(ShipTo).filter(
         ShipTo.id == request.args.get('id')).first()
-    return render_template("widgets/ship_to_address.html", ship_to=ship_to)
+    ship_to_address=ship_to.address_1.split(",")[0]
+    # print(ship_to.id)
+    return render_template("widgets/ship_to_address.html", ship_to=ship_to,ship_to_address=ship_to_address)
 
 # @app.route('/get_ship_to_details', methods=['GET'])
 # @login_required
@@ -244,17 +246,19 @@ def get_ship_to_details():
 def customer_bill_address():
     bill_to = db.session.query(Customer).filter(
         Customer.id == request.args.get('id')).first()
-    return render_template("widgets/bill_to_address.html", bill_to=bill_to)
+    bill_to_address = bill_to.address1.split(",")[0]
+    return render_template("widgets/bill_to_address.html", bill_to=bill_to, bill_to_address=bill_to_address)
 
 
 @app.route('/ship_to_details_for_update', methods=['GET'])
 @login_required
 def ship_to_details_for_update():
-    order_ship_to = db.session.query(Order).filter(Order.id == request.args.get('id')).first()    
+    order_ship_to = db.session.query(Order).filter(
+        Order.id == request.args.get('id')).first()
     shipTo = db.session.query(ShipTo).filter(
         ShipTo.id == order_ship_to.ship_to).first()
-
-    return render_template("widgets/ship_to_address.html", ship_to=shipTo)
+    ship_to_address=shipTo.address_1.split(",")[0]
+    return render_template("widgets/ship_to_address.html", ship_to=shipTo,ship_to_address=ship_to_address)
 
 
 @app.route('/update-order/<int:id>', methods=['GET', 'POST'])
@@ -367,7 +371,11 @@ def viewOrder(id):
     user = User.query.get(session['user_id'])
 
     customer = Customer.query.get(order.customer_id)
-    return render_template('order/viewOrder.html', order=order, orderDetails=order_details, user=user, ship_to=shipTo, customer=customer)
+
+    bill_to_address = customer.address1.split(",")[0]
+    ship_to_address = shipTo.ShipTo.address_1.split(",")[0]
+
+    return render_template('order/viewOrder.html', order=order, orderDetails=order_details, user=user, ship_to=shipTo, customer=customer, bill_to_address=bill_to_address, ship_to_address=ship_to_address)
 
 
 @app.route('/print-order/<int:id>', methods=['GET'])
@@ -380,7 +388,9 @@ def print_order(id):
     customer = Customer.query.get(order.customer_id)
     # shipTo = ShipTo.query.first()
     shipTo = ShipTo.query.get(order.ship_to)
-    print(shipTo)
+    ship_to_address=shipTo.address_1.split(",")[0]
+    bill_to_address=customer.address1.split(",")[0]
+    print(bill_to_address)
 
     # Calculate values and check if brand ecp or entropy is high
 
@@ -401,7 +411,7 @@ def print_order(id):
     else:
         image_path = os.path.abspath("/static/images/ECP_Logo.png")
 
-    return render_template('order/printOrder.html', order=order, orderDetails=order_details, user=user, customer=customer, image_path=image_path, ship_to=shipTo)
+    return render_template('order/printOrder.html', order=order, orderDetails=order_details, user=user, customer=customer, image_path=image_path, ship_to=shipTo,ship_to_address=ship_to_address,bill_to_address=bill_to_address)
 
 
 @app.route('/download-order/<int:id>', methods=['GET'])
@@ -412,7 +422,10 @@ def download_order(id):
         SalesDetails, SalesDetails.id == OrderDetails.product_id).filter(OrderDetails.order_id == id).all()
     user = User.query.get(session['user_id'])
     customer = Customer.query.get(order.customer_id)
-    shipTo = ShipTo.query.first()
+    shipTo = ShipTo.query.get(order.ship_to)
+    ship_to_address=shipTo.address_1.split(",")[0]
+    bill_to_address=customer.address1.split(",")[0]
+
 
     results = db.session.query(SalesDetails.brand, func.sum(OrderDetails.subtotal_amount).label('total_sum')).join(
         OrderDetails, OrderDetails.product_id == SalesDetails.id).filter(OrderDetails.order_id == id).group_by(SalesDetails.brand).all()
@@ -435,7 +448,7 @@ def download_order(id):
     }
 
     html = render_template('order/printOrder.html', order=order, orderDetails=order_details,
-                           user=user, customer=customer, image_path=image_path, ship_to=shipTo)
+                           user=user, customer=customer, image_path=image_path, ship_to=shipTo,ship_to_address=ship_to_address,bill_to_address=bill_to_address)
     pdf = pdfkit.from_string(html, False, options=options)
     response = make_response(pdf)
     response.headers["Content-Type"] = "application/pdf"
