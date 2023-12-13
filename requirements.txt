@@ -9,6 +9,7 @@ crypto==1.4.1
 cryptography==41.0.0
 Flask==2.3.2
 Flask-Login==0.6.2
+Flask-Mail==0.9.1
 Flask-Migrate==4.0.4
 Flask-SQLAlchemy==3.0.3
 greenlet==2.0.2
@@ -23,11 +24,13 @@ MarkupSafe==2.1.2
 mysqlclient==2.1.1
 Naked==0.1.32
 pdfkit==1.0.0
+Pillow==10.1.0
 pycparser==2.21
 PyMySQL==1.0.3
 python-dotenv==1.0.0
 PyXB==1.2.5
 PyYAML==6.0
+reportlab==4.0.7
 requests==2.31.0
 shellescape==3.8.1
 SQLAlchemy==2.0.15

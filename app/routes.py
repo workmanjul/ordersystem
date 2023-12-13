@@ -13,6 +13,18 @@ from sqlalchemy import func
 from authorizenet import apicontractsv1
 from authorizenet.apicontrollers import createTransactionController
 from dotenv import load_dotenv,dotenv_values
+from flask_mail import Mail, Message
+from decimal import *
+
+app.config['MAIL_SERVER'] = os.getenv('MAIL_SERVER')  # Change this to your SMTP server
+app.config['MAIL_PORT'] = os.getenv('MAIL_PORT')  # Change this to your mail server's port (usually 587 for TLS)
+app.config['MAIL_USERNAME'] = os.getenv('MAIL_USERNAME')
+app.config['MAIL_PASSWORD'] = os.getenv('MAIL_PASSWORD')
+
+
+mail = Mail(app)
+
+
 
 
 def login_required(f):
@@ -147,6 +159,8 @@ def listOrder():
     per_page = request.args.get('per_page', 10, type=int)
     orders = db.session.query(Order, Customer).join(Customer, Order.customer_id == Customer.id).order_by(
         Order.id.desc()).paginate(page=page, per_page=per_page)
+    
+    
     user = User.query.get(session['user_id'])
     # user = None
     return render_template('order/listOrder.html', orders=orders, user=user)
@@ -382,9 +396,95 @@ def viewOrder(id):
 
     return render_template('order/viewOrder.html', order=order, orderDetails=order_details, user=user, ship_to=shipTo, customer=customer, bill_to_address=bill_to_address, ship_to_address=ship_to_address)
 
+
+@app.route('/refund-payment',methods=['POST'])
+@login_required
+def refundPayment():
+    ajax_data = request.get_json()
+    try:
+        merchantAuth = apicontractsv1.merchantAuthenticationType()
+        merchantAuth.name = os.getenv('MERCHANT_NAME')
+        merchantAuth.transactionKey = os.getenv('MERCHANT_TRANSACTION_KEY')
+
+        creditCard = apicontractsv1.creditCardType()
+        creditCard.cardNumber = '1111'
+        creditCard.expirationDate = '122025'
+
+        
+        payment = apicontractsv1.paymentType()
+        payment.creditCard = creditCard
+
+        transactionrequest = apicontractsv1.transactionRequestType()
+        transactionrequest.transactionType = "refundTransaction"
+        transactionrequest.amount = Decimal ('2.23')
+        #set refTransId to transId of a settled transaction
+        transactionrequest.refTransId = '80009038940'
+
+        transactionrequest.payment = payment
+
+
+        createtransactionrequest = apicontractsv1.createTransactionRequest()
+        createtransactionrequest.merchantAuthentication = merchantAuth
+        createtransactionrequest.refId = "MerchantID-0001"
+        
+
+        createtransactionrequest.transactionRequest = transactionrequest
+        createtransactioncontroller = createTransactionController(createtransactionrequest)
+        createtransactioncontroller.execute()
+
+        response = createtransactioncontroller.getresponse()
+        print('###############')
+        print(response)
+        print('#################')
+        if response is not None:
+            if response.messages.resultCode == "Ok":
+                print('hello')
+                if hasattr(response.transactionResponse, 'messages') == True:
+                    print ('Successfully created transaction with Transaction ID: %s' % response.transactionResponse.transId)
+                    print ('Transaction Response Code: %s' % response.transactionResponse.responseCode)
+                    print ('Message Code: %s' % response.transactionResponse.messages.message[0].code)
+                    print ('Description: %s' % response.transactionResponse.messages.message[0].description)
+                    return ('Successfully created transaction with Transaction ID: %s'
+                        % response.transactionResponse.transId)
+                else:
+                    print ('Failed Transaction.')
+                    print(response.transactionResponse)
+                    if hasattr(response.transactionResponse, 'errors') == True:
+                        print ('Error Code:  %s' % str(response.transactionResponse.errors.error[0].errorCode))
+                        print ('Error message: %s' % response.transactionResponse.errors.error[0].errorText)
+                        return ('Successfully created transaction with Transaction ID: %s'
+                        % response.transactionResponse.errors.error[0].errorText)
+            else:
+                print ('Failed Transaction.')
+                if hasattr(response, 'transactionResponse') == True and hasattr(response.transactionResponse, 'errors') == True:
+                    print ('Error Code: %s' % str(response.transactionResponse.errors.error[0].errorCode))
+                    print ('Error message: %s' % response.transactionResponse.errors.error[0].errorText)
+                    return ('Successfully created transaction with Transaction ID: %s'
+                        % response.transactionResponse.errors.error[0].errorText)
+                else:
+                    print ('Error Code: %s' % response.messages.message[0]['code'].text)
+                    print ('Error message: %s' % response.messages.message[0]['text'].text)
+                    return ('Successfully created transaction with Transaction ID: %s'
+                        % response.messages.message[0]['text'].text)
+        else:
+            print ('Null Response.')
+            return 'error'
+
+        return response
+
+        
+    except Exception as e:
+        return make_response(str(e),500)
+    
+
+
+
 @app.route('/test-payment',methods=['POST'])
 @login_required
 def testPayment():
+    ajax_data = request.get_json()
+        
+    id = ajax_data['order_id']
 
     try:
         ajax_data = request.get_json()
@@ -499,9 +599,16 @@ def testPayment():
             # Check to see if the API request was successfully received and acted upon
             if response.messages.resultCode=="Ok":
                 print('ok')
+                
+                
                 # Since the API request was successful, look for a transaction response
                 # and parse it to display the results of authorizing the card
                 if hasattr(response.transactionResponse, 'messages') is True:
+                    result = download_order(id=id,email='email')
+                    send_invoice_as_attachment(result,customer)
+                    updateOrderAfterTransaction(id,response.transactionResponse.transId)
+                    
+                    
                     print(
                         'Successfully created transaction with Transaction ID: %s'
                         % response.transactionResponse.transId)
@@ -550,10 +657,36 @@ def testPayment():
             print('Null Response.')
             return 'null response'
     except Exception as e:
-        print(type(e))
+        print(e)
         print("Exceptionaaaa:", str(e))
         response = jsonify({'error': {'code': 500, 'message': 'something went wrong'}})
         return make_response(response,500)
+
+def send_invoice_as_attachment(result,customer):
+    options = {
+        "enable-local-file-access": ""
+    }
+    pdf = pdfkit.from_string(result, False, options=options)
+    with open('app/generated_pdf.pdf', 'wb') as file:
+        file.write(pdf)
+    msg = Message('PDF Attachment', sender='your_email@example.com', recipients=[customer.email])
+    msg.body = 'Please find the attached PDF.'
+
+    with app.open_resource('generated_pdf.pdf') as pdf_file:
+        msg.attach("invoice.pdf", "application/pdf", pdf_file.read())
+
+    mail.send(msg)
+
+    # Delete the generated PDF file
+    os.remove('app/generated_pdf.pdf')
+
+def updateOrderAfterTransaction(id,transId):
+    order = Order.query.get(id)
+    if order is None:
+        return "Item not found", 404
+    order.transactionId = transId
+    order.payment_status = 1
+    db.session.commit()
     
 
 
@@ -595,7 +728,7 @@ def print_order(id):
 
 @app.route('/download-order/<int:id>', methods=['GET'])
 @login_required
-def download_order(id):
+def download_order(id,email=None):
     order = db.session.query(Order).filter(Order.id == id).first()
     order_details = db.session.query(OrderDetails, SalesDetails).join(
         SalesDetails, SalesDetails.id == OrderDetails.product_id).filter(OrderDetails.order_id == id).all()
@@ -628,6 +761,11 @@ def download_order(id):
 
     html = render_template('order/printOrder.html', order=order, orderDetails=order_details,
                            user=user, customer=customer, image_path=image_path, ship_to=shipTo,ship_to_address=ship_to_address,bill_to_address=bill_to_address)
+    
+    if(email):
+        html = render_template('order/orderInvoice.html', order=order, orderDetails=order_details,
+                           user=user, customer=customer, image_path=image_path, ship_to=shipTo,ship_to_address=ship_to_address,bill_to_address=bill_to_address)
+        return html
     pdf = pdfkit.from_string(html, False, options=options)
     response = make_response(pdf)
     response.headers["Content-Type"] = "application/pdf"
