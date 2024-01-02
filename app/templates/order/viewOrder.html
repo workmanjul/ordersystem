@@ -1,6 +1,44 @@
 {% extends './base.html' %} {% block title %}View Order {% endblock title %} {%
 block body %}
+<style>
+  .loaderdiv {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    width: 100%;
+    background-color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 99999;
+    color: white; /* Text color */
+  }
+  .noneloader {
+    display: none;
+  }
+  .loader {
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    border: 10px solid #ffe66d;
+    border-top: 10px solid #4ecdc4;
+    animation: spinAnimate 3s ease-in 0s infinite normal;
+  }
 
+  @keyframes spinAnimate {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }
+</style>
+
+<div class="d-hidden" id="loaderdiv">
+  <div class="" id="loader"></div>
+</div>
 <div class="w-full border-0 flex-col p-2">
   <h1 class="text-2xl font-bold text-gray-700 px-8 mx-2">Invoice</h1>
   <div class="flex justify-around">
@@ -321,6 +359,8 @@ block body %}
                 </div> -->
     </form>
     <div class="flex w-full justify-end">
+      {% if order.payment_status == '0' %}
+
       <div class="flex flex-end mb-5 mr-5 rounded mx-16">
         <button
           data-modal-target="defaultModal2"
@@ -333,6 +373,18 @@ block body %}
         ><br />
         <div id="ship_to"></div>
       </div>
+      {%else%}
+      <div class="flex flex-end mb-5 mr-5 rounded mx-16">
+        <button
+          class="mx-2 text-white bg-blue-600 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 inline-flex items-center"
+          type="button"
+          id=""
+        >
+          Paid</button
+        ><br />
+        <div id="ship_to"></div>
+      </div>
+      {%endif%}
       <div
         id="defaultModal2"
         tabindex="-1"
@@ -440,12 +492,17 @@ block body %}
   </div>
 </div>
 <script>
+
   function submitPayment() {
+    $('#loaderdiv').addClass('loaderdiv')
+    $('#loader').addClass('loader')
     var order = {{order.id}}
     var credit_card_number = document.getElementById('credit_card_number').value;
     var cvv = document.getElementById('cvv').value;
     var expiry_date = document.getElementById('expiry_date').value;
+    var close_button = document.getElementById("modal-backdrop2");
 
+    close_button.click();
     $.ajax({
       url: "/test-payment",
       data: JSON.stringify({order_id:order,cvv:cvv,credit_card_number:credit_card_number,expiry_date:expiry_date}),
@@ -453,18 +510,17 @@ block body %}
       method: "POST",
       success: function (data) {
         console.log('data',data)
-        var close_button = document.getElementById("modal-backdrop2");
-        close_button.click();
+        $('#loaderdiv').removeClass('loaderdiv')
+        $('#loader').removeClass('loader')
         if(data.error){
           alert(data.error.message)
-        }else{
-          alert(data)
         }
       },
       error: function (xhr, textStatus, error) {
         console.log(typeof xhr.responseText)
         var errorData = JSON.parse(xhr.responseText);
-
+        $('#loaderdiv').removeClass('loaderdiv')
+        $('#loader').removeClass('loader')
         if (errorData.error) {
           //console.log("Error Code:", errorData.error.code);
           alert(errorData.error.message);

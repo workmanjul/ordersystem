@@ -669,7 +669,7 @@ def send_invoice_as_attachment(result,customer):
     pdf = pdfkit.from_string(result, False, options=options)
     with open('app/generated_pdf.pdf', 'wb') as file:
         file.write(pdf)
-    msg = Message('PDF Attachment', sender='your_email@example.com', recipients=[customer.email])
+    msg = Message('PDF Attachment', sender=os.getenv('SENDER_EMAIL'), recipients=[customer.email])
     msg.body = 'Please find the attached PDF.'
 
     with app.open_resource('generated_pdf.pdf') as pdf_file:
