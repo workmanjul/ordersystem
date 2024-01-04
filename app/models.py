@@ -64,6 +64,7 @@ class Order(db.Model):
     payment_status = db.Column(db.String(255), nullable=False, default='0')
     transactionId = db.Column(db.String(255), nullable=True)
     shipping_cost = db.Column(db.Numeric(precision=8, scale=2), nullable=True)
+    invoice_no = db.Column(db.String(255), nullable=True)
     total_amount = db.Column(db.Numeric(precision=8, scale=2), nullable=True)
     ship_to = db.Column(db.Numeric(precision=8, scale=2), nullable=True)
     

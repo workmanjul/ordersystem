@@ -1,0 +1,2 @@
+ALTER TABLE `orders`
+ADD COLUMN `invoice_no` VARCHAR(255) NULL;

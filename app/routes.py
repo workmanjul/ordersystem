@@ -508,8 +508,8 @@ def testPayment():
         customer_order = order
 
         
-
-        
+        order_invoice_number = setInvoiceNumber()
+        print(order_invoice_number)
         
 
         merchantAuth = apicontractsv1.merchantAuthenticationType()
@@ -531,7 +531,7 @@ def testPayment():
 
         # Create order information
         order = apicontractsv1.orderType()
-        order.invoiceNumber = "10101"
+        order.invoiceNumber = order_invoice_number
         #order.description = "Golf Shirts"
 
         # # Set the customer's Bill To address
@@ -606,7 +606,8 @@ def testPayment():
                 if hasattr(response.transactionResponse, 'messages') is True:
                     result = download_order(id=id,email='email')
                     send_invoice_as_attachment(result,customer)
-                    updateOrderAfterTransaction(id,response.transactionResponse.transId)
+                    
+                    updateOrderAfterTransaction(id,response.transactionResponse.transId,order_invoice_number)
                     
                     
                     print(
@@ -680,12 +681,31 @@ def send_invoice_as_attachment(result,customer):
     # Delete the generated PDF file
     os.remove('app/generated_pdf.pdf')
 
-def updateOrderAfterTransaction(id,transId):
+def setInvoiceNumber():
+    existing_entries = Order.query.with_entities(Order.invoice_no).all()
+
+    if not existing_entries or all(entry[0] is None for entry in existing_entries):
+        initial_invoice_no = '4001'
+    else:
+        # Find the maximum invoice_no value and increment by 1
+        max_invoice_no = max(int(entry[0]) for entry in existing_entries if entry[0] is not None)
+        initial_invoice_no = str(max_invoice_no + 1)
+    return initial_invoice_no
+    # order = Order.query.get(id)
+    # if order is None:
+    #     return "Item not found", 404
+    
+    # order.invoice_no=initial_invoice_no
+    # db.session.commit()
+    
+
+def updateOrderAfterTransaction(id,transId,order_invoice_number):
     order = Order.query.get(id)
     if order is None:
         return "Item not found", 404
     order.transactionId = transId
     order.payment_status = 1
+    order.invoice_no = order_invoice_number
     db.session.commit()
     
 
