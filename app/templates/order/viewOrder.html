@@ -51,6 +51,10 @@ block body %}
             <p class="card-text">Shipping Method: Flat Card</p>
             <p class="card-text">Payment Method: Credit Card</p>
             <h5>Order Date: {{order.created_date}}</h5>
+            <h5>
+              Transaction Id: {% if order.transactionId
+              %}{{order.transactionId}}{%endif%}
+            </h5>
           </div>
         </div>
       </div>
@@ -492,51 +496,55 @@ block body %}
   </div>
 </div>
 <script>
-
   function submitPayment() {
-    $('#loaderdiv').addClass('loaderdiv')
-    $('#loader').addClass('loader')
-    var order = {{order.id}}
-    var credit_card_number = document.getElementById('credit_card_number').value;
-    var cvv = document.getElementById('cvv').value;
-    var expiry_date = document.getElementById('expiry_date').value;
+    $("#loaderdiv").addClass("loaderdiv");
+    $("#loader").addClass("loader");
+    var order = order.id;
+    var credit_card_number =
+      document.getElementById("credit_card_number").value;
+    var cvv = document.getElementById("cvv").value;
+    var expiry_date = document.getElementById("expiry_date").value;
     var close_button = document.getElementById("modal-backdrop2");
 
     close_button.click();
     $.ajax({
       url: "/test-payment",
-      data: JSON.stringify({order_id:order,cvv:cvv,credit_card_number:credit_card_number,expiry_date:expiry_date}),
+      data: JSON.stringify({
+        order_id: order,
+        cvv: cvv,
+        credit_card_number: credit_card_number,
+        expiry_date: expiry_date,
+      }),
       contentType: "application/json",
       method: "POST",
       success: function (data) {
-        console.log('data',data)
-        $('#loaderdiv').removeClass('loaderdiv')
-        $('#loader').removeClass('loader')
-        if(data.error){
-          alert(data.error.message)
+        console.log("data", data);
+        $("#loaderdiv").removeClass("loaderdiv");
+        $("#loader").removeClass("loader");
+        if (data.error) {
+          alert(data.error.message);
         }
       },
       error: function (xhr, textStatus, error) {
-        console.log(typeof xhr.responseText)
+        console.log(typeof xhr.responseText);
         var errorData = JSON.parse(xhr.responseText);
-        $('#loaderdiv').removeClass('loaderdiv')
-        $('#loader').removeClass('loader')
+        $("#loaderdiv").removeClass("loaderdiv");
+        $("#loader").removeClass("loader");
         if (errorData.error) {
           //console.log("Error Code:", errorData.error.code);
           alert(errorData.error.message);
         }
         var close_button = document.getElementById("modal-backdrop2");
         close_button.click();
-        console.log("erroraa: ", errorData );
-
+        console.log("erroraa: ", errorData);
       },
       complete: function () {
         // Move the close button action to the complete callback,
         // ensuring it executes regardless of success or error
         var close_button = document.getElementById("modal-backdrop2");
         close_button.click();
-        window.location.href = '/list-order';
-      }
+        window.location.href = "/list-order";
+      },
     });
   }
 </script>

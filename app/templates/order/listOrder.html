@@ -1,6 +1,44 @@
 {% extends './base.html' %} {% block title %}List Order{% endblock title %} {%
 block body %} {% with messages = get_flashed_messages() %} {% if messages %} {%
 for message in messages %}
+<style>
+  .loaderdiv {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    width: 100%;
+    background-color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 99999;
+    color: white; /* Text color */
+  }
+  .noneloader {
+    display: none;
+  }
+  .loader {
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    border: 10px solid #ffe66d;
+    border-top: 10px solid #4ecdc4;
+    animation: spinAnimate 3s ease-in 0s infinite normal;
+  }
+
+  @keyframes spinAnimate {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }
+</style>
+<div class="d-hidden" id="loaderdiv">
+  <div class="" id="loader"></div>
+</div>
 <div
   id="toast-success"
   class="flex float-right items-center w-full max-w-xs p-4 mb-4 text-gray-500 bg-white rounded-lg shadow"
@@ -131,8 +169,6 @@ for message in messages %}
 </div>
 
 <div class="relative overflow-x-auto shadow-md sm:rounded-lg p-4 shadow-xl">
-  <!--------------------------------------------------------->
-
   <table class="min-w-full divide-y divide-gray-200">
     <thead>
       <tr>
@@ -154,7 +190,7 @@ for message in messages %}
         <th
           class="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-800 uppercase tracking-wider text-center"
         >
-          Transaction ID
+          Shipment Tracking
         </th>
         <th
           class="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-800 uppercase tracking-wider text-center"
@@ -177,17 +213,16 @@ for message in messages %}
         >
           Total Amount
         </th>
-        <th
+        <!-- <th
           class="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-800 uppercase tracking-wider text-center"
         >
           Refund
-        </th>
+        </th> -->
         <th
           class="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-800 uppercase tracking-wider text-center"
         >
           Action
         </th>
-        <!-- Add more table headers as needed -->
       </tr>
     </thead>
     <tbody class="bg-white divide-y divide-gray-200">
@@ -212,7 +247,7 @@ for message in messages %}
           </button>
           {% endif %}
         </td>
-        <td class="text-center">{{order[0].transactionId }}</td>
+        <td class="text-center"></td>
         <td class="text-center">{{order[0].created_date}}</td>
         <td class="text-center">
           {% if order[0].discount_type == 'percentage' %} {{
@@ -221,7 +256,8 @@ for message in messages %}
         </td>
         <td class="text-center">${{order[0].shipping_cost}}</td>
         <td class="text-center">${{order[0].total_amount}}</td>
-        <td class="text-center">
+
+        <!-- <td class="text-center">
           {% if order[0].payment_status=='1' and order[0].transactionId!=none%}
           <button
             class="h-[40px] w-[100px] bg-green-500 rounded-lg refund"
@@ -233,8 +269,30 @@ for message in messages %}
             Refund
           </button>
           {% endif%}
-        </td>
+        </td> -->
+
         <td class="text-center flex flex-row justify-center items-center mt-6">
+          {% if order[0].payment_status == '0' %}
+          <a
+            href="#"
+            class="mr-4"
+            data-modal-target="defaultModal2"
+            data-modal-toggle="defaultModal2"
+            data-order-id="{{order[0].id}}"
+            onclick="setOrderId('{{order[0].id}}')"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              height="16"
+              width="18"
+              viewBox="0 0 576 512"
+            >
+              <path
+                d="M64 32C28.7 32 0 60.7 0 96v32H576V96c0-35.3-28.7-64-64-64H64zM576 224H0V416c0 35.3 28.7 64 64 64H512c35.3 0 64-28.7 64-64V224zM112 352h64c8.8 0 16 7.2 16 16s-7.2 16-16 16H112c-8.8 0-16-7.2-16-16s7.2-16 16-16zm112 16c0-8.8 7.2-16 16-16H368c8.8 0 16 7.2 16 16s-7.2 16-16 16H240c-8.8 0-16-7.2-16-16z"
+              />
+            </svg>
+          </a>
+          {%endif%}
           <a href="/view-order/{{order[0].id}}">
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -318,7 +376,7 @@ for message in messages %}
   <div class="relative w-[500px] max-h-full">
     <div class="relative bg-white rounded-lg shadow">
       <div class="flex items-start justify-between p-4 border-b rounded-t">
-        <h3 class="text-xl font-semibold text-gray-900">Make Refund</h3>
+        <h3 class="text-xl font-semibold text-gray-900">Make Payment</h3>
         <button
           type="button"
           class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center"
@@ -343,13 +401,6 @@ for message in messages %}
       </div>
       <div class="px-32 py-16">
         <div class="grid md:grid-cols-1 md:gap-6">
-          <input type="hidden" name="order_id" id="orderIdInput" value="" />
-          <input
-            type="hidden"
-            name="transId"
-            id="transactionIdInput"
-            value=""
-          />
           <div class="relative z-0 w-full mb-6 group">
             <input
               type="text"
@@ -400,23 +451,6 @@ for message in messages %}
               >Expiry Date</label
             >
           </div>
-          <div class="relative z-0 w-full mb-6 group">
-            <input
-              type="text"
-              name="amount"
-              id="amount"
-              class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer"
-              placeholder=" "
-              required
-              value=""
-            />
-
-            <label
-              for="contact_x"
-              class="peer-focus:font-medium absolute text-sm text-gray-800 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
-              >Amount</label
-            >
-          </div>
         </div>
 
         <div class="flex justify-center my-6">
@@ -435,6 +469,10 @@ for message in messages %}
   </div>
 </div>
 <script>
+  function setOrderId(orderId) {
+    console.log(orderId);
+    window.currentOrderId = orderId;
+  }
   function populateOrderId(orderId, transactionId) {
     console.log("tra", transactionId);
     const orderIdInput = document.getElementById("orderIdInput");
@@ -445,7 +483,7 @@ for message in messages %}
     }
   }
 
-  function submitPayment() {
+  function submitRefundPayment() {
     var orderId = document.getElementById("orderIdInput").value;
     var transactionId = document.getElementById("transactionIdInput").value;
     var credit_card_number =
@@ -469,6 +507,59 @@ for message in messages %}
       },
       error: function (xhr, textStatus, error) {},
       complete: function () {},
+    });
+  }
+</script>
+<script>
+  function submitPayment() {
+    $("#loaderdiv").addClass("loaderdiv");
+    $("#loader").addClass("loader");
+    var order = window.currentOrderId;
+    var credit_card_number =
+      document.getElementById("credit_card_number").value;
+    var cvv = document.getElementById("cvv").value;
+    var expiry_date = document.getElementById("expiry_date").value;
+    var close_button = document.getElementById("modal-backdrop2");
+
+    close_button.click();
+    $.ajax({
+      url: "/test-payment",
+      data: JSON.stringify({
+        order_id: order,
+        cvv: cvv,
+        credit_card_number: credit_card_number,
+        expiry_date: expiry_date,
+      }),
+      contentType: "application/json",
+      method: "POST",
+      success: function (data) {
+        console.log("data", data);
+        $("#loaderdiv").removeClass("loaderdiv");
+        $("#loader").removeClass("loader");
+        if (data.error) {
+          alert(data.error.message);
+        }
+      },
+      error: function (xhr, textStatus, error) {
+        console.log(typeof xhr.responseText);
+        var errorData = JSON.parse(xhr.responseText);
+        $("#loaderdiv").removeClass("loaderdiv");
+        $("#loader").removeClass("loader");
+        if (errorData.error) {
+          //console.log("Error Code:", errorData.error.code);
+          alert(errorData.error.message);
+        }
+        var close_button = document.getElementById("modal-backdrop2");
+        close_button.click();
+        console.log("erroraa: ", errorData);
+      },
+      complete: function () {
+        // Move the close button action to the complete callback,
+        // ensuring it executes regardless of success or error
+        var close_button = document.getElementById("modal-backdrop2");
+        close_button.click();
+        window.location.href = "/list-order";
+      },
     });
   }
 </script>
