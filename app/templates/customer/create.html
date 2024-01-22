@@ -1,0 +1,157 @@
+{% extends './base.html' %} {% block title %}Create Customer{% endblock title %} {% block body %}
+<style type="text/css">
+	.custom-select + .select2-container .select2-selection--single {
+		height: 2.2rem; /* Adjust the height value as needed */
+	}
+
+	.custom-select + .select2-container .select2-selection__arrow {
+		height: 2.2rem; /* Adjust the height value as needed */
+	}
+</style>
+<div class="px-64 py-16">
+	<form action="{{url_for('createCustomer')}}" method="POST">
+		<div class="grid md:grid-cols-2 md:gap-6">
+			<div class="relative z-0 w-full mb-6 group">
+				<input type="text" name="first_name" id="floating_first_name" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " required />
+				<label for="floating_first_name" class="peer-focus:font-medium absolute text-sm text-gray-800 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">First name</label>
+			</div>
+			<div class="relative z-0 w-full mb-6 group">
+				<input type="text" name="last_name" id="floating_last_name" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " required />
+				<label for="floating_last_name" class="peer-focus:font-medium absolute text-sm text-gray-800 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Last name</label>
+			</div>
+		</div>
+		<div class="grid md:grid-cols-2 md:gap-6">
+			<div class="relative z-0 w-full mb-6 group">
+				<input type="text" name="address1" id="address1" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder="" required />
+				<label for="locationInput" class="peer-focus:font-medium absolute text-sm text-gray-800 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Address1</label>
+			</div>
+			<div class="relative z-0 w-full mb-6 group">
+				<input type="text" name="address2" id="address2" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " />
+				<label for="address1" class="peer-focus:font-medium absolute text-sm text-gray-800 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Address2</label>
+			</div>
+		</div>
+		<div class="grid md:grid-cols-2 md:gap-6">
+			<div class="relative z-0 w-full mb-6 group">
+				<input type="text" name="post_code" id="postalCode" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " required />
+				<label for="floating_phone" class="peer-focus:font-medium absolute text-sm text-gray-800 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Postal Code</label>
+			</div>
+			<div class="relative z-0 w-full mb-6 group">
+				<input type="text" name="city" id="city" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " required />
+				<label for="floating_company" class="peer-focus:font-medium absolute text-sm text-gray-800 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">City</label>
+			</div>
+		</div>
+
+		<div class="grid md:grid-cols-2 md:gap-6">
+			<div class="relative z-0 w-full mb-6 group">
+				<input type="text" name="state" id="state" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " required />
+				<label for="floating_company" class="peer-focus:font-medium absolute text-sm text-gray-800 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">State</label>
+			</div>
+			<div class="relative z-0 w-full mb-6 group">
+				<select data-te-select-init data-te-select-filter="true" class="rounded w-[350px] px-4 select2-js custom-select" id="country" name="country" onchange="handleCustomer(value)">
+					<option>Select a Country</option>
+
+					<option value="" id="countryName"></option>
+				</select>	
+			</div>
+		</div>
+		<div class="grid md:grid-cols-2 md:gap-6">
+			<div class="relative z-0 w-full mb-6 group">
+				<input type="text" name="phone" id="floating_phone" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " required />
+				<label for="floating_phone" class="peer-focus:font-medium absolute text-sm text-gray-800 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Phone number (123-456-7890)</label>
+			</div>
+
+			<div class="relative z-0 w-full mb-6 group">
+				<input type="text" name="company" id="company" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " required />
+				<label for="company" class="peer-focus:font-medium absolute text-sm text-gray-800 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Company</label>
+			</div>
+		</div>
+
+		<div class="grid md:grid-cols-2 md:gap-6">
+			<div class="relative z-0 w-full mb-6 group">
+				<input type="email" name="email" id="email" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " required />
+				<label for="email" class="peer-focus:font-medium absolute text-sm text-gray-800 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Email</label>
+			</div>
+		</div>
+
+		<div class="flex items-center mb-4">
+			<input id="default-checkbox" type="checkbox" value="" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500" />
+			<label for="default-checkbox" class="ml-2 text-sm font-medium text-gray-900">Is Wholesale</label>
+		</div>
+		<div class="flex justify-center my-6"><button type="submit" class="w-64 h-[60px] py-2.5 px-5 mr-2 mb-2 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-200">Submit</button></div>
+	</form>
+</div>
+
+<script>
+	function initAutocomplete() {
+		$(".select2-js").select2();
+		const locationInput = document.getElementById("address1");
+		const countryInput = document.getElementById("country");
+		const cityInput = document.getElementById("city");
+		const stateInput = document.getElementById("state");
+		const postalCodeInput = document.getElementById("postalCode");
+		const addressInput = document.getElementById("address2");
+
+		// Create the autocomplete object
+		const autocomplete = new google.maps.places.Autocomplete(locationInput);
+
+		// Event listener when a place is selected
+		autocomplete.addListener("place_changed", function () {
+			const place = autocomplete.getPlace();
+
+			// Clear the previous values
+			countryInput.value = "";
+			cityInput.value = "";
+			stateInput.value = "";
+			postalCodeInput.value = "";
+			// addressInput.value = "";
+
+			// Set the new values
+			for (const component of place.address_components) {
+				const componentType = component.types[0];
+
+				if (componentType === "country") {
+					countryInput.value = component.long_name;
+				} else if (componentType === "locality" || componentType === "administrative_area_level_2") {
+					cityInput.value = component.long_name;
+				} else if (componentType === "administrative_area_level_1") {
+					stateInput.value = component.long_name;
+				} else if (componentType === "postal_code") {
+					postalCodeInput.value = component.long_name;
+				}
+			}
+
+			// addressInput.value = place.formatted_address;
+		});
+	}
+
+	// Load the Google Maps API and initialize the autocomplete
+	function loadScript() {
+		const script = document.createElement("script");
+		script.src = "https://maps.googleapis.com/maps/api/js?key=AIzaSyAjQbpLmWtP5SBJQ6RWzplfIg0Sd0rpDYg&libraries=places&callback=initAutocomplete";
+		script.defer = true;
+		script.async = true;
+		document.body.appendChild(script);
+	}
+
+	// Call the loadScript function to load the API and initialize
+	loadScript();
+</script>
+<script>
+	// Get a reference to the select element
+	const selectElement = document.getElementById("country");
+
+	// Fetch the list of countries from the REST Countries API
+	fetch("https://restcountries.com/v3.1/all")
+		.then((response) => response.json())
+		.then((data) => {
+			// Loop through the data and add countries to the select element
+			data.forEach((country) => {
+				const option = document.createElement("option");
+				option.value = country.name.common; // Set the value to the country name
+				option.textContent = country.name.common; // Set the text displayed in the dropdown
+				selectElement.appendChild(option); // Add the option to the select element
+			});
+		})
+		.catch((error) => console.error("Error fetching data:", error));
+</script>
+{% endblock body %}

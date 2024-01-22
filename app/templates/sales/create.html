@@ -1,0 +1,57 @@
+{% extends './base.html' %} {% block title %}Create Sales{% endblock title %} {% block body %}
+<style type="text/css">
+	.custom-select + .select2-container .select2-selection--single {
+		height: 2.2rem; /* Adjust the height value as needed */
+	}
+
+	.custom-select + .select2-container .select2-selection__arrow {
+		height: 2.2rem; /* Adjust the height value as needed */
+	}
+</style>
+<div class="px-64 py-16">
+	<form action="{{url_for('createSale')}}" method="POST">
+		<div class="grid md:grid-cols-2 md:gap-6">
+			<div class="relative z-0 w-full mb-6 group">
+				<input type="text" name="name" id="floating_first_name" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " required />
+				<label for="floating_first_name" class="peer-focus:font-medium absolute text-sm text-gray-500 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Name</label>
+			</div>
+			<div class="relative z-0 w-full mb-6 group">
+				<input type="text" name="price" id="floating_last_name" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " required />
+				<label for="floating_last_name" class="peer-focus:font-medium absolute text-sm text-gray-500 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Price</label>
+			</div>
+		</div>
+		<div class="grid md:grid-cols-2 md:gap-6">
+			<div class="relative w-full mb-6 group h-[20px] flex flex-col">
+				<div>Brand</div>
+
+				<select id="countries" name="brand" class="block py-2.5 px-2 w-full h-[45px] bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5">
+					<option value="entropy">Entropy</option>
+					<option value="ecp">ECP</option>
+				</select>
+			</div>
+			<div class="relative z-0 w-full mb-6 group mt-6">
+				<input type="text" name="sku" id="floating_phone" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " required />
+				<label for="floating_phone" class="peer-focus:font-medium absolute text-sm text-gray-500 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">SKU</label>
+			</div>
+		</div>
+		<div class="relative z-0 w-full mb-6 group flex flex-col">
+			<div>Product</div>
+
+			<select id="countries" name="product_id" class="block py-2.5 px-2 w-full h-[45px] bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 select2-js custom-select">
+				<option value="0">Select a Product</option>
+
+				{%for product in products%}
+
+				<option value="{{product.product_id}}">{{product.name}}</option>
+				{%endfor%}
+			</select>
+		</div>
+		<label for="message" class="block mb-2 text-sm font-medium text-gray-700">Description</label>
+		<textarea id="message" name="description" rows="3" class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500" placeholder="Description" required></textarea>
+		<div class="flex justify-center my-6"><button type="submit" class="w-64 h-[60px] py-2.5 px-5 mr-2 mb-2 text-sm font-medium text-gray-900 focus:outline-none rounded-lg border border-gray-200 bg-gray-300 hover:bg-gray-400 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-200">Submit</button></div>
+	</form>
+</div>
+<script>
+	$(".select2-js").select2();
+</script>
+{% endblock body %}

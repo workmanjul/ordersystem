@@ -1,0 +1,18 @@
+<div class="w-[300px] h-[30px] bg-white text-black">
+	<div class="p-3 bg-white rounded-lg">
+		<a href="#">
+			<!-- <h5 class="text-sm font-semibold tracking-tight text-gray-900">{{ ship_to.contact }}</h5> -->
+		</a>
+		<h5 class="card-title text-sm font-bold">{{ship_to.name}}</h5>
+		<p class="card-text">{{ ship_to.contact }}</p>
+		
+		<p class="card-text">{{ ship_to_address }}</p>
+		<p class="card-text">{{ ship_to.city }},{{ ship_to.state }} {{ ship_to.postal_code }}</p>
+		{% if ship_to.country !="United States" %}
+		<p class="card-text">{{ ship_to.country }}</p>
+		{% endif %} 
+		
+		
+		<p class="card-text" hidden id="id">{{ ship_to.id }}</p>
+	</div>
+</div>
