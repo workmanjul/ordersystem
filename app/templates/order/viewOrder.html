@@ -1,193 +1,551 @@
-{% extends './base.html' %} {% block title %}View Order {% endblock title %} {% block body %}
+{% extends './base.html' %} {% block title %}View Order {% endblock title %} {%
+block body %}
+<style>
+  .loaderdiv {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    width: 100%;
+    background-color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 99999;
+    color: white; /* Text color */
+  }
+  .noneloader {
+    display: none;
+  }
+  .loader {
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    border: 10px solid #ffe66d;
+    border-top: 10px solid #4ecdc4;
+    animation: spinAnimate 3s ease-in 0s infinite normal;
+  }
 
-<div class="w-full border-0 flex-col p-2">
-	<h1 class="text-2xl font-bold text-gray-700 px-8 mx-2">Invoice</h1>
-	<div class="flex justify-around">
-		<div class="flex mt-8">
-			<div id="ship_to">
-				<div class="card w-[300px]">
-					<!-- <h1 class="p-2 text-xl font-bold">Bill To</h1> -->
-					<div class="max-w-sm p-2 bg-white rounded-lg">
-						<h5 class="card-title">Order ID: {{order.id}}</h5>
-						<p class="card-text">Shipping Method: Flat Card</p>
-						<p class="card-text">Payment Method: Credit Card</p>
-						<h5>Order Date: {{order.created_date}}</h5>
-					</div>
-				</div>
-			</div>
-		</div>
-		<div class="flex justify-between w-[70%]">
-			<div class="flex ml-64">
-				<div id="ship_to">
-					<div class="card w-64">
-						<div class="w-[350px] p-2 bg-white border-gray-200 rounded-lg">
-							<h1 class="text-xl font-bold">Bill To</h1>
-							<h5 class="font-semibold">{{ customer.first_name }} {{customer.last_name}}</h5>
+  @keyframes spinAnimate {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }
+</style>
 
-							<h5 class="card-title text-xl"></h5>
-							<p class="card-text">{{ customer.phone }}</p>
-							<p class="card-text">{{ bill_to_address}}</p>
-							<p class="card-text">{{ customer.city }}, {{ customer.state_country }} {{customer.postcode }}</p>
-
-							{% if customer.country !="United States" %}
-							<p class="card-text" id="country">{{ customer.country }}</p>
-							{% endif %}
-						</div>
-					</div>
-				</div>
-			</div>
-
-			<div class="flex justify-right">
-				<div id="ship_to">
-					<div class="card w-[350px]">
-						<div class="max-w-sm p-2 bg-white border-gray-200 rounded-lg">
-							<h1 class="text-xl font-bold">Ship To</h1>
-							<!-- <h5 class="font-semibold">{{ ship_to.ShipTo.contact }}</h5> -->
-
-							<h5 class="card-title text-xl"></h5>
-							<p class="card-text">{{ ship_to.ShipTo.name }}</p>
-							<p class="card-text">{{ ship_to.ShipTo.phone_number }}</p>
-							<p class="card-text">{{ ship_to_address }}</p>
-							<p class="card-text">{{ ship_to.ShipTo.city }}, {{ ship_to.ShipTo.state }} {{ ship_to.ShipTo.postal_code }}</p>
-							{% if ship_to.ShipTo.country !="United States" %}
-							<p class="card-text">{{ ship_to.ShipTo.country }}</p>
-							{% endif %}
-							
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-	<!--for making order-->
-
-	<div class="bg-white md:w-auto sm:w-full relative border-b-2 text-gray-900 rounded-lg overflow-hidden">
-		<form action="#" method="">
-			<div class="overflow-x-auto overflow-hidden">
-				<table class="table-auto border rounded border-gray-200 w-full my-2 mx-auto" id="order_table">
-					<thead>
-						<tr>
-							<th class="w-1 px-6 py-3 bg-gray-300 text-left text-xs font-medium text-gray-900 uppercase tracking-wider">SN</th>
-							<th class="w-64 px-6 py-3 bg-gray-300 text-left text-xs font-medium text-gray-900 uppercase tracking-wider">Item</th>
-							<th class="w-80 px-6 py-3 bg-gray-300 text-left text-xs font-medium text-gray-900 uppercase tracking-wider">Description</th>
-							<th class="w-22 px-6 py-3 bg-gray-300 text-left text-xs font-medium text-gray-900 uppercase tracking-wider">Quantity</th>
-							<th class="px-6 py-3 bg-gray-300 text-left text-xs font-medium text-gray-900 uppercase tracking-wider">Unit Price</th>
-							<!-- <th class="px-6 py-3 bg-gray-300 text-left text-xs font-medium text-gray-900 uppercase tracking-wider">Discount</th> -->
-							<th class="px-6 py-3 bg-gray-300 text-left text-xs font-medium text-gray-900 uppercase tracking-wider">Amount</th>
-						</tr>
-					</thead>
-					<tbody class="bg-white divide-y divide-gray-200" id="orderTable">
-						{% for orderDetail in orderDetails %}
-						<tr class="h-2" id="defaultRow">
-							<td class="px-4 w-1 py-4 whitespace-nowrap">{{ loop.index }}</td>
-							<td class="px-4 w-64 py-4 whitespace-wrap sm:w-32">
-								<input type="text" class="border-0" value="{{ orderDetail.SalesDetails.sku }}" />
-							</td>
-
-							<td class="px-4 py-4 whitespace-nowrap" id="descriptionCell">
-								<input name="item_desc_1" id="item_desc_1" disabled value="{{orderDetail.OrderDetails.product_description}}" />
-							</td>
-
-							<td class="px-4 py-4 whitespace-nowrap">
-								<input type="number" class="quantity-input w-20 text-gray-900 bg-white rounded-lg border-none" name="item_quantity_1" id="item_quantity_1" onchange="calculateItemTotal(this.name)" value="{{orderDetail.OrderDetails.item_quantity}}" disabled />
-							</td>
-							<td class="px-4 py-4 whitespace-nowrap">
-								<input type="text" class="quantity-input text-gray-900 bg-white rounded-lg w-20 border-none" name="unit_price_1" id="unit_price_1" disabled value="{{orderDetail.OrderDetails.unit_price}}" />
-							</td>
-							<!-- <td class="px-4 py-4 whitespace-nowrap">{% if orderDetail.OrderDetails.discount_type =='percentage' %} {{orderDetail.OrderDetails.discount_value}} % {% else %} $ {{orderDetail.OrderDetails.discount_value}} {% endif %}</td> -->
-							<td class="px-4 py-4 whitespace-nowrap">
-								<span class="ml-2">$</span>
-								<input type="number" class="amount-input rounded-lg text-gray-900 bg-white w-28 border-none" min="0" name="sub_total_1" id="sub_total_1" disabled value="{{orderDetail.OrderDetails.subtotal_amount}}" />
-							</td>
-						</tr>
-						{%endfor%}
-					</tbody>
-				</table>
-
-				<div class="float-right">
-					<div>
-						<table class="mr-[185px]">
-							<tr>
-								<td>
-									<span class="font-semibold">Subtotal </span>
-								</td>
-								<td>
-									<span>$</span>
-									<span>
-										<input disabled type="text" class="w-24 text-gray-900 bg-white rounded-lg border-none" id="grand_total" name="grand_total" value="{{order.gross_cost}}" />
-										<input type="hidden" id="grand_total_hidden" name="grand_total_hidden" />
-									</span>
-								</td>
-							</tr>
-							<tr>
-								<td>
-									<span class="font-semibold mt-2">Discount &nbsp;</span>
-								</td>
-								<td>
-									{% if order.discount_type=="percentage" %}
-									<span>&nbsp;&nbsp;</span>
-									<span> <input type="text" name="ship_total" class="w-16 text-gray-900 bg-white rounded-lg mb-2 h-[35px] border-none" id="ship_total" onchange="{calculate_subtotal_discount()}" value="{{order.discount_value}}" disabled /> % </span>
-									{% else %}
-									<span>$</span>
-									<span>
-										<input type="text" name="ship_total" class="w-24 text-gray-900 bg-white rounded-lg mb-2 h-[35px] border-none" id="ship_total" onchange="{calculate_subtotal_discount()}" value="{{order.discount_value}}" disabled />
-									</span>
-									{% endif %}
-								</td>
-							</tr>
-							<tr>
-								<td>
-									<span class="font-semibold">Shipping</span>
-								</td>
-								<td>
-									<span>$</span>
-									<span>
-										<input type="text" name="ship_total" class="w-24 text-gray-900 bg-white rounded-lg mb-2 h-[35px] border-none" id="ship_total" onchange="{calculate_subtotal_discount()}" value="{{order.shipping_cost}}" disabled />
-									</span>
-								</td>
-							</tr>
-							<tr>
-								<td>
-									<span class="font-semibold">Net Total &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-								</td>
-								<td>
-									<span>$</span>
-									<span>
-										<input type="text" disabled name="net_total" class="w-24 text-gray-900 bg-white rounded-lg border-none" id="net_total" value="{{order.total_amount}}" />
-										<input type="hidden" name="net_total_hidden" id="net_total_hidden" />
-									</span>
-								</td>
-							</tr>
-						</table>
-					</div>
-				</div>
-			</div>
-			<input type="hidden" style="display: none" name="item_counter" id="item_counter" value="1" />
-			<input type="hidden" style="display: none" name="item_counter_list" id="item_counter_list" value="1" />
-			<!-- <div class="flex justify-end">
-				<input type="submit" class="w-32 h-[50px] text-center rounded bg-green-500 text-white" />
-			</div> -->
-
-			<!-- <div class="flex justify-left mb-5 mr-5">
-				<div id="ship_to">
-					<div class="card w-64">
-						<h1 class="p-3 text-xl">Delivery Address</h1>
-						<div class="max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow">
-							<a href="#">
-								<h5 class="mb-2 text-2xl font-semibold tracking-tight text-gray-900 dark:text-white">{{ ship_to.contact }}</h5>
-							</a>
-							<h5 class="card-title text-xl"></h5>
-							<p class="card-text">{{ ship_to.phone_number }}</p>
-							<p class="card-text">{{ ship_to.name }}</p>
-							<p class="card-text">{{ ship_to.address_1 }}</p>
-							<p class="card-text">{{ ship_to.city }} {{ ship_to.state }} {{ ship_to.postal_code }}</p>
-							<p class="card-text">{{ ship_to.country }}</p>
-						</div>
-					</div>
-				</div>
-			</div> -->
-		</form>
-	</div>
+<div class="d-hidden" id="loaderdiv">
+  <div class="" id="loader"></div>
 </div>
+<div class="w-full border-0 flex-col p-2">
+  <h1 class="text-2xl font-bold text-gray-700 px-8 mx-2">Invoice</h1>
+  <div class="flex justify-around">
+    <div class="flex mt-8">
+      <div id="ship_to">
+        <div class="card w-[300px]">
+          <!-- <h1 class="p-2 text-xl font-bold">Bill To</h1> -->
+          <div class="max-w-sm p-2 bg-white rounded-lg">
+            <h5 class="card-title">Order ID: {{order.id}}</h5>
+            <p class="card-text">Shipping Method: Flat Card</p>
+            <p class="card-text">Payment Method: Credit Card</p>
+            <h5>Order Date: {{order.created_date}}</h5>
+            <h5>
+              Transaction Id: {% if order.transactionId
+              %}{{order.transactionId}}{%endif%}
+            </h5>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="flex justify-between w-[70%]">
+      <div class="flex ml-64">
+        <div id="ship_to">
+          <div class="card w-64">
+            <div class="w-[350px] p-2 bg-white border-gray-200 rounded-lg">
+              <h1 class="text-xl font-bold">Bill To</h1>
+              <h5 class="font-semibold">
+                {{ customer.first_name }} {{customer.last_name}}
+              </h5>
 
+              <h5 class="card-title text-xl"></h5>
+              <p class="card-text">{{ customer.phone }}</p>
+              <p class="card-text">{{ bill_to_address}}</p>
+              <p class="card-text">
+                {{ customer.city }}, {{ customer.state_country }}
+                {{customer.postcode }}
+              </p>
+
+              {% if customer.country !="United States" %}
+              <p class="card-text" id="country">{{ customer.country }}</p>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="flex justify-right">
+        <div id="ship_to">
+          <div class="card w-[350px]">
+            <div class="max-w-sm p-2 bg-white border-gray-200 rounded-lg">
+              <h1 class="text-xl font-bold">Ship To</h1>
+              <!-- <h5 class="font-semibold">{{ ship_to.ShipTo.contact }}</h5> -->
+
+              <h5 class="card-title text-xl"></h5>
+              <p class="card-text">{{ ship_to.ShipTo.name }}</p>
+              <p class="card-text">{{ ship_to.ShipTo.phone_number }}</p>
+              <p class="card-text">{{ ship_to_address }}</p>
+              <p class="card-text">
+                {{ ship_to.ShipTo.city }}, {{ ship_to.ShipTo.state }} {{
+                ship_to.ShipTo.postal_code }}
+              </p>
+              {% if ship_to.ShipTo.country !="United States" %}
+              <p class="card-text">{{ ship_to.ShipTo.country }}</p>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!--for making order-->
+
+  <div
+    class="bg-white md:w-auto sm:w-full relative border-b-2 text-gray-900 rounded-lg overflow-hidden"
+  >
+    <form action="/test-payment" method="POST">
+      <div class="overflow-x-auto overflow-hidden">
+        <table
+          class="table-auto border rounded border-gray-200 w-full my-2 mx-auto"
+          id="order_table"
+        >
+          <thead>
+            <tr>
+              <th
+                class="w-1 px-6 py-3 bg-gray-300 text-left text-xs font-medium text-gray-900 uppercase tracking-wider"
+              >
+                SN
+              </th>
+              <th
+                class="w-64 px-6 py-3 bg-gray-300 text-left text-xs font-medium text-gray-900 uppercase tracking-wider"
+              >
+                Item
+              </th>
+              <th
+                class="w-80 px-6 py-3 bg-gray-300 text-left text-xs font-medium text-gray-900 uppercase tracking-wider"
+              >
+                Description
+              </th>
+              <th
+                class="w-22 px-6 py-3 bg-gray-300 text-left text-xs font-medium text-gray-900 uppercase tracking-wider"
+              >
+                Quantity
+              </th>
+              <th
+                class="px-6 py-3 bg-gray-300 text-left text-xs font-medium text-gray-900 uppercase tracking-wider"
+              >
+                Unit Price
+              </th>
+              <!-- <th class="px-6 py-3 bg-gray-300 text-left text-xs font-medium text-gray-900 uppercase tracking-wider">Discount</th> -->
+              <th
+                class="px-6 py-3 bg-gray-300 text-left text-xs font-medium text-gray-900 uppercase tracking-wider"
+              >
+                Amount
+              </th>
+            </tr>
+          </thead>
+          <tbody class="bg-white divide-y divide-gray-200" id="orderTable">
+            {% for orderDetail in orderDetails %}
+            <tr class="h-2" id="defaultRow">
+              <td class="px-4 w-1 py-4 whitespace-nowrap">{{ loop.index }}</td>
+              <td class="px-4 w-64 py-4 whitespace-wrap sm:w-32">
+                <input
+                  type="text"
+                  class="border-0"
+                  value="{{ orderDetail.SalesDetails.sku }}"
+                />
+              </td>
+
+              <td class="px-4 py-4 whitespace-nowrap" id="descriptionCell">
+                <input
+                  name="item_desc_1"
+                  id="item_desc_1"
+                  disabled
+                  value="{{orderDetail.OrderDetails.product_description}}"
+                />
+              </td>
+
+              <td class="px-4 py-4 whitespace-nowrap">
+                <input
+                  type="number"
+                  class="quantity-input w-20 text-gray-900 bg-white rounded-lg border-none"
+                  name="item_quantity_1"
+                  id="item_quantity_1"
+                  onchange="calculateItemTotal(this.name)"
+                  value="{{orderDetail.OrderDetails.item_quantity}}"
+                  disabled
+                />
+              </td>
+              <td class="px-4 py-4 whitespace-nowrap">
+                <input
+                  type="text"
+                  class="quantity-input text-gray-900 bg-white rounded-lg w-20 border-none"
+                  name="unit_price_1"
+                  id="unit_price_1"
+                  disabled
+                  value="{{orderDetail.OrderDetails.unit_price}}"
+                />
+              </td>
+              <!-- <td class="px-4 py-4 whitespace-nowrap">{% if orderDetail.OrderDetails.discount_type =='percentage' %} {{orderDetail.OrderDetails.discount_value}} % {% else %} $ {{orderDetail.OrderDetails.discount_value}} {% endif %}</td> -->
+              <td class="px-4 py-4 whitespace-nowrap">
+                <span class="ml-2">$</span>
+                <input
+                  type="number"
+                  class="amount-input rounded-lg text-gray-900 bg-white w-28 border-none"
+                  min="0"
+                  name="sub_total_1"
+                  id="sub_total_1"
+                  disabled
+                  value="{{orderDetail.OrderDetails.subtotal_amount}}"
+                />
+              </td>
+            </tr>
+            {%endfor%}
+          </tbody>
+        </table>
+
+        <div class="float-right">
+          <div>
+            <table class="mr-[185px]">
+              <tr>
+                <td>
+                  <span class="font-semibold">Subtotal </span>
+                </td>
+                <td>
+                  <span>$</span>
+                  <span>
+                    <input
+                      disabled
+                      type="text"
+                      class="w-24 text-gray-900 bg-white rounded-lg border-none"
+                      id="grand_total"
+                      name="grand_total"
+                      value="{{order.gross_cost}}"
+                    />
+                    <input
+                      type="hidden"
+                      id="grand_total_hidden"
+                      name="grand_total_hidden"
+                    />
+                  </span>
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <span class="font-semibold mt-2">Discount &nbsp;</span>
+                </td>
+                <td>
+                  {% if order.discount_type=="percentage" %}
+                  <span>&nbsp;&nbsp;</span>
+                  <span>
+                    <input
+                      type="text"
+                      name="ship_total"
+                      class="w-16 text-gray-900 bg-white rounded-lg mb-2 h-[35px] border-none"
+                      id="ship_total"
+                      onchange="{calculate_subtotal_discount()}"
+                      value="{{order.discount_value}}"
+                      disabled
+                    />
+                    %
+                  </span>
+                  {% else %}
+                  <span>$</span>
+                  <span>
+                    <input
+                      type="text"
+                      name="ship_total"
+                      class="w-24 text-gray-900 bg-white rounded-lg mb-2 h-[35px] border-none"
+                      id="ship_total"
+                      onchange="{calculate_subtotal_discount()}"
+                      value="{{order.discount_value}}"
+                      disabled
+                    />
+                  </span>
+                  {% endif %}
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <span class="font-semibold">Shipping</span>
+                </td>
+                <td>
+                  <span>$</span>
+                  <span>
+                    <input
+                      type="text"
+                      name="ship_total"
+                      class="w-24 text-gray-900 bg-white rounded-lg mb-2 h-[35px] border-none"
+                      id="ship_total"
+                      onchange="{calculate_subtotal_discount()}"
+                      value="{{order.shipping_cost}}"
+                      disabled
+                    />
+                  </span>
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <span class="font-semibold"
+                    >Net Total
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span
+                  >
+                </td>
+                <td>
+                  <span>$</span>
+                  <span>
+                    <input
+                      type="text"
+                      disabled
+                      name="net_total"
+                      class="w-24 text-gray-900 bg-white rounded-lg border-none"
+                      id="net_total"
+                      value="{{order.total_amount}}"
+                    />
+                    <input
+                      type="hidden"
+                      name="net_total_hidden"
+                      id="net_total_hidden"
+                    />
+                  </span>
+                </td>
+              </tr>
+            </table>
+          </div>
+        </div>
+      </div>
+      <input
+        type="hidden"
+        style="display: none"
+        name="item_counter"
+        id="item_counter"
+        value="1"
+      />
+      <input
+        type="hidden"
+        style="display: none"
+        name="item_counter_list"
+        id="item_counter_list"
+        value="1"
+      />
+      <!-- <div class="flex justify-end">
+                    <input type="submit" class="w-32 h-[50px] text-center rounded bg-green-500 text-white" />
+                </div> -->
+
+      <!-- <div class="flex justify-left mb-5 mr-5">
+                    <div id="ship_to">
+                        <div class="card w-64">
+                            <h1 class="p-3 text-xl">Delivery Address</h1>
+                            <div class="max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow">
+                                <a href="#">
+                                    <h5 class="mb-2 text-2xl font-semibold tracking-tight text-gray-900 dark:text-white">{{ ship_to.contact }}</h5>
+                                </a>
+                                <h5 class="card-title text-xl"></h5>
+                                <p class="card-text">{{ ship_to.phone_number }}</p>
+                                <p class="card-text">{{ ship_to.name }}</p>
+                                <p class="card-text">{{ ship_to.address_1 }}</p>
+                                <p class="card-text">{{ ship_to.city }} {{ ship_to.state }} {{ ship_to.postal_code }}</p>
+                                <p class="card-text">{{ ship_to.country }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div> -->
+    </form>
+    <div class="flex w-full justify-end">
+      {% if order.payment_status == '0' %}
+
+      <div class="flex flex-end mb-5 mr-5 rounded mx-16">
+        <button
+          data-modal-target="defaultModal2"
+          data-modal-toggle="defaultModal2"
+          class="mx-2 text-white bg-blue-600 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 inline-flex items-center"
+          type="button"
+          id=""
+        >
+          Payment</button
+        ><br />
+        <div id="ship_to"></div>
+      </div>
+      {%else%}
+      <div class="flex flex-end mb-5 mr-5 rounded mx-16">
+        <button
+          class="mx-2 text-white bg-blue-600 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 inline-flex items-center"
+          type="button"
+          id=""
+        >
+          Paid</button
+        ><br />
+        <div id="ship_to"></div>
+      </div>
+      {%endif%}
+      <div
+        id="defaultModal2"
+        tabindex="-1"
+        aria-hidden="true"
+        class="fixed top-0 left-0 right-0 z-50 hidden w-full p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-[calc(100%-1rem)] max-h-full"
+      >
+        <div class="relative w-[500px] max-h-full">
+          <div class="relative bg-white rounded-lg shadow">
+            <div
+              class="flex items-start justify-between p-4 border-b rounded-t"
+            >
+              <h3 class="text-xl font-semibold text-gray-900">Make Payment</h3>
+              <button
+                type="button"
+                class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center"
+                data-modal-hide="defaultModal2"
+                id="modal-backdrop2"
+              >
+                <svg
+                  aria-hidden="true"
+                  class="w-5 h-5"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                    clip-rule="evenodd"
+                  ></path>
+                </svg>
+                <span class="sr-only">Close modal</span>
+              </button>
+            </div>
+            <div class="px-32 py-16">
+              <div class="grid md:grid-cols-1 md:gap-6">
+                <div class="relative z-0 w-full mb-6 group">
+                  <input
+                    type="text"
+                    name="credit_card"
+                    id="credit_card_number"
+                    class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+                    placeholder=" "
+                    required
+                    value=""
+                  />
+                  <label
+                    for="name"
+                    class="peer-focus:font-medium absolute text-sm text-gray-800 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
+                    >Credit Card Number</label
+                  >
+                </div>
+                <div class="relative z-0 w-full mb-6 group">
+                  <input
+                    type="text"
+                    name="cvv"
+                    id="cvv"
+                    class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+                    placeholder=" "
+                    required
+                    value=""
+                  />
+
+                  <label
+                    for="contact_x"
+                    class="peer-focus:font-medium absolute text-sm text-gray-800 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
+                    >CVV</label
+                  >
+                </div>
+                <div class="relative z-0 w-full mb-6 group">
+                  <input
+                    type="text"
+                    name="expiry_date"
+                    id="expiry_date"
+                    class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+                    placeholder=" "
+                    required
+                    value=""
+                  />
+
+                  <label
+                    for="contact_x"
+                    class="peer-focus:font-medium absolute text-sm text-gray-800 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
+                    >Expiry Date</label
+                  >
+                </div>
+              </div>
+
+              <div class="flex justify-center my-6">
+                <button
+                  type="submit"
+                  class="w-64 h-[60px] py-2.5 px-5 mr-2 mb-2 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-200"
+                  id="submit_ship_to"
+                  onclick="submitPayment()"
+                >
+                  Submit
+                </button>
+              </div>
+              <!-- </form> -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+  function submitPayment() {
+    $("#loaderdiv").addClass("loaderdiv");
+    $("#loader").addClass("loader");
+    var order = order.id;
+    var credit_card_number =
+      document.getElementById("credit_card_number").value;
+    var cvv = document.getElementById("cvv").value;
+    var expiry_date = document.getElementById("expiry_date").value;
+    var close_button = document.getElementById("modal-backdrop2");
+
+    close_button.click();
+    $.ajax({
+      url: "/test-payment",
+      data: JSON.stringify({
+        order_id: order,
+        cvv: cvv,
+        credit_card_number: credit_card_number,
+        expiry_date: expiry_date,
+      }),
+      contentType: "application/json",
+      method: "POST",
+      success: function (data) {
+        console.log("data", data);
+        $("#loaderdiv").removeClass("loaderdiv");
+        $("#loader").removeClass("loader");
+        if (data.error) {
+          alert(data.error.message);
+        }
+      },
+      error: function (xhr, textStatus, error) {
+        console.log(typeof xhr.responseText);
+        var errorData = JSON.parse(xhr.responseText);
+        $("#loaderdiv").removeClass("loaderdiv");
+        $("#loader").removeClass("loader");
+        if (errorData.error) {
+          //console.log("Error Code:", errorData.error.code);
+          alert(errorData.error.message);
+        }
+        var close_button = document.getElementById("modal-backdrop2");
+        close_button.click();
+        console.log("erroraa: ", errorData);
+      },
+      complete: function () {
+        // Move the close button action to the complete callback,
+        // ensuring it executes regardless of success or error
+        var close_button = document.getElementById("modal-backdrop2");
+        close_button.click();
+        window.location.href = "/list-order";
+      },
+    });
+  }
+</script>
 {% endblock %}
