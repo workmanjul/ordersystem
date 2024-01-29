@@ -1,0 +1,3 @@
+ALTER TABLE `orders`
+ADD COLUMN `payment_status` VARCHAR(255) NOT NULL DEFAULT '0',
+ADD COLUMN `transactionId` VARCHAR(255) NULL;
