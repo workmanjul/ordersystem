@@ -246,7 +246,8 @@ def get_ship_to_details():
     # ship_to=db.session.query(Order).filter(Order.id==request.args.get('id')).first()
     ship_to = db.session.query(ShipTo).filter(
         ShipTo.id == request.args.get('id')).first()
-    ship_to_address = ship_to.address_1.split(",")[0]
+    if ship_to:
+        ship_to_address = ship_to.address_1.split(",")[0]
     # print(ship_to.id)
     return render_template("widgets/ship_to_address.html", ship_to=ship_to, ship_to_address=ship_to_address)
 
