@@ -1,263 +1,145 @@
-{% extends './base.html' %} {% block title %}List Order{% endblock title %} {%
-block body %} {% with messages = get_flashed_messages() %} {% if messages %} {%
-for message in messages %}
+{% extends './base.html' %} {% block title %}List Order{% endblock title %} {% block body %} {% with messages = get_flashed_messages() %} {% if messages %} {% for message in messages %}
 <style>
-  .loaderdiv {
-    position: fixed;
-    top: 0;
-    left: 0;
-    height: 100vh;
-    width: 100%;
-    background-color: white;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 99999;
-    color: white; /* Text color */
-  }
-  .noneloader {
-    display: none;
-  }
-  .loader {
-    width: 200px;
-    height: 200px;
-    border-radius: 50%;
-    border: 10px solid #ffe66d;
-    border-top: 10px solid #4ecdc4;
-    animation: spinAnimate 3s ease-in 0s infinite normal;
-  }
+	.loaderdiv {
+		position: fixed;
+		top: 0;
+		left: 0;
+		height: 100vh;
+		width: 100%;
+		background-color: white;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		z-index: 99999;
+		color: white; /* Text color */
+	}
+	.noneloader {
+		display: none;
+	}
+	.loader {
+		width: 200px;
+		height: 200px;
+		border-radius: 50%;
+		border: 10px solid #ffe66d;
+		border-top: 10px solid #4ecdc4;
+		animation: spinAnimate 3s ease-in 0s infinite normal;
+	}
 
-  @keyframes spinAnimate {
-    from {
-      transform: rotate(0deg);
-    }
-    to {
-      transform: rotate(360deg);
-    }
-  }
+	@keyframes spinAnimate {
+		from {
+			transform: rotate(0deg);
+		}
+		to {
+			transform: rotate(360deg);
+		}
+	}
 </style>
 <div class="d-hidden" id="loaderdiv">
-  <div class="" id="loader"></div>
+	<div class="" id="loader"></div>
 </div>
-<div
-  id="toast-success"
-  class="flex float-right items-center w-full max-w-xs p-4 mb-4 text-gray-500 bg-white rounded-lg shadow"
-  role="alert"
->
-  <div
-    class="inline-flex items-center justify-center flex-shrink-0 w-8 h-8 text-green-500 bg-green-100 rounded-lg"
-  >
-    <svg
-      class="w-5 h-5"
-      aria-hidden="true"
-      xmlns="http://www.w3.org/2000/svg"
-      fill="currentColor"
-      viewBox="0 0 20 20"
-    >
-      <path
-        d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5Zm3.707 8.207-4 4a1 1 0 0 1-1.414 0l-2-2a1 1 0 0 1 1.414-1.414L9 10.586l3.293-3.293a1 1 0 0 1 1.414 1.414Z"
-      />
-    </svg>
-    <span class="sr-only">Check icon</span>
-  </div>
-  <div class="ml-3 text-sm font-normal">{{message}}</div>
-  <button
-    type="button"
-    class="ml-auto -mx-1.5 -my-1.5 bg-white text-gray-400 hover:text-gray-900 rounded-lg focus:ring-2 focus:ring-gray-300 p-1.5 hover:bg-gray-100 inline-flex items-center justify-center h-8 w-8"
-    data-dismiss-target="#toast-success"
-    aria-label="Close"
-  >
-    <span class="sr-only">Close</span>
-    <svg
-      class="w-3 h-3"
-      aria-hidden="true"
-      xmlns="http://www.w3.org/2000/svg"
-      fill="none"
-      viewBox="0 0 14 14"
-    >
-      <path
-        stroke="currentColor"
-        stroke-linecap="round"
-        stroke-linejoin="round"
-        stroke-width="2"
-        d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"
-      />
-    </svg>
-  </button>
+<div id="toast-success" class="flex float-right items-center w-full max-w-xs p-4 mb-4 text-gray-500 bg-white rounded-lg shadow" role="alert">
+	<div class="inline-flex items-center justify-center flex-shrink-0 w-8 h-8 text-green-500 bg-green-100 rounded-lg">
+		<svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+			<path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5Zm3.707 8.207-4 4a1 1 0 0 1-1.414 0l-2-2a1 1 0 0 1 1.414-1.414L9 10.586l3.293-3.293a1 1 0 0 1 1.414 1.414Z" />
+		</svg>
+		<span class="sr-only">Check icon</span>
+	</div>
+	<div class="ml-3 text-sm font-normal">{{message}}</div>
+	<button type="button" class="ml-auto -mx-1.5 -my-1.5 bg-white text-gray-400 hover:text-gray-900 rounded-lg focus:ring-2 focus:ring-gray-300 p-1.5 hover:bg-gray-100 inline-flex items-center justify-center h-8 w-8" data-dismiss-target="#toast-success" aria-label="Close">
+		<span class="sr-only">Close</span>
+		<svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
+			<path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
+		</svg>
+	</button>
 </div>
 {% endfor %} {% endif %} {% endwith %}
 
 <div class="flex flex-row justify-between py-2 mt-4 ml-4">
-  <nav aria-label="Page navigation example">
-    <ul class="inline-flex items-center -space-x-px">
-      {% if orders.has_prev %}
-      <li>
-        <a
-          href="{{ url_for('listSale', page=orders.prev_num, per_page=orders.per_page) }}"
-          class="block px-3 py-2 ml-0 leading-tight text-gray-500 bg-white border border-gray-300 rounded-l-lg"
-        >
-          <span class="sr-only">Previous</span>
-          <svg
-            aria-hidden="true"
-            class="w-5 h-5"
-            fill="currentColor"
-            viewBox="0 0 20 20"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              fill-rule="evenodd"
-              d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
-              clip-rule="evenodd"
-            ></path>
-          </svg>
-        </a>
-      </li>
-      {% endif %} {% for page_num in orders.iter_pages() %} {% if page_num %} {%
-      if orders.page == page_num %}
-      <li>
-        <a
-          href=""
-          class="px-3 py-2 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700"
-          >{{ page_num }}</a
-        >
-      </li>
-      {% else %}
-      <li>
-        <a
-          href="{{ url_for('listSale', page=page_num, per_page=orders.per_page) }}"
-          class="px-3 py-2 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700"
-          >{{page_num}}</a
-        >
-      </li>
-      {% endif %} {% else %}
-      <li class="page-item disabled"><a class="page-link">...</a></li>
-      {% endif %} {% endfor %} {% if orders.has_next %}
+	<nav aria-label="Page navigation example">
+		<ul class="inline-flex items-center -space-x-px">
+			{% if orders.has_prev %}
+			<li>
+				<a href="{{ url_for('listSale', page=orders.prev_num, per_page=orders.per_page) }}" class="block px-3 py-2 ml-0 leading-tight text-gray-500 bg-white border border-gray-300 rounded-l-lg">
+					<span class="sr-only">Previous</span>
+					<svg aria-hidden="true" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+						<path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+					</svg>
+				</a>
+			</li>
+			{% endif %} {% for page_num in orders.iter_pages() %} {% if page_num %} {% if orders.page == page_num %}
+			<li>
+				<a href="" class="px-3 py-2 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700">{{ page_num }}</a>
+			</li>
+			{% else %}
+			<li>
+				<a href="{{ url_for('listSale', page=page_num, per_page=orders.per_page) }}" class="px-3 py-2 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700">{{page_num}}</a>
+			</li>
+			{% endif %} {% else %}
+			<li class="page-item disabled"><a class="page-link">...</a></li>
+			{% endif %} {% endfor %} {% if orders.has_next %}
 
-      <li>
-        <a
-          href="{{ url_for('listSale', page=orders.next_num, per_page=orders.per_page) }}"
-          class="block px-3 py-2 leading-tight text-gray-500 bg-white border border-gray-300 rounded-r-lg hover:bg-gray-100 hover:text-gray-700"
-        >
-          <span class="sr-only">Next</span>
-          <svg
-            aria-hidden="true"
-            class="w-5 h-5"
-            fill="currentColor"
-            viewBox="0 0 20 20"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              fill-rule="evenodd"
-              d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
-              clip-rule="evenodd"
-            ></path>
-          </svg>
-        </a>
-      </li>
-      {% endif %}
-    </ul>
-  </nav>
+			<li>
+				<a href="{{ url_for('listSale', page=orders.next_num, per_page=orders.per_page) }}" class="block px-3 py-2 leading-tight text-gray-500 bg-white border border-gray-300 rounded-r-lg hover:bg-gray-100 hover:text-gray-700">
+					<span class="sr-only">Next</span>
+					<svg aria-hidden="true" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+						<path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
+					</svg>
+				</a>
+			</li>
+			{% endif %}
+		</ul>
+	</nav>
 
-  <a href="/"
-    ><button
-      type="button"
-      class="py-2.5 px-5 mr-2 mb-2 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-full border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-200"
-    >
-      Create Order
-    </button></a
-  >
+	<a href="/"><button type="button" class="py-2.5 px-5 mr-2 mb-2 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-full border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-200">Create Order</button></a>
 </div>
 
 <div class="relative overflow-x-auto shadow-md sm:rounded-lg p-4 shadow-xl">
-  <table class="min-w-full divide-y divide-gray-200">
-    <thead>
-      <tr>
-        <th
-          class="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-800 uppercase tracking-wider text-center"
-        >
-          <span>Id</span>
-        </th>
-        <th
-          class="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-800 uppercase tracking-wider text-center"
-        >
-          Customer
-        </th>
-        <th
-          class="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-800 uppercase tracking-wider text-center"
-        >
-          Status
-        </th>
-        <th
-          class="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-800 uppercase tracking-wider text-center"
-        >
-          Shipment Tracking
-        </th>
-        <th
-          class="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-800 uppercase tracking-wider text-center"
-        >
-          Added Date
-        </th>
-        <th
-          class="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-800 uppercase tracking-wider text-center"
-        >
-          Discount (On Total)
-        </th>
+	<table class="min-w-full divide-y divide-gray-200">
+		<thead>
+			<tr>
+				<th class="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-800 uppercase tracking-wider text-center">
+					<span>Id</span>
+				</th>
+				<th class="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-800 uppercase tracking-wider text-center">Customer</th>
+				<th class="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-800 uppercase tracking-wider text-center">Status</th>
+				<th class="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-800 uppercase tracking-wider text-center">Shipment Tracking</th>
+				<th class="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-800 uppercase tracking-wider text-center">Added Date</th>
+				<th class="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-800 uppercase tracking-wider text-center">Discount (On Total)</th>
 
-        <th
-          class="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-800 uppercase tracking-wider text-center"
-        >
-          Shipping Cost
-        </th>
-        <th
-          class="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-800 uppercase tracking-wider text-center"
-        >
-          Total Amount
-        </th>
-        <!-- <th
+				<th class="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-800 uppercase tracking-wider text-center">Shipping Cost</th>
+				<th class="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-800 uppercase tracking-wider text-center">Total Amount</th>
+				<!-- <th
           class="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-800 uppercase tracking-wider text-center"
         >
           Refund
         </th> -->
-        <th
-          class="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-800 uppercase tracking-wider text-center"
-        >
-          Action
-        </th>
-      </tr>
-    </thead>
-    <tbody class="bg-white divide-y divide-gray-200">
-      {%for order in orders%}
-      <tr class="px-6 py-4 h-[80px] text-center">
-        <td class="px-6 whitespace-nowrap">
-          <span>{{order[0].id}}</span>
-        </td>
-        <td class="text-center">
-          {{order[1].first_name }} {{order[1].last_name }}
-        </td>
-        <td class="text-center">
-          {% if order[0].payment_status == '1' %}
+				<th class="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-800 uppercase tracking-wider text-center">Action</th>
+			</tr>
+		</thead>
+		<tbody class="bg-white divide-y divide-gray-200">
+			{%for order in orders%}
+			<tr class="px-6 py-4 h-[80px] text-center">
+				<td class="px-6 whitespace-nowrap">
+					<span>{{order[0].id}}</span>
+				</td>
+				<td class="text-center">{{order[1].first_name }} {{order[1].last_name }}</td>
+				<td class="text-center">
+					{% if order[0].payment_status == 'paid' %}
 
-          <button class="h-[40px] w-[100px] bg-green-100 rounded-lg">
-            Paid
-          </button>
+					<button class="h-[40px] w-[100px] bg-green-100 rounded-lg">Paid</button>
+					{% elif order[0].payment_status == "partially paid" %}
+					<button class="h-[40px] w-[100px] bg-yellow-100 rounded-lg">Partially Paid</button>
+					{% else %}
+					<button class="h-[40px] w-[100px] bg-red-100 rounded-lg">Processing</button>
+					{% endif %}
+				</td>
+				<td class="text-center"></td>
+				<td class="text-center">{{order[0].created_date}}</td>
+				<td class="text-center">{% if order[0].discount_type == 'percentage' %} {{ order[0].discount_value }} % {% else %} $ {{ order[0].discount_value }} {% endif %}</td>
+				<td class="text-center">${{order[0].shipping_cost}}</td>
+				<td class="text-center">${{order[0].total_amount}}</td>
 
-          {% else %}
-          <button class="h-[40px] w-[100px] bg-red-100 rounded-lg">
-            Processing
-          </button>
-          {% endif %}
-        </td>
-        <td class="text-center"></td>
-        <td class="text-center">{{order[0].created_date}}</td>
-        <td class="text-center">
-          {% if order[0].discount_type == 'percentage' %} {{
-          order[0].discount_value }} % {% else %} $ {{ order[0].discount_value
-          }} {% endif %}
-        </td>
-        <td class="text-center">${{order[0].shipping_cost}}</td>
-        <td class="text-center">${{order[0].total_amount}}</td>
-
-        <!-- <td class="text-center">
+				<!-- <td class="text-center">
           {% if order[0].payment_status=='1' and order[0].transactionId!=none%}
           <button
             class="h-[40px] w-[100px] bg-green-500 rounded-lg refund"
@@ -271,296 +153,266 @@ for message in messages %}
           {% endif%}
         </td> -->
 
-        <td class="text-center flex flex-row justify-center items-center mt-6">
-          {% if order[0].payment_status == '0' %}
-          <a
-            href="#"
-            class="mr-4"
-            data-modal-target="defaultModal2"
-            data-modal-toggle="defaultModal2"
-            data-order-id="{{order[0].id}}"
-            onclick="setOrderId('{{order[0].id}}')"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              height="16"
-              width="18"
-              viewBox="0 0 576 512"
-            >
-              <path
-                d="M64 32C28.7 32 0 60.7 0 96v32H576V96c0-35.3-28.7-64-64-64H64zM576 224H0V416c0 35.3 28.7 64 64 64H512c35.3 0 64-28.7 64-64V224zM112 352h64c8.8 0 16 7.2 16 16s-7.2 16-16 16H112c-8.8 0-16-7.2-16-16s7.2-16 16-16zm112 16c0-8.8 7.2-16 16-16H368c8.8 0 16 7.2 16 16s-7.2 16-16 16H240c-8.8 0-16-7.2-16-16z"
-              />
-            </svg>
-          </a>
-          {%endif%}
-          <a href="/view-order/{{order[0].id}}">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-            >
-              <path
-                d="M15 12c0 1.654-1.346 3-3 3s-3-1.346-3-3 1.346-3 3-3 3 1.346 3 3zm9-.449s-4.252 8.449-11.985 8.449c-7.18 0-12.015-8.449-12.015-8.449s4.446-7.551 12.015-7.551c7.694 0 11.985 7.551 11.985 7.551zm-7 .449c0-2.757-2.243-5-5-5s-5 2.243-5 5 2.243 5 5 5 5-2.243 5-5z"
-              />
-            </svg>
-          </a>
-          <a
-            href="/update-order/{{order[0].id}}"
-            class="font-medium text-blue-600 mx-2"
-            ><svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              id="edit"
-            >
-              <path fill="none" d="M0 0h24v24H0V0z"></path>
-              <path
-                d="M3 17.46v3.04c0 .28.22.5.5.5h3.04c.13 0 .26-.05.35-.15L17.81 9.94l-3.75-3.75L3.15 17.1c-.1.1-.15.22-.15.36zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"
-              ></path>
-            </svg>
-          </a>
+				<td class="text-center flex flex-row justify-center items-center mt-6">
+					{% if order[0].payment_status == '0' %}
+					<a href="#" class="mr-4" data-modal-target="defaultModal2" data-modal-toggle="defaultModal2" data-order-id="{{order[0].id}}" onclick="setOrderId('{{order[0].id}}')">
+						<svg xmlns="http://www.w3.org/2000/svg" height="16" width="18" viewBox="0 0 576 512">
+							<path d="M64 32C28.7 32 0 60.7 0 96v32H576V96c0-35.3-28.7-64-64-64H64zM576 224H0V416c0 35.3 28.7 64 64 64H512c35.3 0 64-28.7 64-64V224zM112 352h64c8.8 0 16 7.2 16 16s-7.2 16-16 16H112c-8.8 0-16-7.2-16-16s7.2-16 16-16zm112 16c0-8.8 7.2-16 16-16H368c8.8 0 16 7.2 16 16s-7.2 16-16 16H240c-8.8 0-16-7.2-16-16z" />
+						</svg>
+					</a>
+					{%endif%}
+					<a href="/view-order/{{order[0].id}}">
+						<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+							<path d="M15 12c0 1.654-1.346 3-3 3s-3-1.346-3-3 1.346-3 3-3 3 1.346 3 3zm9-.449s-4.252 8.449-11.985 8.449c-7.18 0-12.015-8.449-12.015-8.449s4.446-7.551 12.015-7.551c7.694 0 11.985 7.551 11.985 7.551zm-7 .449c0-2.757-2.243-5-5-5s-5 2.243-5 5 2.243 5 5 5 5-2.243 5-5z" />
+						</svg>
+					</a>
+					<a href="/update-order/{{order[0].id}}" class="font-medium text-blue-600 mx-2"
+						><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" id="edit">
+							<path fill="none" d="M0 0h24v24H0V0z"></path>
+							<path d="M3 17.46v3.04c0 .28.22.5.5.5h3.04c.13 0 .26-.05.35-.15L17.81 9.94l-3.75-3.75L3.15 17.1c-.1.1-.15.22-.15.36zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"></path>
+						</svg>
+					</a>
 
-          <a
-            href="/download-order/{{order[0].id}}"
-            target="_blank"
-            class="font-medium text-blue-600 dark:text-blue-500 hover:underline mx-2"
-          >
-            <svg
-              class="w-6 h-6 text-gray-800 dark:text-white"
-              aria-hidden="true"
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 16 18"
-            >
-              <path
-                stroke="currentColor"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M8 1v11m0 0 4-4m-4 4L4 8m11 4v3a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2v-3"
-              />
-            </svg>
-          </a>
-          <a
-            href="/delete-order/{{order[0].id}}"
-            class="font-medium text-blue-600 dark:text-blue-500 hover:underline mx-2"
-            onclick="return alert('Are you sure you want to delete the order?')"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              id="delete"
-            >
-              <path fill="none" d="M0 0h24v24H0V0z"></path>
-              <path
-                d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V9c0-1.1-.9-2-2-2H8c-1.1 0-2 .9-2 2v10zm3.17-7.83c.39-.39 1.02-.39 1.41 0L12 12.59l1.42-1.42c.39-.39 1.02-.39 1.41 0 .39.39.39 1.02 0 1.41L13.41 14l1.42 1.42c.39.39.39 1.02 0 1.41-.39.39-1.02.39-1.41 0L12 15.41l-1.42 1.42c-.39.39-1.02.39-1.41 0-.39-.39-.39-1.02 0-1.41L10.59 14l-1.42-1.42c-.39-.38-.39-1.02 0-1.41zM15.5 4l-.71-.71c-.18-.18-.44-.29-.7-.29H9.91c-.26 0-.52.11-.7.29L8.5 4H6c-.55 0-1 .45-1 1s.45 1 1 1h12c.55 0 1-.45 1-1s-.45-1-1-1h-2.5z"
-              ></path>
-            </svg>
-          </a>
-        </td>
-      </tr>
-      {% endfor %}
-    </tbody>
-  </table>
+					<a href="/download-order/{{order[0].id}}" target="_blank" class="font-medium text-blue-600 dark:text-blue-500 hover:underline mx-2">
+						<svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 16 18">
+							<path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 1v11m0 0 4-4m-4 4L4 8m11 4v3a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2v-3" />
+						</svg>
+					</a>
+					<a href="/delete-order/{{order[0].id}}" class="font-medium text-blue-600 dark:text-blue-500 hover:underline mx-2" onclick="return alert('Are you sure you want to delete the order?')">
+						<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" id="delete">
+							<path fill="none" d="M0 0h24v24H0V0z"></path>
+							<path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V9c0-1.1-.9-2-2-2H8c-1.1 0-2 .9-2 2v10zm3.17-7.83c.39-.39 1.02-.39 1.41 0L12 12.59l1.42-1.42c.39-.39 1.02-.39 1.41 0 .39.39.39 1.02 0 1.41L13.41 14l1.42 1.42c.39.39.39 1.02 0 1.41-.39.39-1.02.39-1.41 0L12 15.41l-1.42 1.42c-.39.39-1.02.39-1.41 0-.39-.39-.39-1.02 0-1.41L10.59 14l-1.42-1.42c-.39-.38-.39-1.02 0-1.41zM15.5 4l-.71-.71c-.18-.18-.44-.29-.7-.29H9.91c-.26 0-.52.11-.7.29L8.5 4H6c-.55 0-1 .45-1 1s.45 1 1 1h12c.55 0 1-.45 1-1s-.45-1-1-1h-2.5z"></path>
+						</svg>
+					</a>
+				</td>
+			</tr>
+			{% endfor %}
+		</tbody>
+	</table>
 </div>
-<div
-  id="defaultModal2"
-  tabindex="-1"
-  aria-hidden="true"
-  class="fixed top-0 left-0 right-0 z-50 hidden w-full p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-[calc(100%-1rem)] max-h-full"
->
-  <div class="relative w-[500px] max-h-full">
-    <div class="relative bg-white rounded-lg shadow">
-      <div class="flex items-start justify-between p-4 border-b rounded-t">
-        <h3 class="text-xl font-semibold text-gray-900">Make Payment</h3>
-        <button
-          type="button"
-          class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center"
-          data-modal-hide="defaultModal2"
-          id="modal-backdrop2"
-        >
-          <svg
-            aria-hidden="true"
-            class="w-5 h-5"
-            fill="currentColor"
-            viewBox="0 0 20 20"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              fill-rule="evenodd"
-              d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
-              clip-rule="evenodd"
-            ></path>
-          </svg>
-          <span class="sr-only">Close modal</span>
-        </button>
-      </div>
-      <div class="px-32 py-16">
-        <div class="grid md:grid-cols-1 md:gap-6">
-          <div class="relative z-0 w-full mb-6 group">
-            <input
-              type="text"
-              name="credit_card"
-              id="credit_card_number"
-              class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer"
-              placeholder=" "
-              required
-              value=""
-            />
-            <label
-              for="name"
-              class="peer-focus:font-medium absolute text-sm text-gray-800 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
-              >Credit Card Number</label
-            >
-          </div>
-          <div class="relative z-0 w-full mb-6 group">
-            <input
-              type="text"
-              name="cvv"
-              id="cvv"
-              class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer"
-              placeholder=" "
-              required
-              value=""
-            />
+<div id="defaultModal2" tabindex="-1" aria-hidden="true" class="fixed top-0 left-0 right-0 z-50 hidden w-full p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-[calc(100%-1rem)] max-h-full">
+	<div class="relative w-[500px] max-h-full">
+		<div class="relative bg-white rounded-lg shadow">
+			<div class="flex items-start justify-between p-4 border-b rounded-t">
+				<h3 class="text-xl font-semibold text-gray-900">Make Payment</h3>
+				<button type="button" class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center" data-modal-hide="defaultModal2" id="modal-backdrop2">
+					<svg aria-hidden="true" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+						<path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+					</svg>
+					<span class="sr-only">Close modal</span>
+				</button>
+			</div>
+			<!-- <div class="px-32 py-16">
+				<div class="grid md:grid-cols-1 md:gap-6">
+					<div class="relative z-0 w-full mb-6 group">
+						<input type="text" name="credit_card" id="credit_card_number" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " required value="" />
+						<label for="name" class="peer-focus:font-medium absolute text-sm text-gray-800 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Credit Card Number</label>
+					</div>
+					<div class="relative z-0 w-full mb-6 group">
+						<input type="text" name="cvv" id="cvv" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " required value="" />
 
-            <label
-              for="contact_x"
-              class="peer-focus:font-medium absolute text-sm text-gray-800 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
-              >CVV</label
-            >
-          </div>
-          <div class="relative z-0 w-full mb-6 group">
-            <input
-              type="text"
-              name="expiry_date"
-              id="expiry_date"
-              class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer"
-              placeholder=" "
-              required
-              value=""
-            />
+						<label for="contact_x" class="peer-focus:font-medium absolute text-sm text-gray-800 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">CVV</label>
+					</div>
+					<div class="relative z-0 w-full mb-6 group">
+						<input type="text" name="expiry_date" id="expiry_date" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " required value="" />
 
-            <label
-              for="contact_x"
-              class="peer-focus:font-medium absolute text-sm text-gray-800 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
-              >Expiry Date</label
-            >
-          </div>
-        </div>
+						<label for="contact_x" class="peer-focus:font-medium absolute text-sm text-gray-800 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Expiry Date</label>
+					</div>
+				</div>
 
-        <div class="flex justify-center my-6">
-          <button
-            type="submit"
-            class="w-64 h-[60px] py-2.5 px-5 mr-2 mb-2 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-200"
-            id="submit_ship_to"
-            onclick="submitPayment()"
-          >
-            Submit
-          </button>
-        </div>
-        <!-- </form> -->
-      </div>
-    </div>
-  </div>
+				<div class="flex justify-center my-6">
+					<button type="submit" class="w-64 h-[60px] py-2.5 px-5 mr-2 mb-2 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-200" id="submit_ship_to" onclick="submitPayment()">Submit</button>
+				</div>
+				
+			</div> -->
+			<div class="px-32 py-8" id="paymentForm">
+				<div class="">
+					<select name="" id="paymentOption" class="rounded-lg h-16 p-2 w-64 -mt-8" onchange="renderUI()">
+						<option value="">Select Payment Method</option>
+						<option value="FullPayment">Pay full amount by credit card</option>
+						<option value="PartialPayment">Pay partial amount by credit card</option>
+
+						<option value="Pay at pickup">Pay at pickup</option>
+						<option value="Mail check">Mail check</option>
+						<option value="Send Paypal invoice">Send Paypal invoice</option>
+					</select>
+				</div>
+				<div class="grid md:grid-cols-1 md:gap-6 hidden mt-4" id="uiForFullPayment">
+					<div class="relative z-0 w-full mb-6 group">
+						<input type="text" name="credit_card" id="credit_card_number" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " required value="" />
+						<label for="name" class="peer-focus:font-medium absolute text-sm text-gray-800 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Credit Card Number</label>
+					</div>
+					<div class="relative z-0 w-full mb-6 group">
+						<input type="text" name="cvv" id="cvv" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " required value="" />
+
+						<label for="contact_x" class="peer-focus:font-medium absolute text-sm text-gray-800 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">CVV</label>
+					</div>
+					<div class="relative z-0 w-full mb-6 group">
+						<input type="text" name="expiry_date" id="expiry_date" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " required value="" />
+
+						<label for="contact_x" class="peer-focus:font-medium absolute text-sm text-gray-800 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Expiry Date</label>
+					</div>
+				</div>
+
+				<div class="grid md:grid-cols-1 md:gap-6 hidden mt-4" id="uiForPartialPayment">
+					<div class="relative z-0 w-full mb-6 group">
+						<input type="text" name="credit_card" id="credit_card_number2" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " required value="" />
+						<label for="credit_card_number2" class="peer-focus:font-medium absolute text-sm text-gray-800 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Credit Card Number</label>
+					</div>
+					<div class="relative z-0 w-full mb-6 group">
+						<input type="text" name="cvv" id="cvv2" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " required value="" />
+
+						<label for="cvv2" class="peer-focus:font-medium absolute text-sm text-gray-800 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">CVV</label>
+					</div>
+					<div class="relative z-0 w-full mb-6 group">
+						<input type="text" name="expiry_date" id="expiry_date2" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " required value="" />
+
+						<label for="expiry_date2" class="peer-focus:font-medium absolute text-sm text-gray-800 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Expiry Date</label>
+					</div>
+					<div class="relative z-0 w-full mb-6 group">
+						<input type="text" name="partialAmount" id="partialAmount" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder="" required value="" />
+
+						<label for="partialAmount" class="peer-focus:font-medium absolute text-sm text-gray-800 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Amount</label>
+					</div>
+				</div>
+
+				<div id="uiForPayAtPickup"></div>
+				<div id="uiForMailCheck"></div>
+				<div id="uiforSendPaypalInvoice"></div>
+
+				<div class="flex justify-center my-6 hidden" id="submitButton">
+					<button type="submit" class="w-64 h-[60px] py-2.5 px-5 mr-2 mb-2 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-200" id="submit_ship_to" onclick="submitPayment()">Submit</button>
+				</div>
+				<!-- </form> -->
+			</div>
+		</div>
+	</div>
 </div>
 <script>
-  function setOrderId(orderId) {
-    console.log(orderId);
-    window.currentOrderId = orderId;
-  }
-  function populateOrderId(orderId, transactionId) {
-    console.log("tra", transactionId);
-    const orderIdInput = document.getElementById("orderIdInput");
-    const transactionIdInput = document.getElementById("transactionIdInput");
-    if (orderIdInput && transactionIdInput) {
-      orderIdInput.value = orderId;
-      transactionIdInput.value = transactionId;
-    }
-  }
+	function setOrderId(orderId) {
+		console.log(orderId);
+		window.currentOrderId = orderId;
+	}
+	function populateOrderId(orderId, transactionId) {
+		console.log("tra", transactionId);
+		const orderIdInput = document.getElementById("orderIdInput");
+		const transactionIdInput = document.getElementById("transactionIdInput");
+		if (orderIdInput && transactionIdInput) {
+			orderIdInput.value = orderId;
+			transactionIdInput.value = transactionId;
+		}
+	}
 
-  function submitRefundPayment() {
-    var orderId = document.getElementById("orderIdInput").value;
-    var transactionId = document.getElementById("transactionIdInput").value;
-    var credit_card_number =
-      document.getElementById("credit_card_number").value;
-    var cvv = document.getElementById("cvv").value;
-    var expiry_date = document.getElementById("expiry_date").value;
+	function submitRefundPayment() {
+		var orderId = document.getElementById("orderIdInput").value;
+		var transactionId = document.getElementById("transactionIdInput").value;
+		var credit_card_number = document.getElementById("credit_card_number").value;
+		var cvv = document.getElementById("cvv").value;
+		var expiry_date = document.getElementById("expiry_date").value;
 
-    $.ajax({
-      url: "/refund-payment",
-      data: JSON.stringify({
-        order_id: orderId,
-        transaction_id: transactionId,
-        cvv: cvv,
-        credit_card_number: credit_card_number,
-        expiry_date: expiry_date,
-      }),
-      contentType: "application/json",
-      method: "POST",
-      success: function (data) {
-        console.log("data", data);
-      },
-      error: function (xhr, textStatus, error) {},
-      complete: function () {},
-    });
-  }
+		$.ajax({
+			url: "/refund-payment",
+			data: JSON.stringify({
+				order_id: orderId,
+				transaction_id: transactionId,
+				cvv: cvv,
+				credit_card_number: credit_card_number,
+				expiry_date: expiry_date,
+			}),
+			contentType: "application/json",
+			method: "POST",
+			success: function (data) {
+				console.log("data", data);
+			},
+			error: function (xhr, textStatus, error) {},
+			complete: function () {},
+		});
+	}
 </script>
 <script>
-  function submitPayment() {
-    $("#loaderdiv").addClass("loaderdiv");
-    $("#loader").addClass("loader");
-    var order = window.currentOrderId;
-    var credit_card_number =
-      document.getElementById("credit_card_number").value;
-    var cvv = document.getElementById("cvv").value;
-    var expiry_date = document.getElementById("expiry_date").value;
-    var close_button = document.getElementById("modal-backdrop2");
+	function submitPayment() {
+		$("#loaderdiv").addClass("loaderdiv");
+		$("#loader").addClass("loader");
+		var order = window.currentOrderId;
+		var payment_option = document.getElementById("paymentOption").value;
+		console.log(payment_option);
+		if (payment_option === "PartialPayment") {
+			var credit_card_number = document.getElementById("credit_card_number2").value;
+			var cvv = document.getElementById("cvv2").value;
+			var expiry_date = document.getElementById("expiry_date2").value;
+			var partialAmount = document.getElementById("partialAmount").value;
+		} else if (payment_option === "FullPayment") {
+			var credit_card_number = document.getElementById("credit_card_number").value;
+			var cvv = document.getElementById("cvv").value;
+			var expiry_date = document.getElementById("expiry_date").value;
+		}
+		var close_button = document.getElementById("modal-backdrop2");
 
-    close_button.click();
-    $.ajax({
-      url: "/test-payment",
-      data: JSON.stringify({
-        order_id: order,
-        cvv: cvv,
-        credit_card_number: credit_card_number,
-        expiry_date: expiry_date,
-      }),
-      contentType: "application/json",
-      method: "POST",
-      success: function (data) {
-        console.log("data", data);
-        $("#loaderdiv").removeClass("loaderdiv");
-        $("#loader").removeClass("loader");
-        if (data.error) {
-          alert(data.error.message);
-        }
-      },
-      error: function (xhr, textStatus, error) {
-        console.log(typeof xhr.responseText);
-        var errorData = JSON.parse(xhr.responseText);
-        $("#loaderdiv").removeClass("loaderdiv");
-        $("#loader").removeClass("loader");
-        if (errorData.error) {
-          //console.log("Error Code:", errorData.error.code);
-          alert(errorData.error.message);
-        }
-        var close_button = document.getElementById("modal-backdrop2");
-        close_button.click();
-        console.log("erroraa: ", errorData);
-      },
-      complete: function () {
-        // Move the close button action to the complete callback,
-        // ensuring it executes regardless of success or error
-        var close_button = document.getElementById("modal-backdrop2");
-        close_button.click();
-        window.location.href = "/list-order";
-      },
-    });
-  }
+		close_button.click();
+		$.ajax({
+			url: "/test-payment",
+			data: JSON.stringify({
+				order_id: order,
+				cvv: cvv,
+				credit_card_number: credit_card_number,
+				expiry_date: expiry_date,
+				partial_amount: partialAmount,
+				payment_option: payment_option,
+			}),
+			contentType: "application/json",
+			method: "POST",
+			success: function (data) {
+				console.log("data", data);
+				$("#loaderdiv").removeClass("loaderdiv");
+				$("#loader").removeClass("loader");
+				if (data.error) {
+					alert(data.error.message);
+				}
+			},
+			error: function (xhr, textStatus, error) {
+				console.log(typeof xhr.responseText);
+				var errorData = JSON.parse(xhr.responseText);
+				$("#loaderdiv").removeClass("loaderdiv");
+				$("#loader").removeClass("loader");
+				if (errorData.error) {
+					//console.log("Error Code:", errorData.error.code);
+					alert(errorData.error.message);
+				}
+				var close_button = document.getElementById("modal-backdrop2");
+				close_button.click();
+				console.log("erroraa: ", errorData);
+			},
+			complete: function () {
+				// Move the close button action to the complete callback,
+				// ensuring it executes regardless of success or error
+				var close_button = document.getElementById("modal-backdrop2");
+				close_button.click();
+				window.location.href = "/list-order";
+			},
+		});
+	}
+</script>
+
+<!-- For Payment Option -->
+<script>
+	function renderUI() {
+		// Get the selected option value
+		var selectedOption = document.getElementById("paymentOption").value;
+		console.log(selectedOption);
+		var submitButton = document.getElementById("submitButton");
+		// Hide all UI divs
+		var allUIs = document.querySelectorAll("[id^='uiFor']");
+		allUIs.forEach(function (ui) {
+			ui.classList.add("hidden");
+		});
+		console.log(allUIs);
+
+		// Show the selected UI div
+		var selectedUI = document.getElementById("uiFor" + selectedOption);
+		if (selectedUI) {
+			selectedUI.classList.remove("hidden");
+			submitButton.classList.remove("hidden");
+		}
+	}
 </script>
 {% endblock body %}
