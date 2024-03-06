@@ -1,4 +1,7 @@
+import requests
 from flask import redirect, render_template, url_for, request, session, flash, jsonify, send_from_directory
+from ftplib import FTP
+import shutil
 
 from app import app, db
 from .models import *
@@ -619,10 +622,10 @@ def testPayment():
                 # and parse it to display the results of authorizing the card
                 if hasattr(response.transactionResponse, 'messages') is True:
                     result = download_order(id=id, email='email')
-                    send_invoice_as_attachment(id,result, customer)
+                    send_invoice_as_attachment(id, result, customer)
 
                     updateOrderAfterTransaction(
-                        id, response.transactionResponse.transId, order_invoice_number,transactionrequest.amount)
+                        id, response.transactionResponse.transId, order_invoice_number, transactionrequest.amount)
 
                     print(
                         'Successfully created transaction with Transaction ID: %s'
@@ -684,31 +687,135 @@ def testPayment():
 
 
 def send_invoice_as_attachment(id, result, customer):
-    options = {
-        "enable-local-file-access": ""
-    }
-    pdf = pdfkit.from_string(result, False, options=options)
+    try:
+        options = {
+            "enable-local-file-access": ""
+        }
 
-    with open(f'app/static/pdf/generated_pdf-{id}.pdf', 'wb') as file:
-        file.write(pdf)
-    msg = Message('PDF Attachment', sender=os.getenv(
-        'SENDER_EMAIL'), recipients=[customer.email])
-    link = f'http://127.0.0.1:5000/download-pdf/generated_pdf-{id}.pdf'
-    msg.body = f"""
-    Please find the attached PDF.
-    {link}
-    """
+        pdf = pdfkit.from_string(result, False, options=options)
 
-    with app.open_resource(f'static/pdf/generated_pdf-{id}.pdf') as pdf_file:
-        msg.attach("invoice.pdf", "application/pdf", pdf_file.read())
+        folder_path = f'app/static/pdf/{id}/'
 
-    mail.send(msg)
+        try:
+            if not os.path.exists(folder_path):
+                os.makedirs(folder_path)
+                print(f'Folder created: {folder_path}')
+
+            else:
+                print(f'Folder already exists: {folder_path}')
+        except Exception as e:
+            print("Cannot create file:: ", str(e))
+
+        with open(f'app/static/pdf/{id}/PO-{id}.pdf', 'wb') as file:
+            file.write(pdf)
+
+        msg = Message('PDF Attachment', sender=os.getenv(
+            'SENDER_EMAIL'), recipients=[customer.email])
+
+        link = f'https://yayawarnepal.com/pdf/{id}/PO-{id}.pdf'
+
+        msg.body = f"""
+        Please find the attached PDF.
+        {link}
+        """
+
+        with app.open_resource(f'static/pdf/{id}/PO-{id}.pdf') as pdf_file:
+            msg.attach("invoice.pdf", "application/pdf", pdf_file.read())
+
+        file_path = f'app/static/pdf/{id}/PO-{id}.pdf'
+        
+        cpanel_username = os.getenv("CPANEL_USERNAME")
+        cpanel_password = os.getenv("CPANEL_PASSWORD")
+
+        destination_folder = f'public_html/pdf/{id}/'
+
+        upload_pdf_to_cpanel(file_path, cpanel_username,
+                             cpanel_password, destination_folder)
+
+        mail.send(msg)
+        # Delete the generated PDF file
+        remove_local_directory(f'app/static/pdf/{id}')
+
+    except Exception as e:
+        print(e)
+        print("Exception:::", str(e))
+        response = jsonify(
+            {'error': {'code': 500, 'message': 'something went wrong'}})
+        return
+    # 4111111111111111
     # return true
 
-    # Delete the generated PDF file
-    # os.remove('app/generated_pdf.pdf')
+def remove_local_directory(folder_path):
+    try:
+        # Attempt to change permissions to allow writing and deleting
+        os.chmod(folder_path, 0o777)
 
-# to serve the pdf whose link is sent in email
+        # Try to remove the folder and its contents
+        shutil.rmtree(folder_path)
+
+        print(f"Folder '{folder_path}' removed successfully!")
+    except Exception as e:
+        print(f"Failed to remove folder '{folder_path}': {e}")
+
+
+
+# def upload_pdf_to_cpanel(file_path, cpanel_username, cpanel_password, destination_folder):
+#     try:
+#         # Connect to the FTP server
+#         ftp = FTP('yayawarnepal.com')
+#         ftp.login(cpanel_username, cpanel_password)
+
+#         # Change directory to the destination folder
+#         ftp.cwd(destination_folder)
+
+#         # Open the PDF file for reading in binary mode
+#         with open(file_path, 'rb') as file:
+#             # Upload the file
+#             ftp.storbinary('STOR ' + file_path.split('/')[-1], file)
+
+#         print("File uploaded successfully!")
+#     except Exception as e:
+#         print("Failed to upload file:", str(e))
+#     finally:
+#         # Close the FTP connection
+#         ftp.quit()
+
+def create_remote_directory(ftp, path):
+    """
+    Create the directory and any parent directories if they do not already exist.
+    """
+    # path = f'public_html/pdf/{id}/'
+    parts = path.split('/')
+    for part in parts:
+        try:
+            ftp.cwd(part)
+        except:
+            ftp.mkd(part)
+            ftp.cwd(part)
+
+
+def upload_pdf_to_cpanel(file_path, cpanel_username, cpanel_password, destination_folder):
+    try:
+        # Connect to the FTP server
+        ftp = FTP('yayawarnepal.com')
+        ftp.login(cpanel_username, cpanel_password)
+
+        # Create the parent directory and destination folder
+        create_remote_directory(ftp, destination_folder)
+
+        # Open the PDF file for reading in binary mode
+        with open(file_path, 'rb') as file:
+            # Upload the file
+            ftp.storbinary('STOR ' + file_path.split('/')[-1], file)
+
+        print("File uploaded successfully!")
+    except Exception as e:
+        print("Failed to upload file:", str(e))
+    finally:
+        # Close the FTP connection
+        ftp.quit()
+
+
 @app.route('/download-pdf/<filename>')
 def download_pdf(filename):
     pdf_path = f'static/pdf/{filename}'
@@ -717,6 +824,7 @@ def download_pdf(filename):
         return send_from_directory('static/pdf', filename, as_attachment=True, mimetype='application/pdf')
     except FileNotFoundError:
         return jsonify({'error': 'File not found'}), 404
+
 
 def setInvoiceNumber():
     existing_entries = Order.query.with_entities(Order.invoice_no).all()
