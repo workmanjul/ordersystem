@@ -19,13 +19,13 @@ from dotenv import load_dotenv, dotenv_values
 from flask_mail import Mail, Message
 from decimal import *
 
-app.config['MAIL_SERVER'] = os.getenv(
-    'MAIL_SERVER')  # Change this to your SMTP server
+app.config['MAIL_SERVER'] = os.getenv('MAIL_SERVER')  # Change this to your SMTP server
 # Change this to your mail server's port (usually 587 for TLS)
 app.config['MAIL_PORT'] = os.getenv('MAIL_PORT')
 app.config['MAIL_USERNAME'] = os.getenv('MAIL_USERNAME')
 app.config['MAIL_PASSWORD'] = os.getenv('MAIL_PASSWORD')
-
+app.config['MAIL_USE_TLS'] = True
+app.config['MAIL_USE_SSL'] = False
 
 mail = Mail(app)
 
@@ -706,23 +706,23 @@ def send_invoice_as_attachment(id, result, customer):
         except Exception as e:
             print("Cannot create file:: ", str(e))
 
-        with open(f'app/static/pdf/{id}/PO-{id}.pdf', 'wb') as file:
+        with open(f'app/static/pdf/{id}/INV-{id}.pdf', 'wb') as file:
             file.write(pdf)
 
         msg = Message('PDF Attachment', sender=os.getenv(
             'SENDER_EMAIL'), recipients=[customer.email])
 
-        link = f'https://yayawarnepal.com/pdf/{id}/PO-{id}.pdf'
+        link = f'https://entropy-orders.com/pdf/{id}/INV-{id}.pdf'
 
         msg.body = f"""
         Please find the attached PDF.
         {link}
         """
 
-        with app.open_resource(f'static/pdf/{id}/PO-{id}.pdf') as pdf_file:
+        with app.open_resource(f'static/pdf/{id}/INV-{id}.pdf') as pdf_file:
             msg.attach("invoice.pdf", "application/pdf", pdf_file.read())
 
-        file_path = f'app/static/pdf/{id}/PO-{id}.pdf'
+        file_path = f'app/static/pdf/{id}/INV-{id}.pdf'
         
         cpanel_username = os.getenv("CPANEL_USERNAME")
         cpanel_password = os.getenv("CPANEL_PASSWORD")
@@ -757,29 +757,6 @@ def remove_local_directory(folder_path):
     except Exception as e:
         print(f"Failed to remove folder '{folder_path}': {e}")
 
-
-
-# def upload_pdf_to_cpanel(file_path, cpanel_username, cpanel_password, destination_folder):
-#     try:
-#         # Connect to the FTP server
-#         ftp = FTP('yayawarnepal.com')
-#         ftp.login(cpanel_username, cpanel_password)
-
-#         # Change directory to the destination folder
-#         ftp.cwd(destination_folder)
-
-#         # Open the PDF file for reading in binary mode
-#         with open(file_path, 'rb') as file:
-#             # Upload the file
-#             ftp.storbinary('STOR ' + file_path.split('/')[-1], file)
-
-#         print("File uploaded successfully!")
-#     except Exception as e:
-#         print("Failed to upload file:", str(e))
-#     finally:
-#         # Close the FTP connection
-#         ftp.quit()
-
 def create_remote_directory(ftp, path):
     """
     Create the directory and any parent directories if they do not already exist.
@@ -797,7 +774,7 @@ def create_remote_directory(ftp, path):
 def upload_pdf_to_cpanel(file_path, cpanel_username, cpanel_password, destination_folder):
     try:
         # Connect to the FTP server
-        ftp = FTP('yayawarnepal.com')
+        ftp = FTP('ftp.entropy-orders.com')
         ftp.login(cpanel_username, cpanel_password)
 
         # Create the parent directory and destination folder
@@ -978,6 +955,7 @@ def createCustomer():
         company = data['company']
         phone = data['phone']
         address1 = data['address1']
+        # address1=address1.split(",")[0] 
         country = data['country']
         address2 = data['address2'] if data['address2'] else ""
         city = data['city']
