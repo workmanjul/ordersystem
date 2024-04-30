@@ -738,8 +738,7 @@ def send_invoice_as_attachment(id, result, customer):
 
         destination_folder = f'public_html/pdf/{id}/'
 
-        # upload_pdf_to_cpanel(file_path, cpanel_username,
-                            #  cpanel_password, destination_folder)
+        upload_pdf_to_cpanel(file_path, cpanel_username, cpanel_password, destination_folder)
 
         mail.send(msg)
         # Delete the generated PDF file
