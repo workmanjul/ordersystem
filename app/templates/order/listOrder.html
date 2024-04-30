@@ -400,6 +400,11 @@
 		var selectedOption = document.getElementById("paymentOption").value;
 		console.log(selectedOption);
 		var submitButton = document.getElementById("submitButton");
+		if (selectedOption != "") {
+			submitButton.classList.remove("hidden");
+		} else {
+			submitButton.classList.add("hidden");
+		}
 		// Hide all UI divs
 		var allUIs = document.querySelectorAll("[id^='uiFor']");
 		allUIs.forEach(function (ui) {
@@ -414,7 +419,9 @@
 			submitButton.classList.remove("hidden");
 		}
 		else{
-			submitButton.classList.remove("hidden");
+			if(selectedOption ===""){
+				submitButton.classList.add("hidden");
+			}
 		}
 	}
 </script>

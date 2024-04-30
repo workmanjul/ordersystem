@@ -19,13 +19,15 @@ from dotenv import load_dotenv, dotenv_values
 from flask_mail import Mail, Message
 from decimal import *
 
-app.config['MAIL_SERVER'] = os.getenv('MAIL_SERVER')  # Change this to your SMTP server
+app.config['MAIL_SERVER'] = os.getenv(
+    'MAIL_SERVER')  # Change this to your SMTP server
 # Change this to your mail server's port (usually 587 for TLS)
 app.config['MAIL_PORT'] = os.getenv('MAIL_PORT')
 app.config['MAIL_USERNAME'] = os.getenv('MAIL_USERNAME')
 app.config['MAIL_PASSWORD'] = os.getenv('MAIL_PASSWORD')
 app.config['MAIL_USE_TLS'] = True
 app.config['MAIL_USE_SSL'] = False
+
 
 mail = Mail(app)
 
@@ -126,6 +128,12 @@ def saveCustomer():
     first_name = ajax_data['first_name']
     last_name = ajax_data['last_name']
     email = ajax_data['email']
+
+    # check if user with same email exist
+    existing_customer = Customer.query.filter_by(email=ajax_data['email']).first()
+    if existing_customer:
+        return jsonify({'error': 'User with email {} already exists'.format(email)}), 400
+
     company = ajax_data['company']
     phone = ajax_data['phone']
     country = ajax_data['country']
@@ -195,7 +203,7 @@ def get_order_items(data):
 def createOrder():
 
     data = request.form
-    print(data)
+    # print(data)
     item_counter = data['item_counter']
     customer_id = data['current_customer_hidden']
     shipping_cost = data['ship_total'] if data['ship_total'] else 0
@@ -270,7 +278,8 @@ def customer_bill_address():
         Customer.id == request.args.get('id')).first()
     if bill_to:
         bill_to_address = bill_to.address1.split(",")[0]
-    return render_template("widgets/bill_to_address.html", bill_to=bill_to, bill_to_address=bill_to_address)
+        return render_template("widgets/bill_to_address.html", bill_to=bill_to, bill_to_address=bill_to_address)
+    return render_template("widgets/bill_to_address.html", bill_to=bill_to)
 
 
 @app.route('/ship_to_details_for_update', methods=['GET'])
@@ -300,7 +309,7 @@ def updateOrder(id):
     orderUpdate = Order.query.get(id)
     if request.method == "POST":
         data = request.form
-        print(data)
+        # print(data)
         item_counter = data['item_counter']
         item_counter_list = data['item_counter_list'].split(",")
         orderUpdate.customer_id = data['current_customer_hidden']
@@ -436,12 +445,12 @@ def refundPayment():
         createtransactioncontroller.execute()
 
         response = createtransactioncontroller.getresponse()
-        print('###############')
+        # print('###############')
         print(response)
-        print('#################')
+        # print('#################')
         if response is not None:
             if response.messages.resultCode == "Ok":
-                print('hello')
+                # print('hello')
                 if hasattr(response.transactionResponse, 'messages') == True:
                     print('Successfully created transaction with Transaction ID: %s' %
                           response.transactionResponse.transId)
@@ -729,8 +738,8 @@ def send_invoice_as_attachment(id, result, customer):
 
         destination_folder = f'public_html/pdf/{id}/'
 
-        upload_pdf_to_cpanel(file_path, cpanel_username,
-                             cpanel_password, destination_folder)
+        # upload_pdf_to_cpanel(file_path, cpanel_username,
+                            #  cpanel_password, destination_folder)
 
         mail.send(msg)
         # Delete the generated PDF file
@@ -929,15 +938,18 @@ def deleteOrder(id):
 
         # Delete the order and its related order details
         db.session.delete(order)
-        db.session.delete(shipTo)
-        for order_detail in orderDetails:
-            db.session.delete(order_detail)
+        if shipTo:
+            db.session.delete(shipTo)
+        if orderDetails:
+            for order_detail in orderDetails:
+                db.session.delete(order_detail)
 
         db.session.commit()
         flash("Order Deleted")
         return redirect(url_for('listOrder'))
     except Exception as e:
         # Handle any exceptions that occur during the deletion process
+        print(e)
         return "Error occurred while deleting the order", 500
 # =============================================================================================
 
@@ -949,9 +961,14 @@ def deleteOrder(id):
 def createCustomer():
     if request.method == 'POST':
         data = request.form
+        # print(data)
         first_name = data['first_name']
         last_name = data['last_name']
         email = data['email']
+        existing_customer = Customer.query.filter_by(email=email).first()
+        if existing_customer:
+            return jsonify({'error': 'User with email {} already exists'.format(email)}), 400
+
         company = data['company']
         phone = data['phone']
         address1 = data['address1']
@@ -1217,10 +1234,12 @@ def saveShipTo():
 
     shipping = ShipTo(name=name, phone_number=phone, country=country, address_1=address1,
                       address_2=address2, postal_code=postcode, city=city, state=state, contact=contact)
-
-    db.session.add(shipping)
-    db.session.commit()
-    ship = ShipTo.query.filter_by(name=ajax_data['name']).first()
+    existing_address = ShipTo.query.filter_by(phone_number=phone).first()
+    # print(f"\n\nexisting_address:: {existing_address}\n\n")
+    if existing_address is None:
+        db.session.add(shipping)
+        db.session.commit()
+    ship = ShipTo.query.filter_by(phone_number=ajax_data['phone']).first()
     _data = {
         'id': ship.id,
         'name': ship.name,
