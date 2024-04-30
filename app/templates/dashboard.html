@@ -87,7 +87,7 @@
 							</div>
 							<div class="grid md:grid-cols-2 md:gap-6">
 								<div class="relative z-0 w-full mb-6 group">
-									<input type="text" name="city" id="city2" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer city" placeholder=" " required />
+									<input type="text" name="city" id="city2" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer city" placeholder=" " />
 									<label for="floating_company" class="peer-focus:font-medium absolute text-sm text-gray-800 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">City</label>
 								</div>
 								<div class="relative z-0 w-full mb-6 group">
@@ -175,7 +175,7 @@
 							<label for="floating_company" class="peer-focus:font-medium absolute text-sm text-gray-800 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">State</label>
 						</div>
 						<div class="relative z-0 w-full mb-6 group">
-							<select data-te-select-init data-te-select-filter="true" class="rounded w-[350px] px-4 select2-js custom-select" id="country" name="country">
+							<select data-te-select-init data-te-select-filter="true" class="rounded w-[350px] px-4 select3-js custom-select" id="country" name="country" onchange="alert('->',this.value)">
 								<option>Select a Country</option>
 
 								<option value="" id="countryName"></option>
@@ -189,7 +189,7 @@
 						</div>
 
 						<div class="relative z-0 w-full mb-6 group">
-							<input type="text" name="company" id="company" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " required />
+							<input type="text" name="company" id="company" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " />
 							<label for="company" class="peer-focus:font-medium absolute text-sm text-gray-800 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Company</label>
 						</div>
 					</div>
@@ -330,6 +330,8 @@
 
 <script>
 	function initAutocomplete() {
+		$(".select3-js").select2();
+
 		const locationInput = document.getElementById("locationInput");
 		const countryInput = document.getElementById("country");
 		const cityInput = document.getElementById("my_city");
@@ -343,7 +345,6 @@
 		// Event listener when a place is selected
 		autocomplete.addListener("place_changed", function () {
 			const place = autocomplete.getPlace();
-
 			// Clear the previous values
 			countryInput.value = "";
 			cityInput.value = "";
@@ -357,7 +358,8 @@
 
 				if (componentType === "country") {
 					countryInput.value = component.long_name;
-				} else if (componentType === "locality" || componentType === "administrative_area_level_2") {
+					$("#country").val(countryInput.value);
+				} else if (componentType === "locality") {
 					cityInput.value = component.long_name;
 				} else if (componentType === "administrative_area_level_1") {
 					stateInput.value = component.long_name;
@@ -365,8 +367,11 @@
 					postalCodeInput.value = component.long_name;
 				}
 			}
+			$(".select3-js").select2();
+			// console.log(`-- ${place.address_components} --`);
 
-			// addressInput.value = place.formatted_address;
+			addressInput.value = place.formatted_address;
+			console.log(addressInput.value);
 		});
 	}
 	// For Shipping
@@ -398,7 +403,7 @@
 
 				if (componentType === "country") {
 					countryInput.value = component.long_name;
-				} else if (componentType === "locality" || componentType === "administrative_area_level_2") {
+				} else if (componentType === "locality") {
 					cityInput.value = component.long_name;
 				} else if (componentType === "administrative_area_level_1") {
 					stateInput.value = component.long_name;
@@ -572,9 +577,15 @@
 				var postcode = $(tempElement).find("#postcode").text();
 				var contact_x = 0;
 
+				if (name === "" || country === "" || address1 === "" || phone === "" || country === "" || address1 === "" || city === "" || state === "" || postcode === "") {
+					alert("Bill To is Empty");
+					$("#sameAsBillTo").prop("checked", false); //uncheck the checked item
+
+					console.log(first_name, last_name, email, phone, country, address1, address2, city, state, postcode);
+					return;
+				}
 				var requestData = {
 					name: name,
-
 					contact_x: contact_x,
 					phone: phone,
 					country: country,
@@ -714,9 +725,11 @@
 		var state = $("#state").val();
 		var postcode = $("#postalCode").val();
 		var is_wholesale = $("#default-checkbox").is(":checked") ? 1 : 0;
-		if (first_name === "" || last_name === "" || email === "" || company === "" || phone === "" || country === "" || address1 === "" || city === "" || state === "" || postcode === "") {
+
+		if (first_name === "" || last_name === "" || email === "" || phone === "" || country === "" || address1 === "" || city === "" || state === "" || postcode === "") {
 			alert("Please fill in all the required fields.");
-			console.log(first_name, last_name, email, company, phone, country, address1, address2, city, state, postcode);
+
+			console.log(first_name, last_name, email, phone, country, address1, address2, city, state, postcode);
 			return;
 		}
 		var requestData = {
@@ -744,12 +757,18 @@
 				var close_button = document.getElementById("modal-backdrop");
 				close_button.click();
 
+				$(".select2-js").select2();
 				$("#current_customer").append('<option value="' + data.id + '" selected>' + data.first_name + " " + data.last_name + "</option>");
 				$("#current_customer_hidden").val(data.id);
+				// alert(data.id)
 				handleCustomer(data.id);
 			},
 			error: function (xhr, textStatus, error) {
-				console.log("error: ", xhr.responseText);
+				// alert(error)
+				var errorMessage = xhr.responseJSON.error;
+				console.error("Error:", errorMessage);
+				alert(errorMessage);
+				// console.log("error: ", xhr.responseText);
 			},
 		});
 	});
