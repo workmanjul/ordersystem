@@ -368,10 +368,6 @@
 				}
 			}
 			$(".select3-js").select2();
-			// console.log(`-- ${place.address_components} --`);
-
-			addressInput.value = place.formatted_address;
-			console.log(addressInput.value);
 		});
 	}
 	// For Shipping
@@ -563,7 +559,6 @@
 			url: "/customer_bill_address?id=" + value,
 			success: function (data, status, xhr) {
 				$("#ship_to").html(data);
-
 				var tempElement = document.createElement("ship_to");
 				tempElement.innerHTML = data;
 
@@ -576,14 +571,6 @@
 				var state = $(tempElement).find("#state_country").text();
 				var postcode = $(tempElement).find("#postcode").text();
 				var contact_x = 0;
-
-				if (name === "" || country === "" || address1 === "" || phone === "" || country === "" || address1 === "" || city === "" || state === "" || postcode === "") {
-					alert("Bill To is Empty");
-					$("#sameAsBillTo").prop("checked", false); //uncheck the checked item
-
-					console.log(first_name, last_name, email, phone, country, address1, address2, city, state, postcode);
-					return;
-				}
 				var requestData = {
 					name: name,
 					contact_x: contact_x,
@@ -595,6 +582,13 @@
 					state: state,
 					postcode: postcode,
 				};
+				if (name === "" || phone === "" || address1 === "" || city === "" || state === "" || postcode === "") {
+					alert("Bill To is Empty");
+					$("#sameAsBillTo").prop("checked", false); //uncheck the checked item
+
+					return;
+				}
+
 				$.ajax({
 					url: "/save-shipping-ajax",
 					data: JSON.stringify(requestData),
@@ -729,7 +723,6 @@
 		if (first_name === "" || last_name === "" || email === "" || phone === "" || country === "" || address1 === "" || city === "" || state === "" || postcode === "") {
 			alert("Please fill in all the required fields.");
 
-			console.log(first_name, last_name, email, phone, country, address1, address2, city, state, postcode);
 			return;
 		}
 		var requestData = {
@@ -746,7 +739,6 @@
 			postcode: postcode,
 			is_wholesale: is_wholesale,
 		};
-		console.log(requestData);
 
 		$.ajax({
 			url: "/save-customer",
@@ -764,11 +756,9 @@
 				handleCustomer(data.id);
 			},
 			error: function (xhr, textStatus, error) {
-				// alert(error)
 				var errorMessage = xhr.responseJSON.error;
 				console.error("Error:", errorMessage);
 				alert(errorMessage);
-				// console.log("error: ", xhr.responseText);
 			},
 		});
 	});
