@@ -874,7 +874,6 @@ def print_order(id):
         image_path = os.path.abspath("/static/images/Entropy_Logo.png")
     else:
         image_path = os.path.abspath("/static/images/ECP_Logo.png")
-
     return render_template('order/printOrder.html', order=order, orderDetails=order_details, user=user, customer=customer, image_path=image_path, ship_to=shipTo, ship_to_address=ship_to_address, bill_to_address=bill_to_address)
 
 

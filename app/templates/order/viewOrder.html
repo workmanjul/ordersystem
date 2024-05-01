@@ -323,7 +323,7 @@
 	function submitPayment() {
 		$("#loaderdiv").addClass("loaderdiv");
 		$("#loader").addClass("loader");
-		var order = order.id;
+		var order = "{{order.id}}";
 		var payment_option = document.getElementById("paymentOption").value;
 		console.log(payment_option);
 		if (payment_option === "PartialPayment") {
