@@ -12,8 +12,8 @@
 		{% if bill_to.country !="United States" %}
 		<p class="card-text" id="country">{{ bill_to.country }}</p>
 		{% endif %} 
-
-		<p class="card-text" hidden id="city"">{{ bill_to.city }}</p>
+		<p class="card-text" hidden id="country">{{ bill_to.country }}</p>
+		<p class="card-text" hidden id="city">{{ bill_to.city }}</p>
 		<p class="card-text" hidden id="postcode">{{ bill_to.postcode }}</p>
 		<p class="card-text" hidden id="customer_id">{{ bill_to.id }}</p>
 		<p class="card-text" hidden id="contact">{{ bill_to.contact }}</p>
