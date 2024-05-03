@@ -130,7 +130,8 @@ def saveCustomer():
     email = ajax_data['email']
 
     # check if user with same email exist
-    existing_customer = Customer.query.filter_by(email=ajax_data['email']).first()
+    existing_customer = Customer.query.filter_by(
+        email=ajax_data['email']).first()
     if existing_customer:
         return jsonify({'error': 'User with email {} already exists'.format(email)}), 400
 
@@ -526,10 +527,17 @@ def testPayment():
             ship_to_address = shipTo.ShipTo.address_1.split(",")[0]
 
         customer_order = order
-
+        payment_option = str(ajax_data['payment_option'])
         order_invoice_number = setInvoiceNumber()
+        print(payment_option)
         print(order_invoice_number)
+        if payment_option == "Pay at pickup" or payment_option == "Mail check" or payment_option == 'Send Paypal invoice':
+            updateOrderAfterTransaction(
+                id, order_invoice_number=order_invoice_number)
+            result = download_order(id=id, email='email')
+            send_invoice_as_attachment(id, result, customer)
 
+            return ('Invoice Generated')
         merchantAuth = apicontractsv1.merchantAuthenticationType()
         merchantAuth.name = os.getenv('MERCHANT_NAME')
         merchantAuth.transactionKey = os.getenv('MERCHANT_TRANSACTION_KEY')
@@ -601,7 +609,7 @@ def testPayment():
         if payment_option == "FullPayment":
             transactionrequest.amount = customer_order.total_amount
         elif payment_option == "PartialPayment":
-            transactionrequest.amount = int(partial_amount)
+            transactionrequest.amount = partial_amount
 
         transactionrequest.payment = payment
         transactionrequest.order = order
@@ -732,7 +740,7 @@ def send_invoice_as_attachment(id, result, customer):
             msg.attach("invoice.pdf", "application/pdf", pdf_file.read())
 
         file_path = f'app/static/pdf/{id}/INV-{id}.pdf'
-        
+
         cpanel_username = os.getenv("CPANEL_USERNAME")
         cpanel_password = os.getenv("CPANEL_PASSWORD")
 
@@ -830,15 +838,18 @@ def setInvoiceNumber():
     # db.session.commit()
 
 
-def updateOrderAfterTransaction(id, transId, order_invoice_number, paid_amount):
+def updateOrderAfterTransaction(id, transId=None, order_invoice_number=None, paid_amount=None):
     order = Order.query.get(id)
     if order is None:
         return "Item not found", 404
     order.transactionId = transId
-    if order.total_amount == paid_amount:
-        order.payment_status = "paid"
+    if paid_amount is not None:
+        if order.total_amount == paid_amount:
+            order.payment_status = "paid"
+        elif paid_amount < order.total_amount:
+            order.payment_status = "partially paid"
     else:
-        order.payment_status = "partially paid"
+        order.payment_status = "on hold"
     order.invoice_no = order_invoice_number
     db.session.commit()
 

@@ -129,6 +129,8 @@
 					<button class="h-[40px] w-[100px] bg-green-100 rounded-lg">Paid</button>
 					{% elif order[0].payment_status == "partially paid" %}
 					<button class="h-[40px] w-[100px] bg-yellow-100 rounded-lg">Partially Paid</button>
+					{% elif order[0].payment_status == "on hold" %}
+					<button class="h-[40px] w-[100px] bg-yellow-100 rounded-lg">On Holds</button>
 					{% else %}
 					<button class="h-[40px] w-[100px] bg-red-100 rounded-lg">Processing</button>
 					{% endif %}
@@ -202,29 +204,8 @@
 					<span class="sr-only">Close modal</span>
 				</button>
 			</div>
-			<!-- <div class="px-32 py-16">
-				<div class="grid md:grid-cols-1 md:gap-6">
-					<div class="relative z-0 w-full mb-6 group">
-						<input type="text" name="credit_card" id="credit_card_number" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " required value="" />
-						<label for="name" class="peer-focus:font-medium absolute text-sm text-gray-800 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Credit Card Number</label>
-					</div>
-					<div class="relative z-0 w-full mb-6 group">
-						<input type="text" name="cvv" id="cvv" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " required value="" />
-
-						<label for="contact_x" class="peer-focus:font-medium absolute text-sm text-gray-800 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">CVV</label>
-					</div>
-					<div class="relative z-0 w-full mb-6 group">
-						<input type="text" name="expiry_date" id="expiry_date" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " required value="" />
-
-						<label for="contact_x" class="peer-focus:font-medium absolute text-sm text-gray-800 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Expiry Date</label>
-					</div>
-				</div>
-
-				<div class="flex justify-center my-6">
-					<button type="submit" class="w-64 h-[60px] py-2.5 px-5 mr-2 mb-2 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-200" id="submit_ship_to" onclick="submitPayment()">Submit</button>
-				</div>
-				
-			</div> -->
+			
+			<!-- Payment -->
 			<div class="px-32 py-8" id="paymentForm">
 				<div class="">
 					<select name="" id="paymentOption" class="rounded-lg h-16 p-2 w-64 -mt-8" onchange="renderUI()">
@@ -398,7 +379,6 @@
 	function renderUI() {
 		// Get the selected option value
 		var selectedOption = document.getElementById("paymentOption").value;
-		console.log(selectedOption);
 		var submitButton = document.getElementById("submitButton");
 		if (selectedOption != "") {
 			submitButton.classList.remove("hidden");
@@ -410,7 +390,6 @@
 		allUIs.forEach(function (ui) {
 			ui.classList.add("hidden");
 		});
-		console.log(allUIs);
 
 		// Show the selected UI div
 		var selectedUI = document.getElementById("uiFor" + selectedOption);

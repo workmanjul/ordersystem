@@ -235,6 +235,11 @@
 				<button data-modal-target="defaultModal2" data-modal-toggle="defaultModal2" class="mx-2 text-white bg-blue-600 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 inline-flex items-center" type="button" id="">Payment</button><br />
 				<div id="ship_to"></div>
 			</div>
+			{%elif order.payment_status == 'on hold' %}
+			<div class="flex flex-end mb-5 mr-5 rounded mx-16">
+				<button data-modal-target="defaultModal2" data-modal-toggle="defaultModal2" class="mx-2 text-white bg-blue-600 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 inline-flex items-center" type="button" id="">On Hold</button><br />
+				<div id="ship_to"></div>
+			</div>
 			{%else%}
 			<div class="flex flex-end mb-5 mr-5 rounded mx-16">
 				<button class="mx-2 text-white bg-blue-600 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 inline-flex items-center" type="button" id="">Paid</button><br />
@@ -284,7 +289,7 @@
 
 							<div class="grid md:grid-cols-1 md:gap-6 hidden mt-4" id="uiForPartialPayment">
 								<div class="relative z-0 w-full mb-6 group">
-									<input type="text" name="credit_card2" id="credit_card_number" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " required value="" />
+									<input type="text" name="credit_card2" id="credit_card_number2" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " required value="" />
 									<label for="name" class="peer-focus:font-medium absolute text-sm text-gray-800 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Credit Card Number</label>
 								</div>
 								<div class="relative z-0 w-full mb-6 group">
@@ -293,7 +298,7 @@
 									<label for="contact_x" class="peer-focus:font-medium absolute text-sm text-gray-800 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">CVV</label>
 								</div>
 								<div class="relative z-0 w-full mb-6 group">
-									<input type="text" name="expiry_date2" id="expiry_date" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " required value="" />
+									<input type="text" name="expiry_date2" id="expiry_date2" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " required value="" />
 
 									<label for="contact_x" class="peer-focus:font-medium absolute text-sm text-gray-800 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Expiry Date</label>
 								</div>
@@ -337,7 +342,6 @@
 			var expiry_date = document.getElementById("expiry_date").value;
 		}
 		var close_button = document.getElementById("modal-backdrop2");
-
 		close_button.click();
 		$.ajax({
 			url: "/test-payment",
@@ -390,18 +394,26 @@
 		var selectedOption = document.getElementById("paymentOption").value;
 		console.log(selectedOption);
 		var submitButton = document.getElementById("submitButton");
+		if (selectedOption != "") {
+			submitButton.classList.remove("hidden");
+		} else {
+			submitButton.classList.add("hidden");
+		}
 		// Hide all UI divs
 		var allUIs = document.querySelectorAll("[id^='uiFor']");
 		allUIs.forEach(function (ui) {
 			ui.classList.add("hidden");
 		});
-		console.log(allUIs);
 
 		// Show the selected UI div
 		var selectedUI = document.getElementById("uiFor" + selectedOption);
 		if (selectedUI) {
 			selectedUI.classList.remove("hidden");
 			submitButton.classList.remove("hidden");
+		} else {
+			if (selectedOption === "") {
+				submitButton.classList.add("hidden");
+			}
 		}
 	}
 </script>
